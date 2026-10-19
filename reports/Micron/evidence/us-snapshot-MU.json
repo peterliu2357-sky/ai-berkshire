@@ -1,0 +1,2050 @@
+{
+  "type": "issuer_snapshot",
+  "ticker": "MU",
+  "prints": [
+    {
+      "type": "market_print",
+      "ticker": "MU",
+      "price": "913.76",
+      "kind": "intraday_last",
+      "as_of": "2026-10-19T13:37:50+00:00",
+      "source": "yahoo_chart"
+    },
+    {
+      "type": "market_print",
+      "ticker": "MU",
+      "price": "953.19",
+      "kind": "official_close",
+      "as_of": "2026-10-13T13:30:00+00:00",
+      "source": "yahoo_daily_close"
+    },
+    {
+      "type": "market_print",
+      "ticker": "MU",
+      "price": "914.13",
+      "kind": "official_close",
+      "as_of": "2026-10-14T13:30:00+00:00",
+      "source": "yahoo_daily_close"
+    },
+    {
+      "type": "market_print",
+      "ticker": "MU",
+      "price": "931.24",
+      "kind": "official_close",
+      "as_of": "2026-10-15T13:30:00+00:00",
+      "source": "yahoo_daily_close"
+    },
+    {
+      "type": "market_print",
+      "ticker": "MU",
+      "price": "878.84",
+      "kind": "official_close",
+      "as_of": "2026-10-16T13:30:00+00:00",
+      "source": "yahoo_daily_close"
+    },
+    {
+      "type": "market_print",
+      "ticker": "MU",
+      "price": "914.085",
+      "kind": "intraday_last",
+      "as_of": "2026-10-19T09:37:00-04:00",
+      "source": "nasdaq_info"
+    }
+  ],
+  "filings": [],
+  "annual": [],
+  "shares": null,
+  "yields": [
+    {
+      "type": "treasury_yield",
+      "as_of": "2026-10-16",
+      "rate": "0.0509",
+      "source": "treasury_par"
+    }
+  ],
+  "unscaled": [
+    {
+      "type": "unscaled_amount",
+      "lexeme": "1,033,849,274,197",
+      "label": "Market Cap",
+      "period_end": "",
+      "source": "nasdaq_summary"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$133,188,000",
+      "label": "Total Revenue",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$37,378,000",
+      "label": "Total Revenue",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$25,111,000",
+      "label": "Total Revenue",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$15,540,000",
+      "label": "Total Revenue",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$25,684,000",
+      "label": "Cost of Revenue",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$22,505,000",
+      "label": "Cost of Revenue",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$19,498,000",
+      "label": "Cost of Revenue",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$16,956,000",
+      "label": "Cost of Revenue",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$107,504,000",
+      "label": "Gross Profit",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$14,873,000",
+      "label": "Gross Profit",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$5,613,000",
+      "label": "Gross Profit",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,416,000",
+      "label": "Gross Profit",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$5,650,000",
+      "label": "Research and Development",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,798,000",
+      "label": "Research and Development",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,430,000",
+      "label": "Research and Development",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,114,000",
+      "label": "Research and Development",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,514,000",
+      "label": "Sales, General and Admin.",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,305,000",
+      "label": "Sales, General and Admin.",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$879,000",
+      "label": "Sales, General and Admin.",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,044,000",
+      "label": "Sales, General and Admin.",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$171,000",
+      "label": "Non-Recurring Items",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$99,340,000",
+      "label": "Operating Income",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$9,770,000",
+      "label": "Operating Income",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,304,000",
+      "label": "Operating Income",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$5,745,000",
+      "label": "Operating Income",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$437,000",
+      "label": "Add'l income/expense items",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$361,000",
+      "label": "Add'l income/expense items",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$498,000",
+      "label": "Add'l income/expense items",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$475,000",
+      "label": "Add'l income/expense items",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$99,777,000",
+      "label": "Earnings Before Interest and Tax",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$10,131,000",
+      "label": "Earnings Before Interest and Tax",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,802,000",
+      "label": "Earnings Before Interest and Tax",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$5,270,000",
+      "label": "Earnings Before Interest and Tax",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$106,000",
+      "label": "Interest Expense",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$477,000",
+      "label": "Interest Expense",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$562,000",
+      "label": "Interest Expense",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$388,000",
+      "label": "Interest Expense",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$99,671,000",
+      "label": "Earnings Before Tax",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$9,654,000",
+      "label": "Earnings Before Tax",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,240,000",
+      "label": "Earnings Before Tax",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$5,658,000",
+      "label": "Earnings Before Tax",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$14,761,000",
+      "label": "Income Tax",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,124,000",
+      "label": "Income Tax",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$451,000",
+      "label": "Income Tax",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$177,000",
+      "label": "Income Tax",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$59,000",
+      "label": "Minority Interest",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$9,000",
+      "label": "Minority Interest",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$11,000",
+      "label": "Minority Interest",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,000",
+      "label": "Minority Interest",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$84,969,000",
+      "label": "Net Income-Cont. Operations",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,539,000",
+      "label": "Net Income-Cont. Operations",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$778,000",
+      "label": "Net Income-Cont. Operations",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$5,833,000",
+      "label": "Net Income-Cont. Operations",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$84,969,000",
+      "label": "Net Income",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,539,000",
+      "label": "Net Income",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$778,000",
+      "label": "Net Income",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$5,833,000",
+      "label": "Net Income",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$84,969,000",
+      "label": "Net Income Applicable to Common Shareholders",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,539,000",
+      "label": "Net Income Applicable to Common Shareholders",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$778,000",
+      "label": "Net Income Applicable to Common Shareholders",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$5,833,000",
+      "label": "Net Income Applicable to Common Shareholders",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$38,364,000",
+      "label": "Cash and Cash Equivalents",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$9,642,000",
+      "label": "Cash and Cash Equivalents",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$7,041,000",
+      "label": "Cash and Cash Equivalents",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,577,000",
+      "label": "Cash and Cash Equivalents",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$5,070,000",
+      "label": "Short-Term Investments",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$665,000",
+      "label": "Short-Term Investments",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,065,000",
+      "label": "Short-Term Investments",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,017,000",
+      "label": "Short-Term Investments",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$36,197,000",
+      "label": "Net Receivables",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$9,265,000",
+      "label": "Net Receivables",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$6,615,000",
+      "label": "Net Receivables",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,443,000",
+      "label": "Net Receivables",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$10,372,000",
+      "label": "Inventory",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,355,000",
+      "label": "Inventory",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,875,000",
+      "label": "Inventory",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,387,000",
+      "label": "Inventory",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,067,000",
+      "label": "Other Current Assets",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$914,000",
+      "label": "Other Current Assets",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$776,000",
+      "label": "Other Current Assets",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$820,000",
+      "label": "Other Current Assets",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$91,070,000",
+      "label": "Total Current Assets",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$28,841,000",
+      "label": "Total Current Assets",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$24,372,000",
+      "label": "Total Current Assets",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$21,244,000",
+      "label": "Total Current Assets",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$30,019,000",
+      "label": "Long-Term Investments",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,629,000",
+      "label": "Long-Term Investments",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,046,000",
+      "label": "Long-Term Investments",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$844,000",
+      "label": "Long-Term Investments",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$63,310,000",
+      "label": "Fixed Assets",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$46,590,000",
+      "label": "Fixed Assets",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$40,394,000",
+      "label": "Fixed Assets",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$38,594,000",
+      "label": "Fixed Assets",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,150,000",
+      "label": "Goodwill",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,150,000",
+      "label": "Goodwill",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,150,000",
+      "label": "Goodwill",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,150,000",
+      "label": "Goodwill",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$416,000",
+      "label": "Intangible Assets",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$404,000",
+      "label": "Intangible Assets",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$10,339,000",
+      "label": "Other Assets",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,588,000",
+      "label": "Other Assets",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,518,000",
+      "label": "Other Assets",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,262,000",
+      "label": "Other Assets",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$520,000",
+      "label": "Deferred Asset Charges",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$756,000",
+      "label": "Deferred Asset Charges",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$195,888,000",
+      "label": "Total Assets",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$82,798,000",
+      "label": "Total Assets",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$69,416,000",
+      "label": "Total Assets",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$64,254,000",
+      "label": "Total Assets",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$22,605,000",
+      "label": "Accounts Payable",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$9,649,000",
+      "label": "Accounts Payable",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$7,299,000",
+      "label": "Accounts Payable",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,958,000",
+      "label": "Accounts Payable",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$491,000",
+      "label": "Short-Term Debt / Current Portion of Long-Term Debt",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$560,000",
+      "label": "Short-Term Debt / Current Portion of Long-Term Debt",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$431,000",
+      "label": "Short-Term Debt / Current Portion of Long-Term Debt",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$278,000",
+      "label": "Short-Term Debt / Current Portion of Long-Term Debt",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,386,000",
+      "label": "Other Current Liabilities",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,245,000",
+      "label": "Other Current Liabilities",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,518,000",
+      "label": "Other Current Liabilities",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$529,000",
+      "label": "Other Current Liabilities",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$27,482,000",
+      "label": "Total Current Liabilities",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$11,454,000",
+      "label": "Total Current Liabilities",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$9,248,000",
+      "label": "Total Current Liabilities",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,765,000",
+      "label": "Total Current Liabilities",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,688,000",
+      "label": "Long-Term Debt",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$14,017,000",
+      "label": "Long-Term Debt",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$12,966,000",
+      "label": "Long-Term Debt",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$13,052,000",
+      "label": "Long-Term Debt",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$25,340,000",
+      "label": "Other Liabilities",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,162,000",
+      "label": "Other Liabilities",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,071,000",
+      "label": "Other Liabilities",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,317,000",
+      "label": "Other Liabilities",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$57,510,000",
+      "label": "Total Liabilities",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$28,633,000",
+      "label": "Total Liabilities",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$24,285,000",
+      "label": "Total Liabilities",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$20,134,000",
+      "label": "Total Liabilities",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$128,000",
+      "label": "Common Stocks",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$127,000",
+      "label": "Common Stocks",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$125,000",
+      "label": "Common Stocks",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$124,000",
+      "label": "Common Stocks",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$131,851,000",
+      "label": "Capital Surplus",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$48,583,000",
+      "label": "Capital Surplus",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$40,877,000",
+      "label": "Capital Surplus",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$40,824,000",
+      "label": "Capital Surplus",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$8,502,000",
+      "label": "Retained Earnings",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$7,852,000",
+      "label": "Retained Earnings",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$7,852,000",
+      "label": "Retained Earnings",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$7,552,000",
+      "label": "Retained Earnings",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$14,974,000",
+      "label": "Treasury Stock",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$13,339,000",
+      "label": "Treasury Stock",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$12,115,000",
+      "label": "Treasury Stock",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$11,036,000",
+      "label": "Treasury Stock",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$73,000",
+      "label": "Other Equity",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$32,000",
+      "label": "Other Equity",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$134,000",
+      "label": "Other Equity",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$312,000",
+      "label": "Other Equity",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$138,378,000",
+      "label": "Total Equity",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$54,165,000",
+      "label": "Total Equity",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$45,131,000",
+      "label": "Total Equity",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$44,120,000",
+      "label": "Total Equity",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$195,888,000",
+      "label": "Total Liabilities & Equity",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$82,798,000",
+      "label": "Total Liabilities & Equity",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$69,416,000",
+      "label": "Total Liabilities & Equity",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$64,254,000",
+      "label": "Total Liabilities & Equity",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$84,969,000",
+      "label": "Net Income",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,539,000",
+      "label": "Net Income",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$778,000",
+      "label": "Net Income",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$5,833,000",
+      "label": "Net Income",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$9,503,000",
+      "label": "Depreciation",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,352,000",
+      "label": "Depreciation",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$7,780,000",
+      "label": "Depreciation",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$7,756,000",
+      "label": "Depreciation",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,333,000",
+      "label": "Net Income Adjustments",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$972,000",
+      "label": "Net Income Adjustments",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$833,000",
+      "label": "Net Income Adjustments",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,528,000",
+      "label": "Net Income Adjustments",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$25,206,000",
+      "label": "Accounts Receivable",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,776,000",
+      "label": "Accounts Receivable",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$3,581,000",
+      "label": "Accounts Receivable",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,763,000",
+      "label": "Accounts Receivable",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$2,017,000",
+      "label": "Changes in Inventories",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$520,000",
+      "label": "Changes in Inventories",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$488,000",
+      "label": "Changes in Inventories",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$3,555,000",
+      "label": "Changes in Inventories",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$388,000",
+      "label": "Other Operating Activities",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$53,000",
+      "label": "Other Operating Activities",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$205,000",
+      "label": "Other Operating Activities",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$19,000",
+      "label": "Other Operating Activities",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$21,481,000",
+      "label": "Liabilities",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$971,000",
+      "label": "Liabilities",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,980,000",
+      "label": "Liabilities",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$2,119,000",
+      "label": "Liabilities",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$89,675,000",
+      "label": "Net Cash Flow-Operating",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$17,525,000",
+      "label": "Net Cash Flow-Operating",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,507,000",
+      "label": "Net Cash Flow-Operating",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,559,000",
+      "label": "Net Cash Flow-Operating",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$30,712,000",
+      "label": "Capital Expenditures",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$15,857,000",
+      "label": "Capital Expenditures",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$8,386,000",
+      "label": "Capital Expenditures",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$7,676,000",
+      "label": "Capital Expenditures",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$33,929,000",
+      "label": "Investments",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$226,000",
+      "label": "Investments",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$215,000",
+      "label": "Investments",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$868,000",
+      "label": "Investments",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,000,000",
+      "label": "Other Investing Activities",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,996,000",
+      "label": "Other Investing Activities",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$292,000",
+      "label": "Other Investing Activities",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$617,000",
+      "label": "Other Investing Activities",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$61,641,000",
+      "label": "Net Cash Flows-Investing",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$14,087,000",
+      "label": "Net Cash Flows-Investing",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$8,309,000",
+      "label": "Net Cash Flows-Investing",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$6,191,000",
+      "label": "Net Cash Flows-Investing",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,777,000",
+      "label": "Sale and Purchase of Stock",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$340,000",
+      "label": "Sale and Purchase of Stock",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$533,000",
+      "label": "Sale and Purchase of Stock",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$425,000",
+      "label": "Sale and Purchase of Stock",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$10,043,000",
+      "label": "Net Borrowings",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$189,000",
+      "label": "Net Borrowings",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$898,000",
+      "label": "Net Borrowings",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$5,955,000",
+      "label": "Net Borrowings",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$13,060,000",
+      "label": "Other Financing Activities",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$201,000",
+      "label": "Other Financing Activities",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$102,000",
+      "label": "Other Financing Activities",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$43,000",
+      "label": "Other Financing Activities",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$630,000",
+      "label": "Net Cash Flows-Financing",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$850,000",
+      "label": "Net Cash Flows-Financing",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,842,000",
+      "label": "Net Cash Flows-Financing",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,983,000",
+      "label": "Net Cash Flows-Financing",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$81,000",
+      "label": "Effect of Exchange Rate",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$6,000",
+      "label": "Effect of Exchange Rate",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$40,000",
+      "label": "Effect of Exchange Rate",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$34,000",
+      "label": "Effect of Exchange Rate",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$28,745,000",
+      "label": "Net Cash Flow",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,594,000",
+      "label": "Net Cash Flow",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,604,000",
+      "label": "Net Cash Flow",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$317,000",
+      "label": "Net Cash Flow",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    }
+  ],
+  "percents": [
+    {
+      "type": "percent",
+      "parts_per_hundred": "331.38054",
+      "label": "Current Ratio",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "251.7985",
+      "label": "Current Ratio",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "263.53806",
+      "label": "Current Ratio",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "445.83421",
+      "label": "Current Ratio",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "293.63947",
+      "label": "Quick Ratio",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "178.85455",
+      "label": "Quick Ratio",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "167.57137",
+      "label": "Quick Ratio",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "269.82162",
+      "label": "Quick Ratio",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "158.04527",
+      "label": "Cash Ratio",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "89.98603",
+      "label": "Cash Ratio",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "87.65138",
+      "label": "Cash Ratio",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "201.34313",
+      "label": "Cash Ratio",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "80.71598",
+      "label": "Gross Margin",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "39.79079",
+      "label": "Gross Margin",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "22.35275",
+      "label": "Gross Margin",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "-9.11197",
+      "label": "Gross Margin",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "74.5863",
+      "label": "Operating Margin",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "26.13837",
+      "label": "Operating Margin",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "5.19294",
+      "label": "Operating Margin",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "-36.96911",
+      "label": "Operating Margin",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "74.83482",
+      "label": "Pre-Tax Margin",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "25.82803",
+      "label": "Pre-Tax Margin",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "4.93807",
+      "label": "Pre-Tax Margin",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "-36.40927",
+      "label": "Pre-Tax Margin",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "63.79629",
+      "label": "Profit Margin",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "22.84499",
+      "label": "Profit Margin",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "3.09824",
+      "label": "Profit Margin",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "-37.53539",
+      "label": "Profit Margin",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "72.02807",
+      "label": "Pre-Tax ROE",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "17.82332",
+      "label": "Pre-Tax ROE",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "2.74756",
+      "label": "Pre-Tax ROE",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "-12.82412",
+      "label": "Pre-Tax ROE",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "61.40355",
+      "label": "After Tax ROE",
+      "period_end": "9/3/2026",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "15.76479",
+      "label": "After Tax ROE",
+      "period_end": "8/28/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "1.72387",
+      "label": "After Tax ROE",
+      "period_end": "8/31/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "-13.22076",
+      "label": "After Tax ROE",
+      "period_end": "8/31/2023",
+      "source": "nasdaq_financials"
+    }
+  ],
+  "ranges": [
+    {
+      "type": "labeled_decimal",
+      "label": "fifty_two_week_high",
+      "value": "1255.0",
+      "source": "yahoo_chart"
+    },
+    {
+      "type": "labeled_decimal",
+      "label": "fifty_two_week_low",
+      "value": "192.4",
+      "source": "yahoo_chart"
+    }
+  ],
+  "labels": [
+    {
+      "type": "source_label",
+      "label": "company_name",
+      "value": "Micron Technology, Inc. Common Stock",
+      "source": "nasdaq_info"
+    },
+    {
+      "type": "source_label",
+      "label": "exchange",
+      "value": "NASDAQ-GS",
+      "source": "nasdaq_info"
+    },
+    {
+      "type": "source_label",
+      "label": "sector",
+      "value": "Technology",
+      "source": "nasdaq_summary"
+    },
+    {
+      "type": "source_label",
+      "label": "industry",
+      "value": "Semiconductors",
+      "source": "nasdaq_summary"
+    },
+    {
+      "type": "source_label",
+      "label": "fifty_two_week_high_low",
+      "value": "$1255/$192.4",
+      "source": "nasdaq_summary"
+    }
+  ],
+  "insiders": [],
+  "failures": [
+    {
+      "type": "fetch_failure",
+      "source": "fred_dgs10",
+      "status": 0,
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
+      "detail": ""
+    },
+    {
+      "type": "fetch_failure",
+      "source": "sec_company_tickers",
+      "status": 403,
+      "url": "https://www.sec.gov/files/company_tickers.json",
+      "detail": ""
+    }
+  ]
+}

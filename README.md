@@ -18,7 +18,7 @@
 
 > 📖 **想读报告，用 [阅读站](https://xbtlin.github.io/ai-berkshire/)**：成品报告按公司、专题、时间整理，电脑和手机都好读，可搜索、记住阅读进度。
 >
-> 📊 全部 2247 份报告（含底稿）· 109 家公司 · 26 个专题，GitHub 上的完整目录见 [研究报告索引](reports/README.md)，更新至 2026-10-19。
+> 📊 全部 2252 份报告（含底稿）· 110 家公司 · 26 个专题，GitHub 上的完整目录见 [研究报告索引](reports/README.md)，更新至 2026-10-19。
 
 <!-- REPORTS-BANNER:END -->
 
@@ -678,7 +678,7 @@ REM 可选：安装 Codex slash prompts
 
 <!-- REPORTS-INDEX:START 由 tools/reports_index.py 自动更新，勿手改 -->
 
-**📊 [全部研究索引 →](reports/README.md)** ｜ 2247 份报告 · 109 家公司 · 26 个专题 · 更新至 2026-10-19
+**📊 [全部研究索引 →](reports/README.md)** ｜ 2252 份报告 · 110 家公司 · 26 个专题 · 更新至 2026-10-19
 
 最近更新：
 
