@@ -214,6 +214,20 @@ Ask AI directly, and you have one context window. Four parallel Agents means 4×
 
 ---
 
+## US listings
+
+Domestic SEC 10-K filers such as MU use three commands. China ADR names such as PDD, TCEHY, and NTES stay on the macrotrends plus stockanalysis path in `skills/financial-data.md`. The same three lines sit in that file under the domestic 10-K heading.
+
+```bash
+python3 tools/us_market.py quote MU
+python3 tools/us_market.py snapshot MU --out reports/Micron/evidence/us-snapshot-MU.json
+python3 tools/us_market.py analyze --snapshot reports/Micron/evidence/us-snapshot-MU.json
+```
+
+`quote` prints each price with its session kind and source timestamp. `snapshot` writes quotes, Treasury yields, scale-free percents, and any EDGAR facts that returned HTTP 200. A blocked EDGAR response is stored as a failure and is not turned into a filing. `analyze` reads only that file. Nasdaq cells with no stated scale stay unscaled and are not treated as dollars. Market cap is the official close times EDGAR shares outstanding. The `three-scenario` shares flag is denominated in 亿股, so a US share count does not go there. If annual facts or shares are missing, those blocks print `unavailable`.
+
+English writeups for a domestic 10-K issuer use `skills/investment-team-en.md`, `skills/us-market.md`, and `skills/memory-cycle.md`.
+
 ## Quick Start
 
 ### Cost & Model Selection
