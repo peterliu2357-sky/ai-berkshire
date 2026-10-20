@@ -34,7 +34,14 @@ from usmarket.fetch import (  # noqa: E402
     parse_treasury_par,
     parse_yahoo_chart,
 )
-from usmarket.claims import snapshot_allow_list, unexcused_numbers  # noqa: E402
+from usmarket.claims import (  # noqa: E402
+    Excerpt,
+    PeerSnapshot,
+    citation_lines,
+    load_ledger,
+    snapshot_allow_list,
+    unexcused_numbers,
+)
 from usmarket.types import (  # noqa: E402
     AnnualFact,
     IssuerSnapshot,
@@ -1252,10 +1259,24 @@ class TestMicronReport(unittest.TestCase):
         analyze = us_market.render_analysis(snap)
         allowed = snapshot_allow_list(snap, analyze)
         self.assertNotIn("723125", allowed)
+        lines = None
+        ledger_path = snapshot_path.parent / "source-ledger.json"
+        if ledger_path.exists():
+            ledger = load_ledger(ledger_path.read_text(encoding="utf-8"))
+            excerpts = {}
+            peers = {}
+            for claim in ledger.claims:
+                if isinstance(claim, Excerpt):
+                    excerpts[str(claim.id)] = (ledger_path.parent / "excerpts" / f"{claim.id}.txt").read_bytes()
+                elif isinstance(claim, PeerSnapshot):
+                    peers[claim.snapshot_path] = snapshot_from_json(
+                        json.loads((_ROOT / claim.snapshot_path).read_text(encoding="utf-8"))
+                    )
+            lines = citation_lines(snap, ledger, excerpts, peers)
         for path in sorted((_ROOT / "reports" / "Micron").glob("*.md")):
             text = path.read_text(encoding="utf-8")
             self.assertNotIn("—", text, path)
-            missed = unexcused_numbers(text, snap, analyze, None)
+            missed = unexcused_numbers(text, snap, analyze, lines)
             self.assertEqual(missed, [], path.name)
 
 
