@@ -1212,5 +1212,214 @@ class TestReportAuditDelegation(unittest.TestCase):
         self.assertNotEqual(hijack.returncode, 0)
 
 
+class TestRoundThreeBypasses(unittest.TestCase):
+    def test_slash_spans_and_fused_identifiers_are_scanned(self):
+        snap = _mu()
+        samples = (
+            "`99,999,999,999 USD/yr`\n",
+            "`$999B / 9.9B shares`\n",
+            "`Market cap $999,999,999,999 (close/shares)`\n",
+            "`DRAM ASP $3.50/GB`\n",
+            "`P/E 15`\n",
+            "`US$412/share`\n",
+            "`USD99999`\n",
+            "`Revenue_99999`\n",
+        )
+        for line in samples:
+            result = audit_report(line, snap, None, {})
+            self.assertEqual(result.status, "fail", line)
+
+    def test_current_year_and_capital_structure_synonyms_are_blocked(self):
+        snap = _mu(
+            annual=_mu().annual
+            + (
+                AnnualFact(
+                    2026,
+                    date(2026, 8, 28),
+                    "revenue",
+                    Decimal("133188000000"),
+                    date(2026, 10, 1),
+                    "Revenues",
+                ),
+            )
+        )
+        empty = SourceLedger("MU", ())
+        for measure in (
+            "profit_2026",
+            "revenue_2026",
+            "net_income_2026",
+            "nongaap_market_cap",
+            "nongaap_shares",
+            "turnover",
+            "topline",
+            "bottom_line",
+        ):
+            claim = _cited("alias", measure, "99000000000", CitedUnit.USD_ONES, "https://www.reuters.com/markets/example")
+            with self.assertRaises(ValueError, msg=measure):
+                admit(empty, claim, snap)
+        qualified = _cited(
+            "seg-rev",
+            "segment_total_revenue",
+            "150000000000",
+            CitedUnit.USD_ONES,
+            "https://www.reuters.com/markets/example",
+        )
+        ledger = admit(empty, qualified, snap)
+        line = citation_lines(snap, ledger, {}, {})[qualified.id][0]
+        hidden = audit_report(line + "\n", snap, ledger, {})
+        self.assertEqual(hidden.status, "fail")
+        self.assertTrue(any("133188000000" in item or "snapshot" in item for item in hidden.failures))
+        prose = audit_report(f"GAAP net income {line}\n", snap, ledger, {})
+        self.assertEqual(prose.status, "fail")
+        self.assertIn("measure=segment_total_revenue", line)
+        nongap = _cited(
+            "ng-ni",
+            "nongaap_net_income",
+            "999999",
+            CitedUnit.USD_ONES,
+            "https://www.reuters.com/markets/example",
+        )
+        nongap_ledger = admit(SourceLedger("MU", ()), nongap, _mu())
+        nongap_line = citation_lines(_mu(), nongap_ledger, {}, {})[nongap.id][0]
+        worded = audit_report(f"GAAP net income 1000 {nongap_line}\n", _mu(), nongap_ledger, {})
+        self.assertEqual(worded.status, "fail")
+        self.assertTrue(any("gaap" in item.lower() or "worded" in item for item in worded.failures))
+
+    def test_other_score_marks_need_a_ledger(self):
+        snap = _mu()
+        for text in (
+            "Verdict ⭐⭐⭐⭐\nShares 100 as of 2026-08-28.\n",
+            "☆☆☆\nShares 100 as of 2026-08-28.\n",
+            "评级四星\nShares 100 as of 2026-08-28.\n",
+        ):
+            result = audit_report(text, snap, None, {})
+            self.assertEqual(result.status, "fail", text)
+            self.assertTrue(any("star" in item or "score" in item for item in result.failures), result.failures)
+
+    def test_growth_of_minus_one_and_a_nonpositive_irr_profit_fail_cleanly(self):
+        snap = _mu()
+        base = TestDerive()._rates(snap)
+        flat = _cited("g-flat", "growth_flat", "-1", CitedUnit.RATIO, "https://www.ft.com/g/flat")
+        ledger = admit(base, flat, snap)
+        request = ThreeScenario(
+            ClaimId("scenario-flat"),
+            (ClaimId("g-flat"), ClaimId("g-base"), ClaimId("g-bear")),
+            (ClaimId("pe-bull"), ClaimId("pe-base"), ClaimId("pe-bear")),
+        )
+        with self.assertRaises(ValueError) as caught:
+            derive(ledger, snap, request)
+        self.assertIn("greater than -1", str(caught.exception))
+        loss = _cited("profit-loss", "terminal_profit", "-5", CitedUnit.USD_ONES, "https://www.trendforce.com/profit")
+        zero = _cited("profit-zero", "terminal_zero", "0", CitedUnit.USD_ONES, "https://www.reuters.com/profit")
+        ledger = admit(admit(ledger, loss, snap), zero, snap)
+        for profit_id in ("profit-loss", "profit-zero"):
+            with self.assertRaises(ValueError) as irr_caught:
+                derive(ledger, snap, IrrRequest(ClaimId("irr-" + profit_id), ClaimId(profit_id), ClaimId("pe-base")))
+            self.assertIn("profit", str(irr_caught.exception).lower())
+
+    def test_fy_label_is_a_year_and_insider_words_are_not_shares(self):
+        snap = _mu(
+            annual=_mu().annual
+            + (
+                AnnualFact(
+                    2026,
+                    date(2026, 8, 28),
+                    "revenue",
+                    Decimal("133188000000"),
+                    date(2026, 10, 1),
+                    "Revenues",
+                ),
+            ),
+            insiders=(
+                InsiderTrade(
+                    date(2026, 10, 14),
+                    date(2026, 10, 15),
+                    "RAY",
+                    "S",
+                    "D",
+                    Decimal("40.00"),
+                    Decimal("947.29"),
+                    "https://www.sec.gov/Archives/example.xml",
+                ),
+            ),
+        )
+        year = audit_report("FY2026 revenue was 133,188,000,000.\n", snap, None, {})
+        self.assertEqual(year.status, "pass", year.failures)
+        bare = audit_report("shares 40.00\n", snap, None, {})
+        self.assertEqual(bare.status, "fail")
+        named = audit_report("owner transaction shares 40.00 price 947.29\n", snap, None, {})
+        self.assertEqual(named.status, "pass", named.failures)
+
+    def test_chinese_ratios_are_scanned(self):
+        snap = _mu()
+        for text in ("增速约三成。\n", "估值三倍。\n", "仓位三分之一。\n", "利率零点五。\n", "规模壹仟。\n"):
+            result = audit_report(text, snap, None, {})
+            self.assertEqual(result.status, "fail", text)
+
+    def test_exhibit_filename_without_a_hyphen_is_read(self):
+        accession = "0000723125-26-000099"
+        cover = "https://www.sec.gov/Archives/edgar/data/723125/000072312526000099/mu-8k.htm"
+        exhibit = "https://www.sec.gov/Archives/edgar/data/723125/000072312526000099/exhibit99-1.htm"
+        index = "https://www.sec.gov/Archives/edgar/data/723125/000072312526000099/index.json"
+        sentence = "Revenue was strong."
+        snap = _mu(filings=(FilingRef("8-K", date(2026, 10, 1), accession, cover),))
+        pages = {
+            cover: b"<html><p>Cover only.</p></html>",
+            index: json.dumps({"directory": {"item": [
+                {"name": "mu-8k.htm", "type": "8-K"},
+                {"name": "exhibit99-1.htm", "type": "EXHIBIT-99.1"},
+            ]}}).encode(),
+            exhibit: f"<html><p>{sentence}</p></html>".encode(),
+        }
+
+        def fake_get(url, user_agent, **kwargs):
+            body = pages.get(url)
+            return (200, body) if body is not None else (404, b"")
+
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot_path = os.path.join(directory, "us-snapshot-MU.json")
+            ledger_path = os.path.join(directory, "source-ledger.json")
+            out_path = os.path.join(directory, "excerpts", "earnings-release.txt")
+            with open(snapshot_path, "w", encoding="utf-8") as handle:
+                json.dump(snap.to_json(), handle)
+            argv = [
+                "admit", "excerpt",
+                "--ledger", ledger_path,
+                "--snapshot", snapshot_path,
+                "--id", "earnings-release",
+                "--measure", "earnings_release",
+                "--accession", accession,
+                "--contains", sentence,
+                "--out", out_path,
+            ]
+            with patch.object(source_ledger, "http_get", fake_get), patch.object(
+                source_ledger, "sec_user_agent", return_value=_AGENT
+            ), contextlib.redirect_stdout(io.StringIO()):
+                code = source_ledger.main(argv)
+            self.assertEqual(code, 0)
+            stored = load_ledger(Path(ledger_path).read_text(encoding="utf-8"))
+            self.assertEqual(stored.claims[0].document_url, exhibit)
+
+    def test_peer_rejects_the_subject_ticker_and_cik(self):
+        snapshot_path = str(_ROOT / "reports" / "Micron" / "evidence" / "us-snapshot-MU.json")
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = os.path.join(directory, "source-ledger.json")
+            write_ledger(ledger_path, SourceLedger("MU", ()), "")
+            argv = [
+                "admit", "peer",
+                "--ledger", ledger_path,
+                "--id", "mu-revenue",
+                "--measure", "peer_mu_revenue",
+                "--snapshot", snapshot_path,
+                "--concept", "revenue",
+                "--fiscal-year", "2026",
+            ]
+            stderr = io.StringIO()
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(stderr):
+                code = source_ledger.main(argv)
+            self.assertEqual(code, 1, stderr.getvalue())
+            self.assertIn("subject", stderr.getvalue().lower())
+
+
 if __name__ == "__main__":
     unittest.main()
