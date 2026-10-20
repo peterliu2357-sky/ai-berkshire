@@ -1266,6 +1266,15 @@ class TestCommandDocs(unittest.TestCase):
         self.assertIn("20-F", data)
         self.assertIn("40-F", data)
 
+    def test_docs_do_not_import_the_claim_module(self):
+        paths = [
+            _ROOT / "README.md",
+            _ROOT / "README_EN.md",
+            *sorted((_ROOT / "skills").glob("*.md")),
+        ]
+        for path in paths:
+            self.assertNotIn("usmarket.claims", path.read_text(encoding="utf-8"), path)
+
 
 class TestAgentFileUntouched(unittest.TestCase):
     def test_repo_agent_file_bytes_match_the_start_of_the_suite(self):

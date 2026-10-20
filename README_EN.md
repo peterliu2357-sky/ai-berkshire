@@ -226,6 +226,8 @@ python3 tools/us_market.py analyze --snapshot reports/Micron/evidence/us-snapsho
 
 `quote` prints each price with its session kind and source timestamp. `snapshot` writes quotes, Treasury yields, scale-free percents, and any EDGAR facts that returned HTTP 200. A blocked EDGAR response is stored as a failure and is not turned into a filing. `analyze` reads only that file. Nasdaq cells with no stated scale stay unscaled and are not treated as dollars. Market cap for a domestic 10-K is the official close times EDGAR shares outstanding. A 20-F or 40-F filer needs an explicit ordinary-shares-per-ADR ratio before that product is a market cap. The `three-scenario` shares flag is denominated in 亿股, so a US share count does not go there. If annual facts or shares are missing, those blocks print `unavailable`.
 
+Market cap, the share count, and GAAP amounts stay on the snapshot. Every other number needs a bracket from `python3 tools/source_ledger.py`. The command prints the line to paste. Tier and publisher come from `PRIMARY_HOSTS` and `SECONDARY_HOSTS` in `tools/usmarket/claims.py`. `derive` has no `--shares` flag and no `--reported` flag. The steps are in `skills/us-market.md`.
+
 English writeups for a domestic 10-K issuer use `skills/investment-team-en.md`, `skills/us-market.md`, and `skills/memory-cycle.md`.
 
 ## Quick Start

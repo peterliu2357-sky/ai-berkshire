@@ -31,8 +31,41 @@ Market cap for a domestic 10-K is the official close times EDGAR shares outstand
 
 The hurdle is the later 10-year Treasury yield in the snapshot. The same date keeps the Treasury.gov par yield. One parsed series is enough. The check is the through-cycle median GAAP net income divided by market cap, compared with that yield. Through-cycle needs five fiscal years inside the latest ten calendar fiscal years. Say which years are in the window and which years are missing. Fewer than five inside the window is insufficient history. Peak earnings are not the run rate. A Yahoo daily bar's `as_of` is the bar stamp, not the closing auction. The price on that bar is the session close.
 
+## Citations
+
+Market cap, the share count, and GAAP amounts stay in the snapshot. `audit` still rejects a GAAP amount that is not in the snapshot, including on a line that also has a citation. Every other number needs a bracket from `python3 tools/source_ledger.py`. Paste that stdout line. Do not pass `--tier` or `--publisher`. `PRIMARY_HOSTS` and `SECONDARY_HOSTS` in `tools/usmarket/claims.py` assign the tier and the publisher. Leave the host names in those tuples. A registry edit changes the tier, and the old bracket fails until you print it again.
+
+Company IR is primary only when `labels` already holds a website URL and the cited host is that host. The publisher is `company IR`. If the label is absent, do not invent it. Biographies and filing prose use `admit excerpt`.
+
+`admit cited` rejects `sec.gov` and its subdomains. Quote a filing with `admit excerpt` only when that accession is already a `FilingRef` on this snapshot. The command takes `--contains` and `--out`. It does not take `--url`.
+
+`admit peer` records a pointer to a concept and fiscal year on another snapshot. Do not copy the peer number into this file.
+
+`admit dispute` groups two or more cited or peer rows that share one measure and differ in value. A section that shows one member and hides another fails `audit`.
+
+`derive three-scenario` reads `--growth` and `--pe` as comma-separated claim ids. `derive irr` reads `--profit` and `--pe`. Profit uses the unit `usd_ones`. `--years` defaults to 3 for three-scenario and 10 for irr. Neither derive command has `--shares` or `--reported`. Do not pass a US share count to `three-scenario --shares`. Do not pass an analyze market cap to `verify-market-cap --reported`. When analyze prints `market_cap: unavailable`, irr writes no row and exits non-zero.
+
+`admit score` takes `--stars` and at least one `--anchor`. A low claim, a derived row, or a dispute cannot anchor a star. Put those ids in `--context`. `--withhold` prints a withheld bracket and no star count. Star glyphs in the note must match the score bracket.
+
+The ledger path is `reports/<company>/evidence/source-ledger.json`. The file stores the URL, the value, and the dates. It does not store the tier or the publisher.
+
+One cited example, from the repo root.
+
+```bash
+python3 tools/source_ledger.py admit cited \
+  --ledger reports/Micron/evidence/source-ledger.json \
+  --id dram-ddr5-tf \
+  --measure dram_spot_ddr5 \
+  --value 5.15 \
+  --unit usd_per_gb \
+  --url https://www.trendforce.com/example/ddr5 \
+  --published 2026-03-18
+```
+
+Check the note with `python3 tools/source_ledger.py audit --report PATH --snapshot PATH --ledger PATH`. Exit 0 on a pass. A note with no US signal prints `audit: skipped`. A snapshot note with no ledger and only snapshot numbers passes.
+
 ## Report rule
 
-Every number in the report must appear in the snapshot JSON. Quote the session kind and the source timestamp with each price. A mixed-session pair has no return. Unscaled lexemes are not dollars. Scale-free percents may be cited, and a single-source percent must say so. If `annual` and `shares` are empty, the report uses prints, yields, percents, ranges, labels, and failures only.
+Quote the session kind and the source timestamp with each price. A mixed-session pair has no return. Unscaled lexemes are not dollars. Scale-free percents may be cited, and a single-source percent must say so. If `annual` and `shares` are empty, the report uses prints, yields, percents, ranges, labels, and failures only, plus any pasted citation brackets.
 
 SEC HTTP 403 is a failed fetch. Do not invent a 10-K, a 10-Q, an 8-K, a Form 4, or a CIK.

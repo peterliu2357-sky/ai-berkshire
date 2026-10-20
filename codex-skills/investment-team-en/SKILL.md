@@ -36,8 +36,8 @@ Write English markdown under `reports/{Company}/`.
 3. Use `skills/us-market.md` for GAAP, stock-based compensation, buybacks, the Treasury hurdle, and market cap.
 4. Do not call `three-scenario` with a US share count.
 5. If WebSearch or EDGAR fails, say so at the top. Do not fill GAAP from memory.
-6. State a fact only when the snapshot or a saved filing supports it. Mark a judgment as a judgment. Give the counterpoint in the same section.
-7. Withhold a star score when the filing source failed. An unavailable score is the result.
+6. State a fact only when the snapshot, a saved filing, or a pasted citation supports it. Mark a judgment as a judgment. Give the counterpoint in the same section.
+7. Withhold a star score when the filing source failed. An unavailable score is the result. Anchors follow `skills/us-market.md`. For a memory maker, also withhold a star that lacks a price, a peer, or a proxy, as `skills/memory-cycle.md` describes.
 
 ## Valuation block
 
