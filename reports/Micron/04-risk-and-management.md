@@ -8,7 +8,7 @@ type: 研究
 
 Data cutoff is 2026-10-20. Source file `evidence/us-snapshot-MU.json`. Not investment advice.
 
-The failures list has one row: Nasdaq info, status 200, detail `undated last sale`. Submissions include a `10-K`, a `10-Q`, an `8-K`, a proxy, and `Form 4` filings. The latest `10-K` was filed 2026-10-09. `Form 4` primary documents were fetched with the `xsl` directory removed. The insider list is not empty. One parsed row is owner RAY MICHAEL CHARLES, filed 2026-10-14, code S, acquired_disposed D, shares 40.00, price 947.29. Other parsed rows use codes A, F, and M. The proxy text was not read, so this is not a management score.
+The failures list has one row: Nasdaq info, status 200, detail `undated last sale`. Submissions include a `10-K`, a `10-Q`, an `8-K`, a proxy, and `Form 4` filings. The latest `10-K` was filed 2026-10-09. `Form 4` primary documents were fetched with the `xsl` directory removed. The insider list is not empty. One parsed row is owner RAY MICHAEL CHARLES, transaction date 2026-10-14, filing date 2026-10-15, code S, acquired_disposed D, shares 40.00, price 947.29. The `filed` value on that row is the Form 4 filing date. The transaction date is separate. Other parsed rows use codes A, F, and M. The proxy text was not read, so this is not a management score.
 
 The accounting risk that remains is the unscaled Nasdaq table. The Market Cap lexeme `1,023,824,864,539` is the computed cap 1023824864538.8 rounded to a dollar. It still has no scale field, so the dollar cap in this note is the official close times the EDGAR share count.
 

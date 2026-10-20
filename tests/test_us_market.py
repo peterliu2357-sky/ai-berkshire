@@ -446,6 +446,11 @@ class TestValuation(unittest.TestCase):
         self.assertNotIn(2002, cycle.fiscal_years)
         self.assertEqual(cycle.gaps, (2008,))
 
+    def test_through_cycle_drops_a_window_with_fewer_than_five_years(self):
+        rows = [(year, Decimal(1)) for year in range(2000, 2010)]
+        rows.append((2020, Decimal(9)))
+        self.assertIsNone(through_cycle(rows))
+
     def test_through_cycle_median_is_not_the_peak(self):
         self.assertIsNone(through_cycle([(2020, Decimal("1"))] * 4))
         cycle = through_cycle([
@@ -511,7 +516,7 @@ class TestSnapshotAndCli(unittest.TestCase):
                 }
                 return 200, json.dumps(body).encode()
             if url.endswith("/primarydocument.xml"):
-                return 200, b"<html><title>rendered</title></html>"
+                return 200, b"<ownershipDocument></ownershipDocument>"
             if "/quote/MU/info" in url:
                 return 200, json.dumps({"data": {"marketStatus": "Closed", "primaryData": {}}}).encode()
             return 404, b""
@@ -622,10 +627,6 @@ class TestSnapshotAndCli(unittest.TestCase):
 
         os.environ.pop("SEC_USER_AGENT", None)
         os.environ["SEC_USER_AGENT_FILE"] = "/tmp/does-not-exist-sec-ua.txt"
-        local_dir = _ROOT / "local"
-        local_dir.mkdir(exist_ok=True)
-        agent_file = local_dir / "sec_user_agent.txt"
-        agent_file.write_text("Your Name you@example.com\n", encoding="utf-8")
         old_err = sys.stderr
         sys.stderr = io.StringIO()
         try:
@@ -644,7 +645,7 @@ class TestSnapshotAndCli(unittest.TestCase):
             path = os.path.join(directory, "snap.json")
             old = sys.stdout
             sys.stdout = io.StringIO()
-            os.environ["SEC_USER_AGENT"] = "Your Name you@example.com"
+            os.environ["SEC_USER_AGENT"] = "Ada Lovelace ada@research.test"
             try:
                 code = us_market.main(["snapshot", "MU", "--out", path], get=self._fixture_get)
             finally:
@@ -700,7 +701,7 @@ class TestSnapshotAndCli(unittest.TestCase):
             path = os.path.join(directory, "snap.json")
             old = sys.stdout
             sys.stdout = io.StringIO()
-            os.environ["SEC_USER_AGENT"] = "Your Name you@example.com"
+            os.environ["SEC_USER_AGENT"] = "Ada Lovelace ada@research.test"
             try:
                 us_market.main(["snapshot", "MU", "--out", path], get=self._fixture_get)
             finally:
@@ -897,7 +898,7 @@ class TestSecClient(unittest.TestCase):
             seen.append((url, agent, cache_dir))
             return 200, b"{}"
 
-        os.environ["SEC_USER_AGENT"] = "Your Name you@example.com"
+        os.environ["SEC_USER_AGENT"] = "Ada Lovelace ada@research.test"
         original = us_market.http_get
         us_market.http_get = capture
         try:
@@ -907,7 +908,7 @@ class TestSecClient(unittest.TestCase):
             us_market.live_get("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/x")
         finally:
             us_market.http_get = original
-        declared = "Your Name you@example.com"
+        declared = "Ada Lovelace ada@research.test"
         self.assertEqual(seen[0][1], declared)
         self.assertEqual(seen[1][1], declared)
         self.assertIn("Chrome", seen[2][1])
@@ -1227,6 +1228,20 @@ class TestAgentFileUntouched(unittest.TestCase):
         mtime = _AGENT_PATH.stat().st_mtime_ns if _AGENT_PATH.exists() else None
         self.assertEqual(after, _AGENT_BYTES)
         self.assertEqual(mtime, _AGENT_MTIME)
+
+
+def tearDownModule():
+    if _AGENT_BYTES is None:
+        if _AGENT_PATH.exists():
+            _AGENT_PATH.unlink()
+        return
+    current = _AGENT_PATH.read_bytes() if _AGENT_PATH.exists() else None
+    mtime = _AGENT_PATH.stat().st_mtime_ns if _AGENT_PATH.exists() else None
+    if current == _AGENT_BYTES and mtime == _AGENT_MTIME:
+        return
+    _AGENT_PATH.parent.mkdir(exist_ok=True)
+    _AGENT_PATH.write_bytes(_AGENT_BYTES)
+    os.utime(_AGENT_PATH, ns=(_AGENT_MTIME, _AGENT_MTIME))
 
 
 if __name__ == "__main__":

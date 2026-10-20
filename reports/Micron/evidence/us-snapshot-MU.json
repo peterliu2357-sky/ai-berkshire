@@ -4535,613 +4535,735 @@
   "insiders": [
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "MEHROTRA SANJAY",
       "code": "A",
       "acquired_disposed": "A",
       "shares": "21233.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "MEHROTRA SANJAY",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "20213.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "MEHROTRA SANJAY",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "14080.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "MEHROTRA SANJAY",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "9807.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "MEHROTRA SANJAY",
       "code": "M",
       "acquired_disposed": "A",
       "shares": "82721.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "MEHROTRA SANJAY",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "47143.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "MEHROTRA SANJAY",
       "code": "M",
       "acquired_disposed": "A",
       "shares": "82721.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "MEHROTRA SANJAY",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "40575.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "MEHROTRA SANJAY",
       "code": "M",
       "acquired_disposed": "A",
       "shares": "70224.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "MEHROTRA SANJAY",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "34438.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "40.00",
       "price": "947.29",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000005/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000005/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "A",
       "acquired_disposed": "A",
       "shares": "4298.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "5954.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "3035.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "488.00",
       "price": "914.13",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "120.00",
       "price": "915.50",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "80.00",
       "price": "916.38",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "200.00",
       "price": "917.92",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "200.00",
       "price": "919.36",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "200.00",
       "price": "920.62",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "480.00",
       "price": "921.65",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "400.00",
       "price": "922.63",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "320.00",
       "price": "923.69",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "160.00",
       "price": "924.53",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "200.00",
       "price": "926.15",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "200.00",
       "price": "927.17",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "240.00",
       "price": "928.31",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "240.00",
       "price": "929.96",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "120.00",
       "price": "930.97",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "40.00",
       "price": "932.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "160.00",
       "price": "934.05",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "160.00",
       "price": "934.95",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "200.00",
       "price": "936.14",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "280.00",
       "price": "937.64",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "160.00",
       "price": "938.73",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "560.00",
       "price": "939.78",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "200.00",
       "price": "941.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "320.00",
       "price": "942.58",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "240.00",
       "price": "943.81",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "200.00",
       "price": "944.98",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-14",
+      "transaction_date": "2026-10-14",
+      "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
       "code": "S",
       "acquired_disposed": "D",
       "shares": "120.00",
       "price": "945.91",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "Murphy Mark J.",
       "code": "A",
       "acquired_disposed": "A",
       "shares": "7078.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "Murphy Mark J.",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "9320.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "Murphy Mark J.",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "6438.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "Murphy Mark J.",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "4212.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "Murphy Mark J.",
       "code": "M",
       "acquired_disposed": "A",
       "shares": "22774.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "Murphy Mark J.",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "11825.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "Murphy Mark J.",
       "code": "M",
       "acquired_disposed": "A",
       "shares": "22774.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "Murphy Mark J.",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "10033.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "Murphy Mark J.",
       "code": "M",
       "acquired_disposed": "A",
       "shares": "19332.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "Murphy Mark J.",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "8515.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "BHATIA MANISH H",
       "code": "A",
       "acquired_disposed": "A",
       "shares": "10111.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "BHATIA MANISH H",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "10828.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "BHATIA MANISH H",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "7535.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "BHATIA MANISH H",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "5137.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "BHATIA MANISH H",
       "code": "M",
       "acquired_disposed": "A",
       "shares": "24113.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "BHATIA MANISH H",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "13721.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "BHATIA MANISH H",
       "code": "M",
       "acquired_disposed": "A",
       "shares": "24113.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "BHATIA MANISH H",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "11828.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "BHATIA MANISH H",
       "code": "M",
       "acquired_disposed": "A",
       "shares": "20471.00",
       "price": "0.00",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": false
     },
     {
       "type": "insider_trade",
-      "filed": "2026-10-13",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "BHATIA MANISH H",
       "code": "F",
       "acquired_disposed": "D",
       "shares": "10039.00",
       "price": "989.04",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml"
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": false
     }
   ],
   "failures": [
@@ -5152,5 +5274,7 @@
       "url": "https://api.nasdaq.com/api/quote/MU/info?assetclass=stocks",
       "detail": "undated last sale"
     }
-  ]
+  ],
+  "adr_ratio": null,
+  "cache": []
 }

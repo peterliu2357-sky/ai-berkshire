@@ -32,7 +32,7 @@ The Nasdaq Market Cap lexeme is `1,023,824,864,539`. That is the same product ro
 
 ## GAAP and the hurdle
 
-`through_cycle` keeps the latest ten fiscal years, 2017 through 2026. It prints median 6087000000, peak 84969000000, trough -5833000000. The peak row is fiscal year 2026, end 2026-09-03, ones 84969000000, filed 2026-10-09. The trough inside that window is fiscal year 2023, end 2023-08-31, ones -5833000000.
+`through_cycle` keeps the latest ten fiscal years by calendar, 2017 through 2026, and that window has no missing year. It prints median 6087000000, peak 84969000000, trough -5833000000. The peak row is fiscal year 2026, end 2026-09-03, ones 84969000000, filed 2026-10-09. The trough inside that window is fiscal year 2023, end 2023-08-31, ones -5833000000.
 
 The hurdle is the later yield. Treasury par is 0.0515 on 2026-10-19. FRED DGS10 is 0.0509 on 2026-10-16. `analyze` uses 0.0515. The earnings yield on the ten-year median is 0.005945352775488605368121573015. The check prints `clears=no`.
 

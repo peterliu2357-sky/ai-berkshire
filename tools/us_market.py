@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from decimal import Decimal, InvalidOperation
 import re
 import sys
 import tempfile
@@ -17,6 +18,7 @@ from usmarket.fetch import (
     SecConfigError,
     build_snapshot,
     default_cache_dir,
+    depositary_listing,
     fetch_quotes,
     http_get,
     sec_user_agent,
@@ -144,22 +146,26 @@ def render_analysis(snap: IssuerSnapshot) -> str:
         )
     close = official_close(snap.prints)
     cap = None
-    if close is None or snap.shares is None:
+    foreign = depositary_listing(snap.filings)
+    if close is None or snap.shares is None or (foreign and snap.adr_ratio is None):
         lines.append("market_cap: unavailable")
     else:
-        cap = market_cap(close.price, snap.shares.shares)
+        cap = market_cap(close.price, snap.shares.shares, snap.adr_ratio)
+        ratio = "" if snap.adr_ratio is None else f" adr_ratio={_dec(snap.adr_ratio)}"
         lines.append(
             f"market_cap: usd={_dec(cap)} price={_dec(close.price)} "
-            f"shares={_dec(snap.shares.shares)} source={close.source}"
+            f"shares={_dec(snap.shares.shares)}{ratio} source={close.source}"
         )
     income = _latest_by_year([fact for fact in snap.annual if fact.concept == "net_income"])
     cycle = through_cycle([(year, fact.ones) for year, fact in sorted(income.items())])
     if cycle is None:
         lines.append("through_cycle: unavailable")
     else:
+        gaps = "none" if not cycle.gaps else ",".join(str(year) for year in cycle.gaps)
         lines.append(
             f"through_cycle: median={_dec(cycle.median)} peak={_dec(cycle.peak)} "
-            f"trough={_dec(cycle.trough)} years={','.join(str(year) for year in cycle.fiscal_years)}"
+            f"trough={_dec(cycle.trough)} years={','.join(str(year) for year in cycle.fiscal_years)} "
+            f"gaps={gaps}"
         )
     if cycle is None or cap is None or hurdle is None:
         lines.append("hurdle_check: unavailable")
@@ -239,6 +245,7 @@ def _parser() -> argparse.ArgumentParser:
     snap = sub.add_parser("snapshot")
     snap.add_argument("ticker")
     snap.add_argument("--out", required=True)
+    snap.add_argument("--adr-ratio", default=None)
     analyze = sub.add_parser("analyze")
     analyze.add_argument("--snapshot", required=True)
     return parser
@@ -269,7 +276,17 @@ def main(argv: list[str] | None = None, get=None) -> int:
             print(f"failure: source={item.source} status={item.status} url={item.url}")
         return 0 if prints else 2
     if args.command == "snapshot":
-        snap = build_snapshot(args.ticker, getter)
+        ratio = None
+        if args.adr_ratio not in (None, ""):
+            try:
+                ratio = Decimal(str(args.adr_ratio))
+            except InvalidOperation:
+                print("adr ratio rejected", file=sys.stderr)
+                return 2
+            if ratio <= 0:
+                print("adr ratio rejected", file=sys.stderr)
+                return 2
+        snap = build_snapshot(args.ticker, getter, adr_ratio=ratio)
         write_snapshot(args.out, snap)
         print(args.out)
         if snap.prints or snap.yields:

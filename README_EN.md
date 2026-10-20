@@ -216,7 +216,7 @@ Ask AI directly, and you have one context window. Four parallel Agents means 4×
 
 ## US listings
 
-Domestic SEC 10-K filers such as MU use three commands. Before `snapshot`, set `SEC_USER_AGENT` to a name and an email, for example `Your Name you@example.com`. Keep that value only in the environment, and do not commit it. A noreply address is rejected. China ADR names such as PDD, TCEHY, and NTES stay on the macrotrends plus stockanalysis path in `skills/financial-data.md`. The same three lines sit in that file under the domestic 10-K heading.
+Domestic SEC 10-K filers such as MU use three commands. Before `snapshot`, set `SEC_USER_AGENT` to a real name and email. `Your Name you@example.com` shows the shape only. That literal value, and any example.com, example.org, or example.net address, is rejected. Keep the real value only in the environment or in `local/sec_user_agent.txt`, and do not commit it. A noreply address is rejected. China ADR names such as PDD, TCEHY, and NTES stay on the macrotrends plus stockanalysis path in `skills/financial-data.md`. US-listed 20-F and 40-F names such as TSM, ASML, and NVO use the same three commands. Their market cap stays unavailable unless `snapshot` is given `--adr-ratio`, because the quote is an ADR price and the cover-page count is ordinary shares. The same three lines sit in that file under the domestic 10-K heading.
 
 ```bash
 python3 tools/us_market.py quote MU
@@ -224,7 +224,7 @@ python3 tools/us_market.py snapshot MU --out reports/Micron/evidence/us-snapshot
 python3 tools/us_market.py analyze --snapshot reports/Micron/evidence/us-snapshot-MU.json
 ```
 
-`quote` prints each price with its session kind and source timestamp. `snapshot` writes quotes, Treasury yields, scale-free percents, and any EDGAR facts that returned HTTP 200. A blocked EDGAR response is stored as a failure and is not turned into a filing. `analyze` reads only that file. Nasdaq cells with no stated scale stay unscaled and are not treated as dollars. Market cap is the official close times EDGAR shares outstanding. The `three-scenario` shares flag is denominated in 亿股, so a US share count does not go there. If annual facts or shares are missing, those blocks print `unavailable`.
+`quote` prints each price with its session kind and source timestamp. `snapshot` writes quotes, Treasury yields, scale-free percents, and any EDGAR facts that returned HTTP 200. A blocked EDGAR response is stored as a failure and is not turned into a filing. `analyze` reads only that file. Nasdaq cells with no stated scale stay unscaled and are not treated as dollars. Market cap for a domestic 10-K is the official close times EDGAR shares outstanding. A 20-F or 40-F filer needs an explicit ordinary-shares-per-ADR ratio before that product is a market cap. The `three-scenario` shares flag is denominated in 亿股, so a US share count does not go there. If annual facts or shares are missing, those blocks print `unavailable`.
 
 English writeups for a domestic 10-K issuer use `skills/investment-team-en.md`, `skills/us-market.md`, and `skills/memory-cycle.md`.
 

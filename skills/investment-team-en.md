@@ -26,4 +26,4 @@ Write English markdown under `reports/{Company}/`.
 
 ## Valuation block
 
-Official close only, with kind and timestamp. Market cap is that close times EDGAR shares. Do not pass the product back to `verify-market-cap --reported`. Through-cycle median versus the selected Treasury yield, on the latest ten fiscal years when more exist. If either input is missing, write `unavailable`.
+Official close only, with kind and timestamp. Market cap for a 10-K is that close times EDGAR shares. For a 20-F or 40-F filer, market cap is unavailable unless the snapshot has an explicit ordinary-shares-per-ADR ratio. Do not pass the product back to `verify-market-cap --reported`. Through-cycle median versus the selected Treasury yield, on the latest ten calendar fiscal years. Name any gap in that window. If either input is missing, write `unavailable`.

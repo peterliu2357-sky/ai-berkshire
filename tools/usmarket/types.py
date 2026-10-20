@@ -189,6 +189,7 @@ class LabeledDecimal:
 
 @dataclass(frozen=True)
 class InsiderTrade:
+    transaction_date: date
     filed: date
     owner: str
     code: str
@@ -196,10 +197,12 @@ class InsiderTrade:
     shares: Decimal
     price: Decimal | None
     url: str
+    derivative: bool = False
 
     def to_json(self) -> dict[str, Any]:
         return {
             "type": "insider_trade",
+            "transaction_date": self.transaction_date.isoformat(),
             "filed": self.filed.isoformat(),
             "owner": self.owner,
             "code": self.code,
@@ -207,6 +210,22 @@ class InsiderTrade:
             "shares": _dec(self.shares),
             "price": None if self.price is None else _dec(self.price),
             "url": self.url,
+            "derivative": self.derivative,
+        }
+
+
+@dataclass(frozen=True)
+class CacheHit:
+    url: str
+    cached_at: str
+    age_seconds: str
+
+    def to_json(self) -> dict[str, Any]:
+        return {
+            "type": "cache_hit",
+            "url": self.url,
+            "cached_at": self.cached_at,
+            "age_seconds": self.age_seconds,
         }
 
 
@@ -224,6 +243,8 @@ class IssuerSnapshot:
     labels: tuple[SourceLabel, ...]
     insiders: tuple[InsiderTrade, ...]
     failures: tuple[FetchFailure, ...]
+    adr_ratio: Decimal | None = None
+    cache: tuple[CacheHit, ...] = ()
 
     def to_json(self) -> dict[str, Any]:
         return {
@@ -240,6 +261,8 @@ class IssuerSnapshot:
             "labels": [item.to_json() for item in self.labels],
             "insiders": [item.to_json() for item in self.insiders],
             "failures": [item.to_json() for item in self.failures],
+            "adr_ratio": None if self.adr_ratio is None else _dec(self.adr_ratio),
+            "cache": [item.to_json() for item in self.cache],
         }
 
 
@@ -260,6 +283,8 @@ def snapshot_from_json(data: dict[str, Any]) -> IssuerSnapshot:
         labels=tuple(_label_from_json(item) for item in data["labels"]),
         insiders=tuple(_insider_from_json(item) for item in data["insiders"]),
         failures=tuple(_failure_from_json(item) for item in data["failures"]),
+        adr_ratio=None if data.get("adr_ratio") in (None, "") else Decimal(str(data["adr_ratio"])),
+        cache=tuple(_cache_from_json(item) for item in data.get("cache") or []),
     )
 
 
@@ -346,6 +371,7 @@ def _range_from_json(item: dict[str, Any]) -> LabeledDecimal:
 def _insider_from_json(item: dict[str, Any]) -> InsiderTrade:
     price = item.get("price")
     return InsiderTrade(
+        transaction_date=date.fromisoformat(item["transaction_date"]),
         filed=date.fromisoformat(item["filed"]),
         owner=item["owner"],
         code=item["code"],
@@ -353,6 +379,15 @@ def _insider_from_json(item: dict[str, Any]) -> InsiderTrade:
         shares=Decimal(item["shares"]),
         price=None if price is None else Decimal(price),
         url=item["url"],
+        derivative=bool(item.get("derivative", False)),
+    )
+
+
+def _cache_from_json(item: dict[str, Any]) -> CacheHit:
+    return CacheHit(
+        url=item["url"],
+        cached_at=str(item["cached_at"]),
+        age_seconds=str(item["age_seconds"]),
     )
 
 

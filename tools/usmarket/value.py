@@ -21,6 +21,7 @@ class ThroughCycle:
     median: Decimal
     peak: Decimal
     trough: Decimal
+    gaps: tuple[int, ...] = ()
 
 
 def compare_prints(left: MarketPrint, right: MarketPrint) -> PrintComparison:
@@ -40,8 +41,9 @@ def official_close(prints: tuple[MarketPrint, ...] | list[MarketPrint]) -> Marke
     return max(closes, key=lambda item: item.as_of)
 
 
-def market_cap(price: Decimal, shares: Decimal) -> Decimal:
-    return _CTX.multiply(price, shares)
+def market_cap(price: Decimal, shares: Decimal, adr_ratio: Decimal | None = None) -> Decimal:
+    count = shares if adr_ratio is None else _CTX.divide(shares, adr_ratio)
+    return _CTX.multiply(price, count)
 
 
 def inventory_days(inventory: Decimal, cogs: Decimal, days: int) -> Decimal:
@@ -76,22 +78,30 @@ def clears_hurdle(income: Decimal, cap: Decimal, hurdle_rate: Decimal) -> bool:
 
 
 def through_cycle(rows: list[tuple[int, Decimal]]) -> ThroughCycle | None:
-    if len(rows) < 5:
+    if not rows:
         return None
-    ordered = sorted(rows, key=lambda item: item[0])
-    if len(ordered) > 10:
-        ordered = ordered[-10:]
-    values = sorted((amount for _, amount in ordered), key=lambda amount: amount)
+    by_year: dict[int, Decimal] = {}
+    for year, amount in rows:
+        by_year[int(year)] = amount
+    latest = max(by_year)
+    start = latest - 9
+    window = {year: amount for year, amount in by_year.items() if start <= year <= latest}
+    if len(window) < 5:
+        return None
+    years = tuple(sorted(window))
+    gaps = tuple(year for year in range(start, latest + 1) if year not in window)
+    values = sorted(window.values(), key=lambda amount: amount)
     mid = len(values) // 2
     if len(values) % 2 == 1:
         median = values[mid]
     else:
         median = _CTX.divide(values[mid - 1] + values[mid], Decimal(2))
     return ThroughCycle(
-        fiscal_years=tuple(year for year, _ in ordered),
+        fiscal_years=years,
         median=median,
         peak=values[-1],
         trough=values[0],
+        gaps=gaps,
     )
 
 

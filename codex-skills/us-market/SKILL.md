@@ -19,15 +19,17 @@ Use this skill for a domestic SEC 10-K issuer such as MU or AAPL, and for a US-l
 
 ## Data
 
-Run the three commands in the domestic 10-K section of `skills/financial-data.md`. Do not paste extra flags. Set `SEC_USER_AGENT` to a name and an email such as `Your Name you@example.com` before `snapshot`. Do not commit that value. A noreply address is rejected, and a missing value stops `snapshot` before any request. `analyze` reads the snapshot file and does not open a socket.
+Run the three commands in the domestic 10-K section of `skills/financial-data.md`. Do not paste extra flags onto those three lines. For a 20-F or 40-F filer, add `--adr-ratio` to `snapshot` only when the ordinary-shares-per-ADR figure is known. Without that ratio, market cap and the hurdle check are unavailable. Cover-page shares are ordinary shares. The quote is the ADR price. Do not multiply them. IFRS and non-USD companyfacts do not become GAAP rows. The snapshot records that those rows are unavailable.
+
+Set `SEC_USER_AGENT` to a real name and email before `snapshot`. `Your Name you@example.com` shows the shape only. That literal value, and any example.com, example.org, or example.net address, is rejected. Do not commit the value. A noreply address is rejected, and a missing value stops `snapshot` before any request. `analyze` reads the snapshot file and does not open a socket.
 
 Money is USD. GAAP net income already deducts stock-based compensation. Do not add that cost back, and do not subtract it a second time. A company non-GAAP figure that adds the cost back is not the hurdle earnings. This snapshot has no non-GAAP field unless a later parser stores one. Do not invent the bridge.
 
 Buybacks and dilution come only from annual facts in the snapshot. Weighted-average shares are not the share count for market cap.
 
-Market cap is the official close times EDGAR shares outstanding, as a raw share count. If shares are missing, market cap is unavailable. Do not pass that same product to `verify-market-cap --reported`. Do not fill `--reported` from a Nasdaq market-cap string. Do not pass US shares to `three-scenario`.
+Market cap for a domestic 10-K is the official close times EDGAR shares outstanding, as a raw share count. If shares are missing, market cap is unavailable. For a 20-F or 40-F filer it is that close times ordinary shares divided by `--adr-ratio`. If the ratio is missing, market cap is unavailable. Do not pass that same product to `verify-market-cap --reported`. Do not fill `--reported` from a Nasdaq market-cap string. Do not pass US shares to `three-scenario`.
 
-The hurdle is the later 10-year Treasury yield in the snapshot. The same date keeps the Treasury.gov par yield. One parsed series is enough. The check is the through-cycle median GAAP net income divided by market cap, compared with that yield. Through-cycle needs five fiscal years and uses only the latest ten when more exist. Say which years are in the window. Fewer than five is insufficient history. Peak earnings are not the run rate. A Yahoo daily bar's `as_of` is the bar stamp, not the closing auction. The price on that bar is the session close.
+The hurdle is the later 10-year Treasury yield in the snapshot. The same date keeps the Treasury.gov par yield. One parsed series is enough. The check is the through-cycle median GAAP net income divided by market cap, compared with that yield. Through-cycle needs five fiscal years inside the latest ten calendar fiscal years. Say which years are in the window and which years are missing. Fewer than five inside the window is insufficient history. Peak earnings are not the run rate. A Yahoo daily bar's `as_of` is the bar stamp, not the closing auction. The price on that bar is the session close.
 
 ## Report rule
 

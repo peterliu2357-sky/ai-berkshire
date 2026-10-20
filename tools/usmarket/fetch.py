@@ -23,6 +23,7 @@ from zoneinfo import ZoneInfo
 
 from usmarket.types import (
     AnnualFact,
+    CacheHit,
     FetchFailure,
     FilingRef,
     InsiderTrade,
@@ -78,13 +79,16 @@ class SecConfigError(Exception):
 _RETRY_STATUS = {403, 429, 500, 502, 503, 504}
 _CACHE_TTL = 12 * 60 * 60
 _STALE_MAX = 7 * 24 * 60 * 60
+_RESERVED_DOMAINS = ("example.com", "example.org", "example.net")
 _NEXT_SEC = 0.0
 
 
 class HttpResult(tuple):
-    def __new__(cls, status, body, stale_age=None):
+    def __new__(cls, status, body, stale_age=None, cached_at=None, cache_age=None):
         obj = tuple.__new__(cls, (int(status), body))
         obj.stale_age = stale_age
+        obj.cached_at = cached_at
+        obj.cache_age = cache_age
         return obj
 
 
@@ -98,9 +102,16 @@ def _error_page(body: bytes) -> bool:
     )
 
 
+def _reserved_domain(domain: str) -> bool:
+    host = domain.lower().rstrip(".")
+    return any(host == name or host.endswith("." + name) for name in _RESERVED_DOMAINS)
+
+
 def valid_sec_user_agent(value: str) -> bool:
     text = value.strip()
     if not text or "noreply" in text.lower():
+        return False
+    if text == "Your Name you@example.com":
         return False
     parts = text.split()
     if len(parts) < 2:
@@ -111,6 +122,8 @@ def valid_sec_user_agent(value: str) -> bool:
     local, domain = email.split("@", 1)
     labels = domain.split(".")
     if not local or len(labels) < 2 or any(not label for label in labels):
+        return False
+    if _reserved_domain(domain):
         return False
     return True
 
@@ -130,7 +143,8 @@ def sec_user_agent(path: str | None = None) -> str:
             chosen = ""
     if not valid_sec_user_agent(chosen):
         raise SecConfigError(
-            "SEC_USER_AGENT must look like 'Your Name you@example.com'. "
+            "SEC_USER_AGENT must be a real name and email. "
+            "noreply addresses and example.com, example.org, and example.net are rejected. "
             "Set it in the environment or in local/sec_user_agent.txt. Do not commit it."
         )
     return chosen
@@ -225,7 +239,8 @@ def http_get(
     open_url = urllib.request.urlopen if opener is None else opener
     cached = _load_cache(cache_dir, url)
     if cached is not None and clock() - cached[2] <= _CACHE_TTL:
-        return HttpResult(cached[0], cached[1])
+        saved = cached[2]
+        return HttpResult(cached[0], cached[1], cached_at=saved, cache_age=clock() - saved)
     host = urllib.parse.urlparse(url).hostname or ""
     last = (0, b"")
     for attempt in range(attempts):
@@ -810,6 +825,49 @@ def _local(tag: str) -> str:
     return tag.split("}", 1)[-1] if "}" in tag else tag
 
 
+def _value_text(node, name: str) -> str:
+    for item in node.iter():
+        if _local(item.tag) != name:
+            continue
+        for child in item.iter():
+            if _local(child.tag) == "value" and child.text:
+                return child.text.strip()
+        if item.text and item.text.strip():
+            return item.text.strip()
+    return ""
+
+
+def _trade_from_node(node, owner: str, url: str, filed: date, derivative: bool) -> InsiderTrade | None:
+    code = _value_text(node, "transactionCode")
+    acquired = _value_text(node, "transactionAcquiredDisposedCode")
+    shares_text = _value_text(node, "transactionShares")
+    price_text = _value_text(node, "transactionPricePerShare")
+    when = _iso(_value_text(node, "transactionDate"))
+    if not code or not shares_text or when is None:
+        return None
+    price = Decimal(price_text) if price_text else None
+    return InsiderTrade(
+        when,
+        filed,
+        owner,
+        code,
+        acquired,
+        Decimal(shares_text),
+        price,
+        url,
+        derivative,
+    )
+
+
+def _has_derivative_node(body: bytes) -> bool:
+    try:
+        root = ET.fromstring(body)
+    except ET.ParseError:
+        return False
+    names = {"derivativeTransaction", "derivativeHolding"}
+    return any(_local(node.tag) in names for node in root.iter())
+
+
 def parse_form4(body: bytes, url: str, filed: date) -> list[InsiderTrade]:
     try:
         root = ET.fromstring(body)
@@ -822,59 +880,93 @@ def parse_form4(body: bytes, url: str, filed: date) -> list[InsiderTrade]:
     owner = owners[0] if owners else ""
     trades: list[InsiderTrade] = []
     for node in root.iter():
-        if _local(node.tag) != "nonDerivativeTransaction":
+        name = _local(node.tag)
+        if name == "nonDerivativeTransaction":
+            trade = _trade_from_node(node, owner, url, filed, False)
+        elif name == "derivativeTransaction":
+            trade = _trade_from_node(node, owner, url, filed, True)
+        else:
             continue
-        values = {_local(child.tag): child for child in node.iter()}
-        code = ""
-        acquired = ""
-        shares = None
-        price = None
-        when = filed
-        for item in node.iter():
-            name = _local(item.tag)
-            if name == "transactionCode" and item.text:
-                code = item.text.strip()
-            elif name == "transactionAcquiredDisposedCode":
-                for child in item.iter():
-                    if _local(child.tag) == "value" and child.text:
-                        acquired = child.text.strip()
-            elif name == "transactionShares":
-                for child in item.iter():
-                    if _local(child.tag) == "value" and child.text:
-                        shares = Decimal(child.text.strip())
-            elif name == "transactionPricePerShare":
-                for child in item.iter():
-                    if _local(child.tag) == "value" and child.text:
-                        price = Decimal(child.text.strip())
-            elif name == "transactionDate":
-                for child in item.iter():
-                    if _local(child.tag) == "value" and child.text:
-                        parsed = _iso(child.text.strip())
-                        if parsed is not None:
-                            when = parsed
-        if shares is None or not code:
-            continue
-        trades.append(
-            InsiderTrade(when, owner, code, acquired, shares, price, url)
-        )
+        if trade is not None:
+            trades.append(trade)
     return trades
+
+
+def companyfacts_issue(body: bytes) -> str:
+    data = _loads(body)
+    if data is None:
+        return ""
+    facts = data.get("facts") or {}
+    ifrs = bool(facts.get("ifrs-full"))
+    saw_usd = False
+    saw_other = False
+    for node in (facts.get("us-gaap") or {}).values():
+        if not isinstance(node, dict):
+            continue
+        units = node.get("units") or {}
+        if units.get("USD"):
+            saw_usd = True
+        for key, rows in units.items():
+            if key not in {"USD", "shares", "pure"} and rows:
+                saw_other = True
+    if not (ifrs or (saw_other and not saw_usd)):
+        return ""
+    annual, _shares = parse_companyfacts(body)
+    if annual:
+        return ""
+    return "gaap rows unavailable: ifrs or non-usd"
+
+
+def depositary_listing(filings) -> bool:
+    annual = [
+        item for item in filings
+        if str(item.form).startswith(("10-K", "20-F", "40-F"))
+    ]
+    if not annual:
+        return False
+    return str(annual[0].form).startswith(("20-F", "40-F"))
 
 
 def _failure(source: str, status: int, url: str, detail: str = "") -> FetchFailure:
     return FetchFailure(source, status, url, detail)
 
 
-def _with_stale(get, failures: list[FetchFailure]):
+def _html_title(body: bytes) -> str:
+    match = re.search(br"<title>(.*?)</title>", body, re.IGNORECASE | re.DOTALL)
+    if match is None:
+        return ""
+    return re.sub(r"\s+", " ", match.group(1).decode("utf-8", "replace")).strip()
+
+
+def _with_stale(get, failures: list[FetchFailure], cache_hits: list[CacheHit] | None = None):
+    blocked: set[str] = set()
+
     def tracked(url: str):
         result = get(url)
         status = int(result[0])
         body = result[1]
         stale = getattr(result, "stale_age", None)
+        cached_at = getattr(result, "cached_at", None)
+        cache_age = getattr(result, "cache_age", None)
+        if cached_at is not None and stale is None and cache_hits is not None:
+            age = 0 if cache_age is None else int(cache_age)
+            cache_hits.append(CacheHit(url, str(int(cached_at)), str(age)))
         if stale is not None:
             failures.append(_failure("stale_cache", status, url, f"age_seconds={int(stale)}"))
+        if status == 200 and _error_page(body) and cached_at is None and stale is None:
+            title = _html_title(body)
+            detail = "html error page" if not title else f"html error page: {title}"
+            failures.append(_failure("http", status, url, detail))
+            blocked.add(url)
+            return status, b""
         return status, body
 
+    tracked.blocked = blocked
     return tracked
+
+
+def _blocked(get, url: str) -> bool:
+    return url in getattr(get, "blocked", ())
 
 
 def fetch_quotes(ticker: str, get) -> tuple[tuple[MarketPrint, ...], tuple[FetchFailure, ...]]:
@@ -883,12 +975,14 @@ def fetch_quotes(ticker: str, get) -> tuple[tuple[MarketPrint, ...], tuple[Fetch
     get = _with_stale(get, failures)
     chart_url = yahoo_chart_url(ticker)
     status, body = get(chart_url)
-    if status != 200:
+    if status != 200 and not _blocked(get, chart_url):
         alt = yahoo_chart_url(ticker, "query2")
         alt_status, alt_body = get(alt)
-        if alt_status == 200:
+        if alt_status == 200 and not _blocked(get, alt):
             chart_url, status, body = alt, alt_status, alt_body
-    if status == 200:
+    if _blocked(get, chart_url):
+        pass
+    elif status == 200:
         found, _, detail = parse_yahoo_chart(body, ticker)
         prints.extend(found)
         if detail:
@@ -897,7 +991,9 @@ def fetch_quotes(ticker: str, get) -> tuple[tuple[MarketPrint, ...], tuple[Fetch
         failures.append(_failure("yahoo_chart", status, chart_url))
     info_url = nasdaq_info_url(ticker)
     status, body = get(info_url)
-    if status == 200:
+    if _blocked(get, info_url):
+        pass
+    elif status == 200:
         found, detail = parse_nasdaq_info(body, ticker)
         prints.extend(found)
         if detail:
@@ -909,7 +1005,7 @@ def fetch_quotes(ticker: str, get) -> tuple[tuple[MarketPrint, ...], tuple[Fetch
     return tuple(prints), tuple(failures)
 
 
-def build_snapshot(ticker: str, get) -> IssuerSnapshot:
+def build_snapshot(ticker: str, get, adr_ratio: Decimal | None = None) -> IssuerSnapshot:
     prints: list[MarketPrint] = []
     ranges: list[LabeledDecimal] = []
     unscaled: list[UnscaledAmount] = []
@@ -919,7 +1015,8 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
     annual: list[AnnualFact] = []
     insiders: list[InsiderTrade] = []
     failures: list[FetchFailure] = []
-    get = _with_stale(get, failures)
+    cache_hits: list[CacheHit] = []
+    get = _with_stale(get, failures, cache_hits)
     labels: list[SourceLabel] = []
     shares: ShareCount | None = None
     info_body = b""
@@ -927,12 +1024,14 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
 
     chart_url = yahoo_chart_url(ticker)
     status, body = get(chart_url)
-    if status != 200:
+    if status != 200 and not _blocked(get, chart_url):
         alt = yahoo_chart_url(ticker, "query2")
         alt_status, alt_body = get(alt)
-        if alt_status == 200:
+        if alt_status == 200 and not _blocked(get, alt):
             chart_url, status, body = alt, alt_status, alt_body
-    if status == 200:
+    if _blocked(get, chart_url):
+        pass
+    elif status == 200:
         found, span, detail = parse_yahoo_chart(body, ticker)
         prints.extend(found)
         ranges.extend(span)
@@ -943,7 +1042,9 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
 
     info_url = nasdaq_info_url(ticker)
     status, body = get(info_url)
-    if status == 200:
+    if _blocked(get, info_url):
+        pass
+    elif status == 200:
         info_body = body
         found, detail = parse_nasdaq_info(body, ticker)
         prints.extend(found)
@@ -956,7 +1057,9 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
 
     summary_url = nasdaq_summary_url(ticker)
     status, body = get(summary_url)
-    if status == 200:
+    if _blocked(get, summary_url):
+        pass
+    elif status == 200:
         summary_body = body
         cap = parse_nasdaq_summary_cap(body)
         if cap is not None:
@@ -967,7 +1070,9 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
 
     fin_url = nasdaq_financials_url(ticker)
     status, body = get(fin_url)
-    if status == 200:
+    if _blocked(get, fin_url):
+        pass
+    elif status == 200:
         cells, ratios = parse_nasdaq_financials(body)
         unscaled.extend(cells)
         percents.extend(ratios)
@@ -976,7 +1081,9 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
 
     fred_url = fred_dgs10_url()
     status, body = get(fred_url)
-    if status == 200:
+    if _blocked(get, fred_url):
+        pass
+    elif status == 200:
         found = parse_fred_dgs10(body)
         if found is not None:
             yields.append(found)
@@ -988,7 +1095,9 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
     year = date.today().year
     treasury_url = treasury_yield_url(year)
     status, body = get(treasury_url)
-    if status == 200:
+    if _blocked(get, treasury_url):
+        pass
+    elif status == 200:
         found = parse_treasury_par(body)
         if found is not None:
             yields.append(found)
@@ -1000,7 +1109,10 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
     tickers_url = sec_tickers_url()
     status, body = get(tickers_url)
     cik = None
-    if status == 200:
+    sub_url = ""
+    if _blocked(get, tickers_url):
+        pass
+    elif status == 200:
         cik = parse_cik(body, ticker)
         if cik is None:
             failures.append(_failure("sec_company_tickers", status, tickers_url, "ticker missing"))
@@ -1010,28 +1122,49 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
     if cik is not None:
         sub_url = sec_submissions_url(cik)
         status, body = get(sub_url)
-        if status == 200:
+        if _blocked(get, sub_url):
+            pass
+        elif status == 200:
             filings = parse_submissions(body, cik)
         else:
             failures.append(_failure("sec_submissions", status, sub_url))
         facts_url = sec_facts_url(cik)
         status, body = get(facts_url)
-        if status == 200:
+        if _blocked(get, facts_url):
+            pass
+        elif status == 200:
             annual, shares = parse_companyfacts(body)
+            issue = companyfacts_issue(body)
+            if issue:
+                failures.append(_failure("sec_companyfacts", status, facts_url, issue))
         else:
             failures.append(_failure("sec_companyfacts", status, facts_url))
         for filing in filings:
             if filing.form != "4":
                 continue
             status, body = get(filing.url)
+            if _blocked(get, filing.url):
+                continue
             if status != 200:
                 failures.append(_failure("sec_form4", status, filing.url))
                 continue
             parsed = parse_form4(body, filing.url, filing.filed)
             if parsed:
                 insiders.extend(parsed)
-            else:
+            elif not _has_derivative_node(body):
                 failures.append(_failure("sec_form4", status, filing.url, "no insider rows"))
+
+    stored_ratio = None
+    if depositary_listing(filings):
+        if adr_ratio is None or Decimal(adr_ratio) <= 0:
+            failures.append(_failure(
+                "adr_ratio",
+                0,
+                sub_url,
+                "market cap unavailable without an explicit ordinary-shares-per-adr ratio",
+            ))
+        else:
+            stored_ratio = Decimal(adr_ratio)
 
     return IssuerSnapshot(
         ticker=ticker,
@@ -1046,4 +1179,6 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
         labels=tuple(labels),
         insiders=tuple(insiders),
         failures=tuple(failures),
+        adr_ratio=stored_ratio,
+        cache=tuple(cache_hits),
     )
