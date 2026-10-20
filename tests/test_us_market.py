@@ -618,6 +618,124 @@ class TestSnapshotAndCli(unittest.TestCase):
         self.assertIn("market_cap: usd=100000", scaled_text)
         self.assertFalse(any("ordinary-shares-per-adr" in item.detail for item in scaled.failures))
 
+    def _adr_chart(self):
+        return json.dumps({"chart": {"result": [{
+            "meta": {
+                "currency": "USD",
+                "regularMarketPrice": 100,
+                "regularMarketTime": 1700000000,
+                "currentTradingPeriod": {"regular": {"start": 1700003600, "end": 1700020000}},
+            },
+        }]}}).encode()
+
+    def test_unknown_filing_type_does_not_price_ordinary_shares(self):
+        shares = 227900788800
+        facts = {
+            "facts": {
+                "us-gaap": {"NetIncomeLoss": {"units": {"USD": []}}},
+                "dei": {"EntityCommonStockSharesOutstanding": {"units": {"shares": [{
+                    "val": shares, "end": "2026-06-30", "form": "20-F", "filed": "2026-04-16",
+                }]}}},
+            }
+        }
+        for year, amount in ((2021, 1), (2022, 2), (2023, 3), (2024, 4), (2025, 5)):
+            facts["facts"]["us-gaap"]["NetIncomeLoss"]["units"]["USD"].append({
+                "val": amount,
+                "start": f"{year - 1}-01-01",
+                "end": f"{year - 1}-12-31",
+                "form": "20-F",
+                "filed": f"{year}-04-01",
+                "fy": year - 1,
+                "frame": f"CY{year - 1}",
+            })
+        fred = b"observation_date,DGS10\n2026-10-16,4.00\n"
+        tickers = json.dumps({"0": {"cik_str": 1046179, "ticker": "TSM", "title": "TSMC"}}).encode()
+
+        def get(url):
+            if "query1.finance.yahoo.com" in url:
+                return 200, self._adr_chart()
+            if "company_tickers.json" in url:
+                return 200, tickers
+            if "submissions" in url:
+                return 403, b"<title>SEC.gov | Request Rate Threshold Exceeded</title>"
+            if "companyfacts" in url:
+                return 200, json.dumps(facts).encode()
+            if "fred.stlouisfed.org" in url:
+                return 200, fred
+            return 404, b""
+
+        bare = us_market.render_analysis(build_snapshot("TSM", get))
+        self.assertIn("market_cap: unavailable", bare)
+        self.assertIn("hurdle_check: unavailable", bare)
+        self.assertNotIn("22790078880000", bare)
+        self.assertTrue(any("filing type unknown" in item.detail for item in build_snapshot("TSM", get).failures))
+        scaled = us_market.render_analysis(build_snapshot("TSM", get, adr_ratio=Decimal("5")))
+        self.assertIn("market_cap: usd=4558015776000", scaled)
+        self.assertIn("adr_ratio=5", scaled)
+        self.assertIn("hurdle_check:", scaled)
+        self.assertNotIn("hurdle_check: unavailable", scaled)
+
+    def test_ifrs_notice_is_a_foreign_filer_signal(self):
+        facts = json.dumps({"facts": {
+            "ifrs-full": {"Revenue": {"units": {"EUR": [{
+                "val": 9, "start": "2025-01-01", "end": "2025-12-31",
+                "form": "20-F", "filed": "2026-04-01", "fy": 2025,
+            }]}}},
+            "dei": {"EntityCommonStockSharesOutstanding": {"units": {"shares": [{
+                "val": 5000, "end": "2026-02-28", "form": "20-F", "filed": "2026-04-01",
+            }]}}},
+        }}).encode()
+        submissions = json.dumps({"filings": {"recent": {
+            "form": ["10-K"],
+            "filingDate": ["2026-04-01"],
+            "accessionNumber": ["0001046179-26-000001"],
+            "primaryDocument": ["annual.htm"],
+            "items": [""],
+        }}}).encode()
+        tickers = json.dumps({"0": {"cik_str": 1046179, "ticker": "TSM", "title": "TSMC"}}).encode()
+
+        def get(url):
+            if "query1.finance.yahoo.com" in url:
+                return 200, self._adr_chart()
+            if "company_tickers.json" in url:
+                return 200, tickers
+            if "submissions" in url:
+                return 200, submissions
+            if "companyfacts" in url:
+                return 200, facts
+            return 404, b""
+
+        snap = build_snapshot("TSM", get)
+        text = us_market.render_analysis(snap)
+        self.assertIn("market_cap: unavailable", text)
+        self.assertNotIn("market_cap: usd=500000", text)
+        self.assertTrue(any(item.detail == "gaap rows unavailable: ifrs or non-usd" for item in snap.failures))
+        scaled = us_market.render_analysis(build_snapshot("TSM", get, adr_ratio=Decimal("5")))
+        self.assertIn("market_cap: usd=100000", scaled)
+
+    def test_adr_ratio_must_be_finite_and_positive(self):
+        Path("/tmp/adr-ratio-rejected.json").unlink(missing_ok=True)
+        os.environ["SEC_USER_AGENT"] = "Ada Lovelace ada@research.test"
+        try:
+            for raw in ("NaN", "sNaN", "Infinity", "-Infinity", "0", "-1"):
+                err = io.StringIO()
+                old = sys.stderr
+                sys.stderr = err
+                try:
+                    code = us_market.main(
+                        ["snapshot", "MU", "--out", "/tmp/adr-ratio-rejected.json", "--adr-ratio", raw],
+                        get=lambda url: (_ for _ in ()).throw(AssertionError(url)),
+                    )
+                except Exception as exc:
+                    self.fail(f"{raw} raised {type(exc).__name__}: {exc}")
+                finally:
+                    sys.stderr = old
+                self.assertEqual(code, 2, raw)
+                self.assertIn("adr ratio rejected", err.getvalue(), raw)
+                self.assertFalse(Path("/tmp/adr-ratio-rejected.json").exists(), raw)
+        finally:
+            os.environ.pop("SEC_USER_AGENT", None)
+
     def test_snapshot_exits_before_fetch_when_agent_missing(self):
         calls = []
 
