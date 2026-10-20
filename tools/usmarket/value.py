@@ -79,6 +79,8 @@ def through_cycle(rows: list[tuple[int, Decimal]]) -> ThroughCycle | None:
     if len(rows) < 5:
         return None
     ordered = sorted(rows, key=lambda item: item[0])
+    if len(ordered) > 10:
+        ordered = ordered[-10:]
     values = sorted((amount for _, amount in ordered), key=lambda amount: amount)
     mid = len(values) // 2
     if len(values) % 2 == 1:

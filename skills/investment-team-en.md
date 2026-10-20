@@ -1,6 +1,6 @@
 # Investment team, English path for a domestic 10-K issuer
 
-Run this for a US domestic 10-K issuer. The default Chinese team skill stays in force for China, Hong Kong, Taiwan, and China ADR names.
+Run this only when the user asks for English or passes `lang=en`. A US 10-K or 20-F name does not switch the report to English by itself. The default Chinese team skill stays in force, including for China, Hong Kong, Taiwan, and China ADR names.
 
 ## Files
 
@@ -26,4 +26,4 @@ Write English markdown under `reports/{Company}/`.
 
 ## Valuation block
 
-Official close only, with kind and timestamp. Market cap only when shares exist, checked with `tools/financial_rigor.py verify-market-cap` and `--currency USD`. Through-cycle median versus the selected Treasury yield. If either input is missing, write `unavailable`.
+Official close only, with kind and timestamp. Market cap is that close times EDGAR shares. Do not pass the product back to `verify-market-cap --reported`. Through-cycle median versus the selected Treasury yield, on the latest ten fiscal years when more exist. If either input is missing, write `unavailable`.

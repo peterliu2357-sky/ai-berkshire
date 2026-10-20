@@ -15,7 +15,7 @@ This skill is generated from `skills/us-market.md` so Claude Code and Codex user
 
 # US listings: quotes, filings, and the Treasury hurdle
 
-Use this skill for a domestic SEC 10-K issuer such as MU or AAPL. China ADR names such as PDD, TCEHY, and NTES stay on the ADR section of `skills/financial-data.md`. Korean and Taiwanese listings are not EDGAR 10-K filers.
+Use this skill for a domestic SEC 10-K issuer such as MU or AAPL, and for a US-listed 20-F or 40-F issuer such as TSM, ASML, or NVO. China ADR names such as PDD, TCEHY, and NTES stay on the ADR section of `skills/financial-data.md`. Korean and Taiwanese local listings are not EDGAR 10-K filers. The report stays in Chinese unless the user asks for English or passes `lang=en`.
 
 ## Data
 
@@ -25,9 +25,9 @@ Money is USD. GAAP net income already deducts stock-based compensation. Do not a
 
 Buybacks and dilution come only from annual facts in the snapshot. Weighted-average shares are not the share count for market cap.
 
-Market cap is the official close times EDGAR shares outstanding, as a raw share count. Then run `tools/financial_rigor.py verify-market-cap` with that raw count and `--currency USD`. If shares are missing, market cap is unavailable. Do not fill `--reported` from a Nasdaq market-cap string. Do not pass US shares to `three-scenario`.
+Market cap is the official close times EDGAR shares outstanding, as a raw share count. If shares are missing, market cap is unavailable. Do not pass that same product to `verify-market-cap --reported`. Do not fill `--reported` from a Nasdaq market-cap string. Do not pass US shares to `three-scenario`.
 
-The hurdle is the later 10-year Treasury yield in the snapshot. The same date keeps the Treasury.gov par yield. One parsed series is enough. The check is the through-cycle median GAAP net income divided by market cap, compared with that yield. Through-cycle needs five fiscal years. Fewer years is insufficient history. Peak earnings are not the run rate.
+The hurdle is the later 10-year Treasury yield in the snapshot. The same date keeps the Treasury.gov par yield. One parsed series is enough. The check is the through-cycle median GAAP net income divided by market cap, compared with that yield. Through-cycle needs five fiscal years and uses only the latest ten when more exist. Say which years are in the window. Fewer than five is insufficient history. Peak earnings are not the run rate. A Yahoo daily bar's `as_of` is the bar stamp, not the closing auction. The price on that bar is the session close.
 
 ## Report rule
 

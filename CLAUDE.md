@@ -78,7 +78,7 @@ reports/{公司名}/
 ## 报告语言与风格
 
 - 默认报告使用**中文**
-- 美国本土 10-K 发行人走 `skills/investment-team-en.md`（或显式 `lang=en`）时，报告用英文。文件名为 `reports/{Company}/README.md`、`01-business-model.md`、`02-valuation.md`、`03-competition.md`、`04-risk-and-management.md`、`final-report.md`。中概 ADR 仍用中文技能和中文文件名。
+- 美国本土 10-K 与在美上市的 20-F/40-F 发行人，报告默认中文。只有用户要求英文或显式 `lang=en` 时才走 `skills/investment-team-en.md`，英文文件名为 `reports/{Company}/README.md`、`01-business-model.md`、`02-valuation.md`、`03-competition.md`、`04-risk-and-management.md`、`final-report.md`。中概 ADR 仍用中文技能和中文文件名。
 - 风格：直接、犀利、不说废话
 - 数据必须标注来源，关键数据至少2个来源交叉验证
 - 估计值必须注明"估计"

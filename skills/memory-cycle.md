@@ -9,7 +9,7 @@ When the snapshot has the fact, compute it with `analyze` and cite the line.
 - Inventory days are inventory divided by cost of goods, then multiplied by the period length in days. Do not divide by cost of goods times days.
 - Capex ratio is absolute capex divided by absolute depreciation.
 - Gross margin and operating margin percents are usable only as percents. A Nasdaq dollar cell with no scale is an unscaled lexeme.
-- Through-cycle earnings are the median of annual GAAP net income over at least five fiscal years. Peak and trough stay in the set. They are not the hurdle earnings.
+- Through-cycle earnings are the median of annual GAAP net income. The tool needs at least five fiscal years and, when more exist, keeps only the latest ten. State that window in the report. Peak and trough stay in the set. They are not the hurdle earnings.
 - Hyperscaler and export-control claims need a filing, an 8-K item 2.02 URL, or another document whose URL is in the snapshot. Do not scrape copyrighted transcripts. If submissions did not return HTTP 200, there is no 8-K URL.
 
 ## When the fact is missing

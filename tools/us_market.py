@@ -58,9 +58,10 @@ def _dec(value) -> str:
 
 
 def _print_line(item) -> str:
+    clock = " clock=bar_stamp" if item.source == "yahoo_daily_close" else ""
     return (
         f"print: price={_dec(item.price)} kind={item.kind.value} "
-        f"as_of={item.as_of.isoformat()} source={item.source}"
+        f"as_of={item.as_of.isoformat()} source={item.source}{clock}"
     )
 
 

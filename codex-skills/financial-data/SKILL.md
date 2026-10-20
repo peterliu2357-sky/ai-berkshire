@@ -31,7 +31,9 @@ This skill is generated from `skills/financial-data.md` so Claude Code and Codex
 
 ### 美国本土上市公司（10-K / 10-Q，如 MU、AAPL）
 
-上一节的中概 ADR（PDD、腾讯 ADR、网易 ADR）继续用 macrotrends + stockanalysis，不要改走下面三条命令。运行 snapshot 之前设置环境变量 `SEC_USER_AGENT`，形式是 `Your Name you@example.com`。这个值只留在本机，不要写入仓库。noreply 地址会被拒绝。韩国、台湾发行人不是 EDGAR 10-K 申报主体，只可 `quote` 对照行情，不可把 snapshot 里的空 filings 写成已取得年报。
+上一节的中概 ADR（PDD、腾讯 ADR、网易 ADR）继续用 macrotrends + stockanalysis，不要改走下面三条命令。同一三条命令也覆盖在美上市、向 SEC 提交 20-F 或 40-F 的非中国发行人，例如 TSM、ASML、NVO。它们不是中概 ADR，也不是韩国或台湾本地股。韩国、台湾本地发行人不是 EDGAR 10-K 申报主体，只可 `quote` 对照行情，不可把 snapshot 里的空 filings 写成已取得年报。报告默认中文。只有用户要求英文或传入 `lang=en` 时，才改走 `skills/investment-team-en.md`。
+
+运行 snapshot 之前设置环境变量 `SEC_USER_AGENT`，形式是 `Your Name you@example.com`。这个值只留在本机，不要写入仓库。noreply 地址会被拒绝。
 
 命令与 README 的 `US listings` 小节逐字相同：
 
@@ -44,10 +46,10 @@ python3 tools/us_market.py analyze --snapshot reports/Micron/evidence/us-snapsho
 - 货币是美元。`analyze` 只读 snapshot 文件，不再发网络请求。
 - 官方收盘价必须带 `kind=official_close` 和来源时间。盘前、盘后、无时间戳的打印不得拿来算收益率或市值。
 - Nasdaq 报表单元格没有单位字段时，JSON 里是 `unscaled_amount`，只有 lexeme。禁止把它当成美元，也禁止拿 Nasdaq 市值字符串去填 `verify-market-cap --reported`。
-- 市值只用官方收盘价 × EDGAR 流通在外股数（原始股数，不是加权平均股，也不是亿股）。有股本时再跑 `python3 tools/financial_rigor.py verify-market-cap --price {价格} --shares {原始股数} --reported {价格乘股数} --currency USD`。没有股本就写明市值不可得，不要编造 `--reported`。
+- 市值只用官方收盘价 × EDGAR 流通在外股数（原始股数，不是加权平均股，也不是亿股）。没有股本就写明市值不可得。不要把同一乘积再传给 `verify-market-cap --reported`，那是用计算结果核对自身。Nasdaq 市值字符串没有单位，也不能当作独立的美元市值。
 - 美国本土股本禁止传入 `three-scenario --shares`（该参数单位是亿股）。
 - GAAP 净利润已经扣除股权激励。不要把 SBC 加回，也不要再减一次。公司 non-GAAP 加回 SBC 的口径不是门槛收益。
-- 周期收益用至少五个会计年度的 GAAP 净利润中位数。不足五年写历史不足，不用峰值代替。
+- 周期收益用 GAAP 净利润中位数。不足五个会计年度写历史不足。超过十个会计年度时只用最近十年，并在报告里写明这个窗口。不用峰值代替中位数。
 - 门槛利率取较晚的 10 年期美债。同一天优先 Treasury.gov 票面收益率，其次 FRED DGS10。只有一条序列时就用那一条。
 - SEC 返回非 200 时，snapshot 仍保存行情、收益率和失败记录，filings 保持为空。报告只能引用文件里真实出现的字段。
 

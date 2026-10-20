@@ -4,6 +4,7 @@ import base64
 import csv
 import gzip
 import hashlib
+import http.client
 import io
 import json
 import os
@@ -76,7 +77,25 @@ class SecConfigError(Exception):
 
 _RETRY_STATUS = {403, 429, 500, 502, 503, 504}
 _CACHE_TTL = 12 * 60 * 60
+_STALE_MAX = 7 * 24 * 60 * 60
 _NEXT_SEC = 0.0
+
+
+class HttpResult(tuple):
+    def __new__(cls, status, body, stale_age=None):
+        obj = tuple.__new__(cls, (int(status), body))
+        obj.stale_age = stale_age
+        return obj
+
+
+def _error_page(body: bytes) -> bool:
+    head = body.lstrip()[:400].lower()
+    return (
+        head.startswith(b"<!doctype")
+        or head.startswith(b"<html")
+        or head.startswith(b"<head")
+        or b"<title>" in head
+    )
 
 
 def valid_sec_user_agent(value: str) -> bool:
@@ -99,7 +118,11 @@ def valid_sec_user_agent(value: str) -> bool:
 def sec_user_agent(path: str | None = None) -> str:
     chosen = os.environ.get("SEC_USER_AGENT", "").strip()
     if not chosen:
-        path = path or os.path.join(repo_root(), "local", "sec_user_agent.txt")
+        path = (
+            path
+            or os.environ.get("SEC_USER_AGENT_FILE")
+            or os.path.join(repo_root(), "local", "sec_user_agent.txt")
+        )
         try:
             with open(path, encoding="utf-8") as handle:
                 chosen = handle.readline().strip()
@@ -136,7 +159,7 @@ def _load_cache(cache_dir: str | None, url: str):
 
 
 def _store_cache(cache_dir: str | None, url: str, status: int, body: bytes, clock) -> None:
-    if not cache_dir or status != 200:
+    if not cache_dir or status != 200 or _error_page(body):
         return
     os.makedirs(cache_dir, exist_ok=True)
     payload = {
@@ -190,7 +213,7 @@ def _pace(url: str, pause, clock) -> None:
 def http_get(
     url: str,
     user_agent: str,
-    timeout: int = 40,
+    timeout: int = 15,
     opener=None,
     sleep=None,
     cache_dir: str | None = None,
@@ -202,7 +225,7 @@ def http_get(
     open_url = urllib.request.urlopen if opener is None else opener
     cached = _load_cache(cache_dir, url)
     if cached is not None and clock() - cached[2] <= _CACHE_TTL:
-        return cached[0], cached[1]
+        return HttpResult(cached[0], cached[1])
     host = urllib.parse.urlparse(url).hostname or ""
     last = (0, b"")
     for attempt in range(attempts):
@@ -224,22 +247,32 @@ def http_get(
             status = int(error.code)
             raw = error.read() if error.fp is not None else b""
             body = _decode_body(error.headers, raw)
-        except (urllib.error.URLError, TimeoutError) as error:
+        except (
+            urllib.error.URLError,
+            TimeoutError,
+            ConnectionResetError,
+            http.client.IncompleteRead,
+            http.client.RemoteDisconnected,
+        ) as error:
             reason = getattr(error, "reason", error)
             status, body = 0, str(reason).encode("utf-8", "replace")
         last = (status, body)
-        if status == 200:
+        if status == 200 and not _error_page(body):
             _store_cache(cache_dir, url, status, body, clock)
-            return status, body
+            return HttpResult(status, body)
+        if status == 200 and _error_page(body):
+            last = (status, body)
+            break
         if status not in _RETRY_STATUS and status != 0:
             break
         if attempt == attempts - 1:
             break
         pause(0.5 * (2 ** attempt))
-    if cached is not None:
+    if cached is not None and clock() - cached[2] <= _STALE_MAX:
+        age = clock() - cached[2]
         print(f"using cached response after fetch failed: {url}", file=sys.stderr)
-        return cached[0], cached[1]
-    return last
+        return HttpResult(cached[0], cached[1], age)
+    return HttpResult(last[0], last[1])
 
 
 def yahoo_chart_url(ticker: str, host: str = "query1") -> str:
@@ -377,6 +410,7 @@ def parse_nasdaq_info(body: bytes, ticker: str) -> tuple[list[MarketPrint], str]
     primary = payload.get("primaryData") or {}
     primary_at = _parse_et(str(primary.get("lastTradeTimestamp") or ""))
     primary_price = _price_text(str(primary.get("lastSalePrice") or ""))
+    undated = False
     if primary_price is not None and primary_at is not None:
         if status in {"Pre-Market", "After-Hours"}:
             kind = PrintKind.EXTENDED_HOURS
@@ -385,6 +419,8 @@ def parse_nasdaq_info(body: bytes, ticker: str) -> tuple[list[MarketPrint], str]
         else:
             kind = PrintKind.OFFICIAL_CLOSE
         prints.append(MarketPrint(ticker, primary_price, kind, primary_at, "nasdaq_info"))
+    elif primary_price is not None:
+        undated = True
     secondary = payload.get("secondaryData") or {}
     secondary_text = str(secondary.get("lastTradeTimestamp") or "")
     secondary_at = _parse_et(secondary_text)
@@ -399,6 +435,8 @@ def parse_nasdaq_info(body: bytes, ticker: str) -> tuple[list[MarketPrint], str]
                 "nasdaq_info",
             )
         )
+    if not prints and undated:
+        return prints, "undated last sale"
     return prints, ""
 
 
@@ -534,9 +572,17 @@ def parse_cik(body: bytes, ticker: str) -> str | None:
     return None
 
 
+def _raw_document(filename: str) -> str:
+    parts = [part for part in filename.split("/") if part and not part.lower().startswith("xsl")]
+    return "/".join(parts) if parts else filename
+
+
 def _archive_url(cik: str, accession: str, filename: str) -> str:
     acc = accession.replace("-", "")
-    return f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{acc}/{filename}"
+    return (
+        f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{acc}/"
+        f"{_raw_document(filename)}"
+    )
 
 
 def parse_submissions(body: bytes, cik: str) -> list[FilingRef]:
@@ -585,8 +631,38 @@ def _iso(value: str | None) -> date | None:
         return None
 
 
+def _note_period(chosen, frames, earliest, entry, key, filed):
+    previous = chosen.get(key)
+    if previous is None or filed >= str(previous.get("filed") or ""):
+        chosen[key] = entry
+    frame = _annual_frame(entry)
+    if frame:
+        frames[key] = frame
+    raw = entry.get("fy")
+    if raw not in (None, ""):
+        prior = earliest.get(key)
+        if prior is None or filed < prior[0]:
+            earliest[key] = (filed, int(raw))
+
+
+def _resolved_rows(chosen, frames, earliest) -> list[dict]:
+    resolved: list[dict] = []
+    for key, entry in chosen.items():
+        item = dict(entry)
+        if key in frames:
+            item["frame"] = frames[key]
+        else:
+            item["frame"] = None
+            if key in earliest:
+                item["fy"] = earliest[key][1]
+        resolved.append(item)
+    return resolved
+
+
 def _instant_rows(entries: list[dict]) -> list[dict]:
     chosen: dict[str, dict] = {}
+    frames: dict[str, str] = {}
+    earliest: dict[str, tuple[str, int]] = {}
     for entry in entries:
         if not isinstance(entry, dict):
             continue
@@ -600,11 +676,8 @@ def _instant_rows(entries: list[dict]) -> list[dict]:
         end = _iso(entry.get("end"))
         if end is None:
             continue
-        key = end.isoformat()
-        previous = chosen.get(key)
-        if previous is None or str(entry.get("filed") or "") >= str(previous.get("filed") or ""):
-            chosen[key] = entry
-    return list(chosen.values())
+        _note_period(chosen, frames, earliest, entry, end.isoformat(), str(entry.get("filed") or ""))
+    return _resolved_rows(chosen, frames, earliest)
 
 
 def _annual_frame(entry: dict) -> str:
@@ -633,36 +706,14 @@ def _annual_rows(entries: list[dict]) -> list[dict]:
         span = (end - start).days
         if span < 300 or span > 380:
             continue
-        key = end.isoformat()
-        filed = str(entry.get("filed") or "")
-        previous = chosen.get(key)
-        if previous is None or filed >= str(previous.get("filed") or ""):
-            chosen[key] = entry
-        frame = _annual_frame(entry)
-        if frame:
-            frames[key] = frame
-        raw = entry.get("fy")
-        if raw not in (None, ""):
-            prior = earliest.get(key)
-            if prior is None or filed < prior[0]:
-                earliest[key] = (filed, int(raw))
-    resolved: list[dict] = []
-    for key, entry in chosen.items():
-        item = dict(entry)
-        if key in frames:
-            item["frame"] = frames[key]
-        else:
-            item["frame"] = None
-            if key in earliest:
-                item["fy"] = earliest[key][1]
-        resolved.append(item)
-    return resolved
+        _note_period(chosen, frames, earliest, entry, end.isoformat(), str(entry.get("filed") or ""))
+    return _resolved_rows(chosen, frames, earliest)
 
 
 def _best_tag_rows(gaap: dict, tags: tuple[str, ...], row_fn) -> tuple[str, list[dict]]:
     best_tag = ""
     best_rows: list[dict] = []
-    best_key = (-1, "")
+    best_key = None
     for tag in tags:
         node = gaap.get(tag) or {}
         units = (node.get("units") or {}).get("USD") or []
@@ -670,8 +721,8 @@ def _best_tag_rows(gaap: dict, tags: tuple[str, ...], row_fn) -> tuple[str, list
         if not rows:
             continue
         end = max(str(row.get("end") or "") for row in rows)
-        key = (len(rows), end)
-        if key > best_key:
+        key = (end, len(rows))
+        if best_key is None or key > best_key:
             best_key = key
             best_tag = tag
             best_rows = rows
@@ -813,9 +864,23 @@ def _failure(source: str, status: int, url: str, detail: str = "") -> FetchFailu
     return FetchFailure(source, status, url, detail)
 
 
+def _with_stale(get, failures: list[FetchFailure]):
+    def tracked(url: str):
+        result = get(url)
+        status = int(result[0])
+        body = result[1]
+        stale = getattr(result, "stale_age", None)
+        if stale is not None:
+            failures.append(_failure("stale_cache", status, url, f"age_seconds={int(stale)}"))
+        return status, body
+
+    return tracked
+
+
 def fetch_quotes(ticker: str, get) -> tuple[tuple[MarketPrint, ...], tuple[FetchFailure, ...]]:
     prints: list[MarketPrint] = []
     failures: list[FetchFailure] = []
+    get = _with_stale(get, failures)
     chart_url = yahoo_chart_url(ticker)
     status, body = get(chart_url)
     if status != 200:
@@ -837,6 +902,8 @@ def fetch_quotes(ticker: str, get) -> tuple[tuple[MarketPrint, ...], tuple[Fetch
         prints.extend(found)
         if detail:
             failures.append(_failure("nasdaq_info", status, info_url, detail))
+        elif not found:
+            failures.append(_failure("nasdaq_info", status, info_url, "no print"))
     else:
         failures.append(_failure("nasdaq_info", status, info_url))
     return tuple(prints), tuple(failures)
@@ -852,6 +919,7 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
     annual: list[AnnualFact] = []
     insiders: list[InsiderTrade] = []
     failures: list[FetchFailure] = []
+    get = _with_stale(get, failures)
     labels: list[SourceLabel] = []
     shares: ShareCount | None = None
     info_body = b""
@@ -881,6 +949,8 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
         prints.extend(found)
         if detail:
             failures.append(_failure("nasdaq_info", status, info_url, detail))
+        elif not found:
+            failures.append(_failure("nasdaq_info", status, info_url, "no print"))
     else:
         failures.append(_failure("nasdaq_info", status, info_url))
 
@@ -957,7 +1027,11 @@ def build_snapshot(ticker: str, get) -> IssuerSnapshot:
             if status != 200:
                 failures.append(_failure("sec_form4", status, filing.url))
                 continue
-            insiders.extend(parse_form4(body, filing.url, filing.filed))
+            parsed = parse_form4(body, filing.url, filing.filed)
+            if parsed:
+                insiders.extend(parsed)
+            else:
+                failures.append(_failure("sec_form4", status, filing.url, "no insider rows"))
 
     return IssuerSnapshot(
         ticker=ticker,
