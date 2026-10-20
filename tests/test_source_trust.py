@@ -6,6 +6,7 @@ import contextlib
 import io
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -710,6 +711,46 @@ class TestSourceLedgerCli(unittest.TestCase):
             with open(out_path, "rb") as handle:
                 self.assertEqual(handle.read(), b"other sentence")
             self.assertFalse(os.path.exists(ledger_path))
+
+
+class TestReportAuditDelegation(unittest.TestCase):
+    def test_snapshot_flag_delegates_and_bare_extract_does_not(self):
+        snap = _mu()
+        tool = str(_ROOT / "tools" / "report_audit.py")
+        with tempfile.TemporaryDirectory() as directory:
+            snap_path = os.path.join(directory, "snap.json")
+            report_path = os.path.join(directory, "note.md")
+            with open(snap_path, "w", encoding="utf-8") as handle:
+                json.dump(snap.to_json(), handle)
+            with open(report_path, "w", encoding="utf-8") as handle:
+                handle.write("Shares 100 as of 2026-08-28.\n")
+            passed = subprocess.run(
+                [sys.executable, tool, "--report", report_path, "--snapshot", snap_path],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(passed.returncode, 0, passed.stderr)
+            self.assertIn("audit: pass", passed.stdout)
+            self.assertNotIn("报告数据抽检清单", passed.stdout)
+            with open(report_path, "w", encoding="utf-8") as handle:
+                handle.write("Shares 100 as of 2026-08-28.\nnet income 424242\n")
+            failed = subprocess.run(
+                [sys.executable, tool, "--report", report_path, "--snapshot", snap_path],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(failed.returncode, 1, failed.stderr)
+            self.assertIn("424242", failed.stdout)
+            self.assertIn("not in the snapshot", failed.stdout)
+            self.assertNotIn("报告数据抽检清单", failed.stdout)
+        bare = subprocess.run(
+            [sys.executable, tool, "extract", "--report", str(_ROOT / "reports" / "Micron" / "final-report.md"), "--dry-run"],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(bare.returncode, 0, bare.stderr)
+        self.assertIn("报告数据抽检清单", bare.stdout)
+        self.assertNotIn("audit: pass", bare.stdout)
 
 
 if __name__ == "__main__":

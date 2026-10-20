@@ -434,6 +434,9 @@ def _force_utf8_stdio():
 
 def main():
     _force_utf8_stdio()
+    if "--snapshot" in sys.argv[1:] or "--ledger" in sys.argv[1:]:
+        from source_ledger import main as ledger_main
+        sys.exit(ledger_main(["audit", *sys.argv[1:]]))
     parser = argparse.ArgumentParser(
         description='Report Audit Tool — 研究报告数据抽检工具',
         formatter_class=argparse.RawDescriptionHelpFormatter,
