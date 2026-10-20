@@ -14,7 +14,7 @@
 
 | 日期 | 报告 | 归属 | 类型 |
 |------|------|------|------|
-| 2026-10-20 | [Micron team note, 2026-10-20](Micron/final-report.md) | Micron | 研究 |
+| 2026-10-20 | [Micron final report, 2026-10-20](Micron/final-report.md) | Micron | 研究 |
 | 2026-10-20 | [Micron risk and management, Li Lu view, 2026-10-20](Micron/04-risk-and-management.md) | Micron | 研究 |
 | 2026-10-20 | [Micron competition, Munger view, 2026-10-20](Micron/03-competition.md) | Micron | 研究 |
 | 2026-10-19 | [苹果（AAPL）投资研究报告](苹果/苹果投资研究报告-20261019.md) | 苹果 | 研究 |
@@ -1534,8 +1534,8 @@
 <summary><b>Micron</b> · 5 份 · 最近 2026-10-20</summary>
 
 - `2026-10-20` [Micron valuation, Buffett view, 2026-10-20](Micron/02-valuation.md) — 研究
-- `2026-10-20` [Micron team note, 2026-10-20](Micron/final-report.md) — 研究
 - `2026-10-20` [Micron risk and management, Li Lu view, 2026-10-20](Micron/04-risk-and-management.md) — 研究
+- `2026-10-20` [Micron final report, 2026-10-20](Micron/final-report.md) — 研究
 - `2026-10-20` [Micron competition, Munger view, 2026-10-20](Micron/03-competition.md) — 研究
 - `2026-10-20` [Micron business model, Duan view, 2026-10-20](Micron/01-business-model.md) — 研究
 

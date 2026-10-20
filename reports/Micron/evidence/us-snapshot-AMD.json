@@ -1,0 +1,5087 @@
+{
+  "type": "issuer_snapshot",
+  "ticker": "AMD",
+  "prints": [
+    {
+      "type": "market_print",
+      "ticker": "AMD",
+      "price": "538.27",
+      "kind": "intraday_last",
+      "as_of": "2026-10-20T19:54:38+00:00",
+      "source": "yahoo_chart"
+    },
+    {
+      "type": "market_print",
+      "ticker": "AMD",
+      "price": "570.82",
+      "kind": "official_close",
+      "as_of": "2026-10-14T13:30:00+00:00",
+      "source": "yahoo_daily_close"
+    },
+    {
+      "type": "market_print",
+      "ticker": "AMD",
+      "price": "562.23",
+      "kind": "official_close",
+      "as_of": "2026-10-15T13:30:00+00:00",
+      "source": "yahoo_daily_close"
+    },
+    {
+      "type": "market_print",
+      "ticker": "AMD",
+      "price": "528.75",
+      "kind": "official_close",
+      "as_of": "2026-10-16T13:30:00+00:00",
+      "source": "yahoo_daily_close"
+    },
+    {
+      "type": "market_print",
+      "ticker": "AMD",
+      "price": "538.05",
+      "kind": "official_close",
+      "as_of": "2026-10-19T13:30:00+00:00",
+      "source": "yahoo_daily_close"
+    },
+    {
+      "type": "market_print",
+      "ticker": "AMD",
+      "price": "538.395",
+      "kind": "intraday_last",
+      "as_of": "2026-10-20T15:54:00-04:00",
+      "source": "nasdaq_info"
+    }
+  ],
+  "filings": [
+    {
+      "type": "filing_ref",
+      "form": "4",
+      "filed": "2026-10-19",
+      "accession": "0000002488-26-000184",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml"
+    },
+    {
+      "type": "filing_ref",
+      "form": "4",
+      "filed": "2026-09-17",
+      "accession": "0000002488-26-000180",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml"
+    },
+    {
+      "type": "filing_ref",
+      "form": "4",
+      "filed": "2026-09-14",
+      "accession": "0000002488-26-000178",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml"
+    },
+    {
+      "type": "filing_ref",
+      "form": "4",
+      "filed": "2026-08-27",
+      "accession": "0001452385-26-000008",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000145238526000008/wk-form4_1787864688.xml"
+    },
+    {
+      "type": "filing_ref",
+      "form": "4",
+      "filed": "2026-08-26",
+      "accession": "0000002488-26-000176",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2026-08-05",
+      "accession": "0000002488-26-000123",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000123/amd-20260627.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2026-08-04",
+      "accession": "0000002488-26-000121",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amd-20260804.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2026-05-06",
+      "accession": "0000002488-26-000076",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000076/amd-20260328.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2026-05-05",
+      "accession": "0000002488-26-000072",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000072/amd-20260505.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2026-03-27",
+      "accession": "0001193125-26-129057",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312526129057/d85856ddef14a.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K/A",
+      "filed": "2026-02-04",
+      "accession": "0000002488-26-000021",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000021/amd-20251227.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2026-02-04",
+      "accession": "0000002488-26-000018",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/amd-20251227.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2026-02-03",
+      "accession": "0000002488-26-000014",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000014/amd-20260203.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2025-11-05",
+      "accession": "0000002488-25-000166",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248825000166/amd-20250927.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2025-11-04",
+      "accession": "0000002488-25-000163",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248825000163/amd-20251104.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2025-08-06",
+      "accession": "0000002488-25-000108",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248825000108/amd-20250628.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2025-08-05",
+      "accession": "0000002488-25-000106",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248825000106/amd-20250805.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2025-05-07",
+      "accession": "0000002488-25-000047",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248825000047/amd-20250329.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2025-05-06",
+      "accession": "0000002488-25-000045",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248825000045/amd-20250506.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2025-03-28",
+      "accession": "0001193125-25-067170",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312525067170/d869673ddef14a.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2025-02-05",
+      "accession": "0000002488-25-000012",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248825000012/amd-20241228.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2025-02-04",
+      "accession": "0000002488-25-000009",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248825000009/amd-20250204.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2024-10-30",
+      "accession": "0000002488-24-000163",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248824000163/amd-20240928.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2024-10-29",
+      "accession": "0000002488-24-000161",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248824000161/amd-20241029.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2024-07-31",
+      "accession": "0000002488-24-000123",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248824000123/amd-20240629.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2024-07-30",
+      "accession": "0000002488-24-000121",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248824000121/amd-20240730.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2024-05-01",
+      "accession": "0000002488-24-000056",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248824000056/amd-20240330.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2024-04-30",
+      "accession": "0000002488-24-000054",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248824000054/amd-20240430.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2024-03-25",
+      "accession": "0001193125-24-076513",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312524076513/d653280ddef14a.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2024-01-31",
+      "accession": "0000002488-24-000012",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248824000012/amd-20231230.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2024-01-30",
+      "accession": "0000002488-24-000009",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248824000009/amd-20240130.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2023-11-01",
+      "accession": "0000002488-23-000195",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248823000195/amd-20230930.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2023-10-31",
+      "accession": "0000002488-23-000192",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248823000192/amd-20231031.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2023-08-02",
+      "accession": "0000002488-23-000139",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248823000139/amd-20230701.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2023-08-01",
+      "accession": "0000002488-23-000135",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248823000135/amd-20230801.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2023-05-03",
+      "accession": "0000002488-23-000076",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248823000076/amd-20230401.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2023-05-02",
+      "accession": "0000002488-23-000074",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248823000074/amd-20230502.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2023-03-31",
+      "accession": "0001193125-23-088096",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312523088096/d425773ddef14a.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2023-02-27",
+      "accession": "0000002488-23-000047",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248823000047/amd-20221231.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2023-01-31",
+      "accession": "0000002488-23-000007",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248823000007/amd-20230131.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2022-11-02",
+      "accession": "0000002488-22-000170",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248822000170/amd-20220924.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2022-11-01",
+      "accession": "0000002488-22-000168",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248822000168/amd-20221101.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2022-10-06",
+      "accession": "0000002488-22-000163",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248822000163/amd-20221006.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2022-08-03",
+      "accession": "0000002488-22-000123",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248822000123/amd-20220625.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2022-08-02",
+      "accession": "0000002488-22-000120",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248822000120/amd-20220802.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2022-05-04",
+      "accession": "0000002488-22-000078",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248822000078/amd-20220326.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2022-05-03",
+      "accession": "0000002488-22-000074",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248822000074/amd-20220429.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2022-03-31",
+      "accession": "0001193125-22-091792",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312522091792/d261716ddef14a.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2022-02-03",
+      "accession": "0000002488-22-000016",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248822000016/amd-20211225.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2022-02-01",
+      "accession": "0000002488-22-000014",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248822000014/amd-20220201.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2021-10-27",
+      "accession": "0000002488-21-000178",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248821000178/amd-20210925.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2021-10-26",
+      "accession": "0000002488-21-000176",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248821000176/amd-20211026.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2021-07-28",
+      "accession": "0000002488-21-000116",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248821000116/amd-20210626.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2021-07-27",
+      "accession": "0000002488-21-000114",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248821000114/amd-20210727.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2021-04-28",
+      "accession": "0000002488-21-000056",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248821000056/amd-20210327.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2021-04-27",
+      "accession": "0000002488-21-000054",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248821000054/amd-20210427.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2021-03-31",
+      "accession": "0001193125-21-102463",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312521102463/d85905ddef14a.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2021-01-29",
+      "accession": "0001628280-21-001185",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000162828021001185/amd-20201226.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2021-01-26",
+      "accession": "0000002488-21-000009",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248821000009/amd-20210126.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2020-10-28",
+      "accession": "0000002488-20-000164",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248820000164/amd-20200926.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2020-10-27",
+      "accession": "0000002488-20-000161",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248820000161/amd-20201027.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2020-07-29",
+      "accession": "0000002488-20-000103",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248820000103/amd-20200627.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2020-07-28",
+      "accession": "0000002488-20-000101",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248820000101/amd-20200728.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2020-04-29",
+      "accession": "0000002488-20-000051",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248820000051/amdq1fy2010q.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2020-04-28",
+      "accession": "0000002488-20-000048",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248820000048/a2020q1earnings8-k.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2020-03-26",
+      "accession": "0000002488-20-000038",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248820000038/amd2020proxystatement.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2020-02-04",
+      "accession": "0000002488-20-000008",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248820000008/amdform10-kfy2019.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2020-01-28",
+      "accession": "0000002488-20-000006",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248820000006/a20200128q419earnings8.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2019-10-30",
+      "accession": "0000002488-19-000159",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248819000159/amd0928201910q.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2019-10-29",
+      "accession": "0000002488-19-000157",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248819000157/a20191029q319earnings8.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2019-07-31",
+      "accession": "0000002488-19-000104",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248819000104/amd0629201910q.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2019-07-30",
+      "accession": "0000002488-19-000102",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248819000102/a20190730q219earnings8-k.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2019-05-01",
+      "accession": "0000002488-19-000045",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248819000045/amd0330201910q.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2019-04-30",
+      "accession": "0000002488-19-000043",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248819000043/a20190430q119earnings8-k.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2019-03-21",
+      "accession": "0001193125-19-082205",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312519082205/d659595ddef14a.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2019-02-08",
+      "accession": "0000002488-19-000011",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248819000011/amd-12292018x10k.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2019-01-29",
+      "accession": "0000002488-19-000004",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248819000004/a20190129q418earnings8-k.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2018-10-31",
+      "accession": "0000002488-18-000189",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248818000189/amd0929201810q.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2018-10-24",
+      "accession": "0000002488-18-000186",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248818000186/a20181024q318earnings8-k.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2018-08-02",
+      "accession": "0000002488-18-000128",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248818000128/amd0630201810q.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2018-07-25",
+      "accession": "0000002488-18-000124",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248818000124/a20180725q218earnings8-k.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2018-05-03",
+      "accession": "0000002488-18-000068",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248818000068/amd0331201810q.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2018-04-25",
+      "accession": "0000002488-18-000058",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248818000058/a20180425q118earnings8-k.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2018-03-19",
+      "accession": "0001193125-18-087766",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312518087766/d543804ddef14a.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2018-02-27",
+      "accession": "0000002488-18-000043",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248818000043/a6form8-kasc606disclosurev.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2018-02-27",
+      "accession": "0000002488-18-000042",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248818000042/amd-12302017x10k.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2018-01-30",
+      "accession": "0000002488-18-000014",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248818000014/a20180130q417earnings8-k.htm"
+    }
+  ],
+  "annual": [
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-12-31",
+      "start": "2015-12-27",
+      "concept": "revenue",
+      "ones": "4319000000",
+      "filed": "2019-02-08",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-12-30",
+      "start": "2017-01-01",
+      "concept": "revenue",
+      "ones": "5253000000",
+      "filed": "2020-02-04",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-12-29",
+      "start": "2017-12-31",
+      "concept": "revenue",
+      "ones": "6475000000",
+      "filed": "2021-01-29",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-12-28",
+      "start": "2018-12-30",
+      "concept": "revenue",
+      "ones": "6731000000",
+      "filed": "2022-02-03",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-12-26",
+      "start": "2019-12-29",
+      "concept": "revenue",
+      "ones": "9763000000",
+      "filed": "2023-02-27",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-12-25",
+      "start": "2020-12-27",
+      "concept": "revenue",
+      "ones": "16434000000",
+      "filed": "2024-01-31",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-12-31",
+      "start": "2021-12-26",
+      "concept": "revenue",
+      "ones": "23601000000",
+      "filed": "2025-02-05",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-12-30",
+      "start": "2023-01-01",
+      "concept": "revenue",
+      "ones": "22680000000",
+      "filed": "2026-02-04",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-12-28",
+      "start": "2023-12-31",
+      "concept": "revenue",
+      "ones": "25785000000",
+      "filed": "2026-02-04",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-12-27",
+      "start": "2024-12-29",
+      "concept": "revenue",
+      "ones": "34639000000",
+      "filed": "2026-02-04",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-12-31",
+      "start": "2015-12-27",
+      "concept": "cogs",
+      "ones": "3316000000",
+      "filed": "2019-02-08",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-12-30",
+      "start": "2017-01-01",
+      "concept": "cogs",
+      "ones": "3466000000",
+      "filed": "2020-02-04",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-12-29",
+      "start": "2017-12-31",
+      "concept": "cogs",
+      "ones": "4028000000",
+      "filed": "2021-01-29",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-12-28",
+      "start": "2018-12-30",
+      "concept": "cogs",
+      "ones": "3863000000",
+      "filed": "2022-02-03",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-12-26",
+      "start": "2019-12-29",
+      "concept": "cogs",
+      "ones": "5416000000",
+      "filed": "2023-02-27",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-12-25",
+      "start": "2020-12-27",
+      "concept": "cogs",
+      "ones": "8505000000",
+      "filed": "2024-01-31",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-12-31",
+      "start": "2021-12-26",
+      "concept": "cogs",
+      "ones": "12998000000",
+      "filed": "2025-02-05",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-12-30",
+      "start": "2023-01-01",
+      "concept": "cogs",
+      "ones": "12220000000",
+      "filed": "2026-02-04",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-12-28",
+      "start": "2023-12-31",
+      "concept": "cogs",
+      "ones": "13060000000",
+      "filed": "2026-02-04",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-12-27",
+      "start": "2024-12-29",
+      "concept": "cogs",
+      "ones": "17487000000",
+      "filed": "2026-02-04",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2008,
+      "end": "2008-12-27",
+      "start": "2007-12-30",
+      "concept": "gross_profit",
+      "ones": "2320000000",
+      "filed": "2011-02-18",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-12-26",
+      "start": "2008-12-28",
+      "concept": "gross_profit",
+      "ones": "2272000000",
+      "filed": "2012-02-24",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-12-25",
+      "start": "2009-12-27",
+      "concept": "gross_profit",
+      "ones": "2961000000",
+      "filed": "2013-02-21",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-12-31",
+      "start": "2010-12-26",
+      "concept": "gross_profit",
+      "ones": "2940000000",
+      "filed": "2014-02-18",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-12-29",
+      "start": "2012-01-01",
+      "concept": "gross_profit",
+      "ones": "1235000000",
+      "filed": "2015-02-19",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-12-28",
+      "start": "2012-12-30",
+      "concept": "gross_profit",
+      "ones": "1978000000",
+      "filed": "2016-02-18",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-12-27",
+      "start": "2013-12-29",
+      "concept": "gross_profit",
+      "ones": "1839000000",
+      "filed": "2017-02-21",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-12-26",
+      "start": "2014-12-28",
+      "concept": "gross_profit",
+      "ones": "1080000000",
+      "filed": "2018-02-27",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-12-31",
+      "start": "2015-12-27",
+      "concept": "gross_profit",
+      "ones": "1003000000",
+      "filed": "2019-02-08",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-12-30",
+      "start": "2017-01-01",
+      "concept": "gross_profit",
+      "ones": "1787000000",
+      "filed": "2020-02-04",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-12-29",
+      "start": "2017-12-31",
+      "concept": "gross_profit",
+      "ones": "2447000000",
+      "filed": "2021-01-29",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-12-28",
+      "start": "2018-12-30",
+      "concept": "gross_profit",
+      "ones": "2868000000",
+      "filed": "2022-02-03",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-12-26",
+      "start": "2019-12-29",
+      "concept": "gross_profit",
+      "ones": "4347000000",
+      "filed": "2023-02-27",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-12-25",
+      "start": "2020-12-27",
+      "concept": "gross_profit",
+      "ones": "7929000000",
+      "filed": "2024-01-31",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-12-31",
+      "start": "2021-12-26",
+      "concept": "gross_profit",
+      "ones": "10603000000",
+      "filed": "2025-02-05",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-12-30",
+      "start": "2023-01-01",
+      "concept": "gross_profit",
+      "ones": "10460000000",
+      "filed": "2026-02-04",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-12-28",
+      "start": "2023-12-31",
+      "concept": "gross_profit",
+      "ones": "12725000000",
+      "filed": "2026-02-04",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-12-27",
+      "start": "2024-12-29",
+      "concept": "gross_profit",
+      "ones": "17152000000",
+      "filed": "2026-02-04",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2008,
+      "end": "2008-12-27",
+      "start": "2007-12-30",
+      "concept": "operating_income",
+      "ones": "-1955000000",
+      "filed": "2011-02-18",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-12-26",
+      "start": "2008-12-28",
+      "concept": "operating_income",
+      "ones": "664000000",
+      "filed": "2012-02-24",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-12-25",
+      "start": "2009-12-27",
+      "concept": "operating_income",
+      "ones": "848000000",
+      "filed": "2013-02-21",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-12-31",
+      "start": "2010-12-26",
+      "concept": "operating_income",
+      "ones": "368000000",
+      "filed": "2014-02-18",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-12-29",
+      "start": "2012-01-01",
+      "concept": "operating_income",
+      "ones": "-1056000000",
+      "filed": "2015-02-19",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-12-28",
+      "start": "2012-12-30",
+      "concept": "operating_income",
+      "ones": "103000000",
+      "filed": "2016-02-18",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-12-27",
+      "start": "2013-12-29",
+      "concept": "operating_income",
+      "ones": "-155000000",
+      "filed": "2017-02-21",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-12-26",
+      "start": "2014-12-28",
+      "concept": "operating_income",
+      "ones": "-481000000",
+      "filed": "2018-02-27",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-12-31",
+      "start": "2015-12-27",
+      "concept": "operating_income",
+      "ones": "-373000000",
+      "filed": "2019-02-08",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-12-30",
+      "start": "2017-01-01",
+      "concept": "operating_income",
+      "ones": "127000000",
+      "filed": "2020-02-04",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-12-29",
+      "start": "2017-12-31",
+      "concept": "operating_income",
+      "ones": "451000000",
+      "filed": "2021-01-29",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-12-28",
+      "start": "2018-12-30",
+      "concept": "operating_income",
+      "ones": "631000000",
+      "filed": "2022-02-03",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-12-26",
+      "start": "2019-12-29",
+      "concept": "operating_income",
+      "ones": "1369000000",
+      "filed": "2023-02-27",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-12-25",
+      "start": "2020-12-27",
+      "concept": "operating_income",
+      "ones": "3648000000",
+      "filed": "2024-01-31",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-12-31",
+      "start": "2021-12-26",
+      "concept": "operating_income",
+      "ones": "1264000000",
+      "filed": "2025-02-05",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-12-30",
+      "start": "2023-01-01",
+      "concept": "operating_income",
+      "ones": "401000000",
+      "filed": "2026-02-04",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-12-28",
+      "start": "2023-12-31",
+      "concept": "operating_income",
+      "ones": "1900000000",
+      "filed": "2026-02-04",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-12-27",
+      "start": "2024-12-29",
+      "concept": "operating_income",
+      "ones": "3694000000",
+      "filed": "2026-02-04",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-12-25",
+      "start": "2009-12-27",
+      "concept": "net_income",
+      "ones": "471000000",
+      "filed": "2013-02-21",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-12-31",
+      "start": "2010-12-26",
+      "concept": "net_income",
+      "ones": "491000000",
+      "filed": "2014-02-18",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-12-29",
+      "start": "2012-01-01",
+      "concept": "net_income",
+      "ones": "-1183000000",
+      "filed": "2015-02-19",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-12-28",
+      "start": "2012-12-30",
+      "concept": "net_income",
+      "ones": "-83000000",
+      "filed": "2016-02-18",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-12-27",
+      "start": "2013-12-29",
+      "concept": "net_income",
+      "ones": "-403000000",
+      "filed": "2017-02-21",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-12-26",
+      "start": "2014-12-28",
+      "concept": "net_income",
+      "ones": "-660000000",
+      "filed": "2018-02-27",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-12-31",
+      "start": "2015-12-27",
+      "concept": "net_income",
+      "ones": "-498000000",
+      "filed": "2019-02-08",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-12-30",
+      "start": "2017-01-01",
+      "concept": "net_income",
+      "ones": "-33000000",
+      "filed": "2020-02-04",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-12-29",
+      "start": "2017-12-31",
+      "concept": "net_income",
+      "ones": "337000000",
+      "filed": "2021-01-29",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-12-28",
+      "start": "2018-12-30",
+      "concept": "net_income",
+      "ones": "341000000",
+      "filed": "2022-02-03",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-12-26",
+      "start": "2019-12-29",
+      "concept": "net_income",
+      "ones": "2490000000",
+      "filed": "2023-02-27",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-12-25",
+      "start": "2020-12-27",
+      "concept": "net_income",
+      "ones": "3162000000",
+      "filed": "2024-01-31",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-12-31",
+      "start": "2021-12-26",
+      "concept": "net_income",
+      "ones": "1320000000",
+      "filed": "2025-02-05",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-12-30",
+      "start": "2023-01-01",
+      "concept": "net_income",
+      "ones": "854000000",
+      "filed": "2026-02-04",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-12-28",
+      "start": "2023-12-31",
+      "concept": "net_income",
+      "ones": "1641000000",
+      "filed": "2026-02-04",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-12-27",
+      "start": "2024-12-29",
+      "concept": "net_income",
+      "ones": "4335000000",
+      "filed": "2026-02-04",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2008,
+      "end": "2008-12-27",
+      "start": "2007-12-30",
+      "concept": "sbc",
+      "ones": "83000000",
+      "filed": "2011-02-18",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-12-26",
+      "start": "2008-12-28",
+      "concept": "sbc",
+      "ones": "75000000",
+      "filed": "2012-02-24",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-12-25",
+      "start": "2009-12-27",
+      "concept": "sbc",
+      "ones": "87000000",
+      "filed": "2013-02-21",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-12-31",
+      "start": "2010-12-26",
+      "concept": "sbc",
+      "ones": "90000000",
+      "filed": "2014-02-18",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-12-29",
+      "start": "2012-01-01",
+      "concept": "sbc",
+      "ones": "97000000",
+      "filed": "2015-02-19",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-12-28",
+      "start": "2012-12-30",
+      "concept": "sbc",
+      "ones": "91000000",
+      "filed": "2016-02-18",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-12-27",
+      "start": "2013-12-29",
+      "concept": "sbc",
+      "ones": "81000000",
+      "filed": "2017-02-21",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-12-26",
+      "start": "2014-12-28",
+      "concept": "sbc",
+      "ones": "63000000",
+      "filed": "2018-02-27",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-12-31",
+      "start": "2015-12-27",
+      "concept": "sbc",
+      "ones": "86000000",
+      "filed": "2019-02-08",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-12-30",
+      "start": "2017-01-01",
+      "concept": "sbc",
+      "ones": "97000000",
+      "filed": "2020-02-04",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-12-29",
+      "start": "2017-12-31",
+      "concept": "sbc",
+      "ones": "137000000",
+      "filed": "2021-01-29",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-12-28",
+      "start": "2018-12-30",
+      "concept": "sbc",
+      "ones": "197000000",
+      "filed": "2022-02-03",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-12-26",
+      "start": "2019-12-29",
+      "concept": "sbc",
+      "ones": "274000000",
+      "filed": "2023-02-27",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-12-25",
+      "start": "2020-12-27",
+      "concept": "sbc",
+      "ones": "379000000",
+      "filed": "2024-01-31",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-12-31",
+      "start": "2021-12-26",
+      "concept": "sbc",
+      "ones": "1081000000",
+      "filed": "2025-02-05",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-12-30",
+      "start": "2023-01-01",
+      "concept": "sbc",
+      "ones": "1384000000",
+      "filed": "2026-02-04",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-12-28",
+      "start": "2023-12-31",
+      "concept": "sbc",
+      "ones": "1407000000",
+      "filed": "2026-02-04",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-12-27",
+      "start": "2024-12-29",
+      "concept": "sbc",
+      "ones": "1638000000",
+      "filed": "2026-02-04",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-12-28",
+      "start": "2012-12-30",
+      "concept": "depreciation",
+      "ones": "236000000",
+      "filed": "2016-02-18",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-12-27",
+      "start": "2013-12-29",
+      "concept": "depreciation",
+      "ones": "203000000",
+      "filed": "2017-02-21",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-12-26",
+      "start": "2014-12-28",
+      "concept": "depreciation",
+      "ones": "167000000",
+      "filed": "2018-02-27",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-12-31",
+      "start": "2015-12-27",
+      "concept": "depreciation",
+      "ones": "133000000",
+      "filed": "2019-02-08",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-12-30",
+      "start": "2017-01-01",
+      "concept": "depreciation",
+      "ones": "144000000",
+      "filed": "2020-02-04",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-12-29",
+      "start": "2017-12-31",
+      "concept": "depreciation",
+      "ones": "170000000",
+      "filed": "2020-02-04",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-12-28",
+      "start": "2018-12-30",
+      "concept": "depreciation",
+      "ones": "222000000",
+      "filed": "2020-02-04",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2008,
+      "end": "2008-12-27",
+      "start": "2007-12-30",
+      "concept": "capex",
+      "ones": "624000000",
+      "filed": "2011-02-18",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-12-26",
+      "start": "2008-12-28",
+      "concept": "capex",
+      "ones": "466000000",
+      "filed": "2012-02-24",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-12-25",
+      "start": "2009-12-27",
+      "concept": "capex",
+      "ones": "148000000",
+      "filed": "2013-02-21",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-12-31",
+      "start": "2010-12-26",
+      "concept": "capex",
+      "ones": "250000000",
+      "filed": "2014-02-18",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-12-29",
+      "start": "2012-01-01",
+      "concept": "capex",
+      "ones": "133000000",
+      "filed": "2015-02-19",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-12-28",
+      "start": "2012-12-30",
+      "concept": "capex",
+      "ones": "84000000",
+      "filed": "2016-02-18",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-12-27",
+      "start": "2013-12-29",
+      "concept": "capex",
+      "ones": "95000000",
+      "filed": "2017-02-21",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-12-26",
+      "start": "2014-12-28",
+      "concept": "capex",
+      "ones": "96000000",
+      "filed": "2018-02-27",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-12-31",
+      "start": "2015-12-27",
+      "concept": "capex",
+      "ones": "77000000",
+      "filed": "2019-02-08",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-12-30",
+      "start": "2017-01-01",
+      "concept": "capex",
+      "ones": "113000000",
+      "filed": "2020-02-04",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-12-29",
+      "start": "2017-12-31",
+      "concept": "capex",
+      "ones": "163000000",
+      "filed": "2021-01-29",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-12-28",
+      "start": "2018-12-30",
+      "concept": "capex",
+      "ones": "217000000",
+      "filed": "2022-02-03",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-12-26",
+      "start": "2019-12-29",
+      "concept": "capex",
+      "ones": "294000000",
+      "filed": "2023-02-27",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-12-25",
+      "start": "2020-12-27",
+      "concept": "capex",
+      "ones": "301000000",
+      "filed": "2024-01-31",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-12-31",
+      "start": "2021-12-26",
+      "concept": "capex",
+      "ones": "450000000",
+      "filed": "2025-02-05",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-12-30",
+      "start": "2023-01-01",
+      "concept": "capex",
+      "ones": "546000000",
+      "filed": "2026-02-04",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-12-28",
+      "start": "2023-12-31",
+      "concept": "capex",
+      "ones": "636000000",
+      "filed": "2026-02-04",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-12-27",
+      "start": "2024-12-29",
+      "concept": "capex",
+      "ones": "974000000",
+      "filed": "2026-02-04",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2008,
+      "end": "2008-12-27",
+      "start": "2007-12-30",
+      "concept": "cfo",
+      "ones": "-692000000",
+      "filed": "2011-02-18",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-12-26",
+      "start": "2008-12-28",
+      "concept": "cfo",
+      "ones": "473000000",
+      "filed": "2012-02-24",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-12-25",
+      "start": "2009-12-27",
+      "concept": "cfo",
+      "ones": "-412000000",
+      "filed": "2013-02-21",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-12-31",
+      "start": "2010-12-26",
+      "concept": "cfo",
+      "ones": "382000000",
+      "filed": "2014-02-18",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-12-29",
+      "start": "2012-01-01",
+      "concept": "cfo",
+      "ones": "-338000000",
+      "filed": "2015-02-19",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-12-28",
+      "start": "2012-12-30",
+      "concept": "cfo",
+      "ones": "-148000000",
+      "filed": "2016-02-18",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-12-27",
+      "start": "2013-12-29",
+      "concept": "cfo",
+      "ones": "-98000000",
+      "filed": "2017-02-21",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-12-26",
+      "start": "2014-12-28",
+      "concept": "cfo",
+      "ones": "-226000000",
+      "filed": "2018-02-27",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-12-31",
+      "start": "2015-12-27",
+      "concept": "cfo",
+      "ones": "81000000",
+      "filed": "2019-02-08",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-12-30",
+      "start": "2017-01-01",
+      "concept": "cfo",
+      "ones": "12000000",
+      "filed": "2020-02-04",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-12-29",
+      "start": "2017-12-31",
+      "concept": "cfo",
+      "ones": "34000000",
+      "filed": "2021-01-29",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-12-28",
+      "start": "2018-12-30",
+      "concept": "cfo",
+      "ones": "493000000",
+      "filed": "2022-02-03",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-12-26",
+      "start": "2019-12-29",
+      "concept": "cfo",
+      "ones": "1071000000",
+      "filed": "2023-02-27",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-12-25",
+      "start": "2020-12-27",
+      "concept": "cfo",
+      "ones": "3521000000",
+      "filed": "2024-01-31",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-12-31",
+      "start": "2021-12-26",
+      "concept": "cfo",
+      "ones": "3565000000",
+      "filed": "2025-02-05",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-12-30",
+      "start": "2023-01-01",
+      "concept": "cfo",
+      "ones": "1667000000",
+      "filed": "2026-02-04",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-12-28",
+      "start": "2023-12-31",
+      "concept": "cfo",
+      "ones": "3041000000",
+      "filed": "2026-02-04",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-12-27",
+      "start": "2024-12-29",
+      "concept": "cfo",
+      "ones": "7709000000",
+      "filed": "2026-02-04",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-12-28",
+      "start": "2018-12-30",
+      "concept": "buybacks",
+      "ones": "0",
+      "filed": "2022-02-03",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-12-26",
+      "start": "2019-12-29",
+      "concept": "buybacks",
+      "ones": "0",
+      "filed": "2023-02-27",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-12-25",
+      "start": "2020-12-27",
+      "concept": "buybacks",
+      "ones": "1762000000",
+      "filed": "2024-01-31",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-12-31",
+      "start": "2021-12-26",
+      "concept": "buybacks",
+      "ones": "3702000000",
+      "filed": "2025-02-05",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-12-30",
+      "start": "2023-01-01",
+      "concept": "buybacks",
+      "ones": "985000000",
+      "filed": "2026-02-04",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-12-28",
+      "start": "2023-12-31",
+      "concept": "buybacks",
+      "ones": "862000000",
+      "filed": "2026-02-04",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-12-27",
+      "start": "2024-12-29",
+      "concept": "buybacks",
+      "ones": "1316000000",
+      "filed": "2026-02-04",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2009-12-26",
+      "start": null,
+      "concept": "inventory",
+      "ones": "567000000",
+      "filed": "2011-02-18",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-12-25",
+      "start": null,
+      "concept": "inventory",
+      "ones": "632000000",
+      "filed": "2012-02-24",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-12-31",
+      "start": null,
+      "concept": "inventory",
+      "ones": "476000000",
+      "filed": "2013-02-21",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-12-29",
+      "start": null,
+      "concept": "inventory",
+      "ones": "562000000",
+      "filed": "2014-02-18",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-12-28",
+      "start": null,
+      "concept": "inventory",
+      "ones": "884000000",
+      "filed": "2015-02-19",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-12-27",
+      "start": null,
+      "concept": "inventory",
+      "ones": "685000000",
+      "filed": "2016-02-18",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-12-26",
+      "start": null,
+      "concept": "inventory",
+      "ones": "678000000",
+      "filed": "2017-02-21",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-12-31",
+      "start": null,
+      "concept": "inventory",
+      "ones": "691000000",
+      "filed": "2019-02-08",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-12-30",
+      "start": null,
+      "concept": "inventory",
+      "ones": "694000000",
+      "filed": "2019-02-08",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-12-29",
+      "start": null,
+      "concept": "inventory",
+      "ones": "845000000",
+      "filed": "2020-02-04",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-12-28",
+      "start": null,
+      "concept": "inventory",
+      "ones": "982000000",
+      "filed": "2021-01-29",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-12-26",
+      "start": null,
+      "concept": "inventory",
+      "ones": "1399000000",
+      "filed": "2022-02-03",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-12-25",
+      "start": null,
+      "concept": "inventory",
+      "ones": "1955000000",
+      "filed": "2023-02-27",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-12-31",
+      "start": null,
+      "concept": "inventory",
+      "ones": "3771000000",
+      "filed": "2024-01-31",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-12-30",
+      "start": null,
+      "concept": "inventory",
+      "ones": "4351000000",
+      "filed": "2025-02-05",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-12-28",
+      "start": null,
+      "concept": "inventory",
+      "ones": "5734000000",
+      "filed": "2026-02-04",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-12-27",
+      "start": null,
+      "concept": "inventory",
+      "ones": "7920000000",
+      "filed": "2026-02-04",
+      "tag": "InventoryNet"
+    }
+  ],
+  "shares": {
+    "type": "share_count",
+    "shares": "1632475042",
+    "as_of": "2026-07-29",
+    "tag": "EntityCommonStockSharesOutstanding"
+  },
+  "yields": [
+    {
+      "type": "treasury_yield",
+      "as_of": "2026-10-16",
+      "rate": "0.0509",
+      "source": "fred_dgs10"
+    },
+    {
+      "type": "treasury_yield",
+      "as_of": "2026-10-19",
+      "rate": "0.0515",
+      "source": "treasury_par"
+    }
+  ],
+  "unscaled": [
+    {
+      "type": "unscaled_amount",
+      "lexeme": "878,712,340,857",
+      "label": "Market Cap",
+      "period_end": "",
+      "source": "nasdaq_summary"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$34,639,000",
+      "label": "Total Revenue",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$25,785,000",
+      "label": "Total Revenue",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$22,680,000",
+      "label": "Total Revenue",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$23,601,000",
+      "label": "Total Revenue",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$17,487,000",
+      "label": "Cost of Revenue",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$13,060,000",
+      "label": "Cost of Revenue",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$12,220,000",
+      "label": "Cost of Revenue",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$12,998,000",
+      "label": "Cost of Revenue",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$17,152,000",
+      "label": "Gross Profit",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$12,725,000",
+      "label": "Gross Profit",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$10,460,000",
+      "label": "Gross Profit",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$10,603,000",
+      "label": "Gross Profit",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,091,000",
+      "label": "Research and Development",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$6,456,000",
+      "label": "Research and Development",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$5,872,000",
+      "label": "Research and Development",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$5,005,000",
+      "label": "Research and Development",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,144,000",
+      "label": "Sales, General and Admin.",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,735,000",
+      "label": "Sales, General and Admin.",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,318,000",
+      "label": "Sales, General and Admin.",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,234,000",
+      "label": "Sales, General and Admin.",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$186,000",
+      "label": "Non-Recurring Items",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,223,000",
+      "label": "Other Operating Items",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,448,000",
+      "label": "Other Operating Items",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,869,000",
+      "label": "Other Operating Items",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,100,000",
+      "label": "Other Operating Items",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,694,000",
+      "label": "Operating Income",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,900,000",
+      "label": "Operating Income",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$401,000",
+      "label": "Operating Income",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,264,000",
+      "label": "Operating Income",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$577,000",
+      "label": "Add'l income/expense items",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$181,000",
+      "label": "Add'l income/expense items",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$197,000",
+      "label": "Add'l income/expense items",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,000",
+      "label": "Add'l income/expense items",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,271,000",
+      "label": "Earnings Before Interest and Tax",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,081,000",
+      "label": "Earnings Before Interest and Tax",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$598,000",
+      "label": "Earnings Before Interest and Tax",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,272,000",
+      "label": "Earnings Before Interest and Tax",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$131,000",
+      "label": "Interest Expense",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$92,000",
+      "label": "Interest Expense",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$106,000",
+      "label": "Interest Expense",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$88,000",
+      "label": "Interest Expense",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,140,000",
+      "label": "Earnings Before Tax",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,989,000",
+      "label": "Earnings Before Tax",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$492,000",
+      "label": "Earnings Before Tax",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,184,000",
+      "label": "Earnings Before Tax",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$103,000",
+      "label": "Income Tax",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$381,000",
+      "label": "Income Tax",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$346,000",
+      "label": "Income Tax",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$122,000",
+      "label": "Income Tax",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$26,000",
+      "label": "Minority Interest",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$33,000",
+      "label": "Minority Interest",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$16,000",
+      "label": "Minority Interest",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$14,000",
+      "label": "Minority Interest",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,269,000",
+      "label": "Net Income-Cont. Operations",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,641,000",
+      "label": "Net Income-Cont. Operations",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$854,000",
+      "label": "Net Income-Cont. Operations",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,320,000",
+      "label": "Net Income-Cont. Operations",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,335,000",
+      "label": "Net Income",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,641,000",
+      "label": "Net Income",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$854,000",
+      "label": "Net Income",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,320,000",
+      "label": "Net Income",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,335,000",
+      "label": "Net Income Applicable to Common Shareholders",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,641,000",
+      "label": "Net Income Applicable to Common Shareholders",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$854,000",
+      "label": "Net Income Applicable to Common Shareholders",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,320,000",
+      "label": "Net Income Applicable to Common Shareholders",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$5,539,000",
+      "label": "Cash and Cash Equivalents",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,787,000",
+      "label": "Cash and Cash Equivalents",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,933,000",
+      "label": "Cash and Cash Equivalents",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,835,000",
+      "label": "Cash and Cash Equivalents",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$5,013,000",
+      "label": "Short-Term Investments",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,345,000",
+      "label": "Short-Term Investments",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,840,000",
+      "label": "Short-Term Investments",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,020,000",
+      "label": "Short-Term Investments",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$6,315,000",
+      "label": "Net Receivables",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$6,192,000",
+      "label": "Net Receivables",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,332,000",
+      "label": "Net Receivables",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,128,000",
+      "label": "Net Receivables",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$7,920,000",
+      "label": "Inventory",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$5,734,000",
+      "label": "Inventory",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,351,000",
+      "label": "Inventory",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,771,000",
+      "label": "Inventory",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,160,000",
+      "label": "Other Current Assets",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,991,000",
+      "label": "Other Current Assets",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,312,000",
+      "label": "Other Current Assets",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,265,000",
+      "label": "Other Current Assets",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$26,947,000",
+      "label": "Total Current Assets",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$19,049,000",
+      "label": "Total Current Assets",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$16,768,000",
+      "label": "Total Current Assets",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$15,019,000",
+      "label": "Total Current Assets",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$99,000",
+      "label": "Long-Term Investments",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$83,000",
+      "label": "Long-Term Investments",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,312,000",
+      "label": "Fixed Assets",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,802,000",
+      "label": "Fixed Assets",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,222,000",
+      "label": "Fixed Assets",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,973,000",
+      "label": "Fixed Assets",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$25,126,000",
+      "label": "Goodwill",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$24,839,000",
+      "label": "Goodwill",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$24,262,000",
+      "label": "Goodwill",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$24,177,000",
+      "label": "Goodwill",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$16,705,000",
+      "label": "Intangible Assets",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$18,930,000",
+      "label": "Intangible Assets",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$21,363,000",
+      "label": "Intangible Assets",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$24,118,000",
+      "label": "Intangible Assets",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$5,452,000",
+      "label": "Other Assets",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,918,000",
+      "label": "Other Assets",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,805,000",
+      "label": "Other Assets",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,152,000",
+      "label": "Other Assets",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$384,000",
+      "label": "Deferred Asset Charges",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$688,000",
+      "label": "Deferred Asset Charges",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$366,000",
+      "label": "Deferred Asset Charges",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$58,000",
+      "label": "Deferred Asset Charges",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$76,926,000",
+      "label": "Total Assets",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$69,226,000",
+      "label": "Total Assets",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$67,885,000",
+      "label": "Total Assets",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$67,580,000",
+      "label": "Total Assets",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$8,179,000",
+      "label": "Accounts Payable",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$6,726,000",
+      "label": "Accounts Payable",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$5,500,000",
+      "label": "Accounts Payable",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$6,033,000",
+      "label": "Accounts Payable",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$874,000",
+      "label": "Short-Term Debt / Current Portion of Long-Term Debt",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$751,000",
+      "label": "Short-Term Debt / Current Portion of Long-Term Debt",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$402,000",
+      "label": "Other Current Liabilities",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$555,000",
+      "label": "Other Current Liabilities",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$438,000",
+      "label": "Other Current Liabilities",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$336,000",
+      "label": "Other Current Liabilities",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$9,455,000",
+      "label": "Total Current Liabilities",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$7,281,000",
+      "label": "Total Current Liabilities",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$6,689,000",
+      "label": "Total Current Liabilities",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$6,369,000",
+      "label": "Total Current Liabilities",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,348,000",
+      "label": "Long-Term Debt",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,721,000",
+      "label": "Long-Term Debt",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,717,000",
+      "label": "Long-Term Debt",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,467,000",
+      "label": "Long-Term Debt",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,811,000",
+      "label": "Other Liabilities",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,307,000",
+      "label": "Other Liabilities",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,385,000",
+      "label": "Other Liabilities",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,060,000",
+      "label": "Other Liabilities",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$313,000",
+      "label": "Deferred Liability Charges",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$349,000",
+      "label": "Deferred Liability Charges",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,202,000",
+      "label": "Deferred Liability Charges",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,934,000",
+      "label": "Deferred Liability Charges",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$13,927,000",
+      "label": "Total Liabilities",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$11,658,000",
+      "label": "Total Liabilities",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$11,993,000",
+      "label": "Total Liabilities",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$12,830,000",
+      "label": "Total Liabilities",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$17,000",
+      "label": "Common Stocks",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$17,000",
+      "label": "Common Stocks",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$17,000",
+      "label": "Common Stocks",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$16,000",
+      "label": "Common Stocks",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$6,699,000",
+      "label": "Capital Surplus",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,364,000",
+      "label": "Capital Surplus",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$723,000",
+      "label": "Capital Surplus",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$131,000",
+      "label": "Capital Surplus",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$7,079,000",
+      "label": "Retained Earnings",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$6,106,000",
+      "label": "Retained Earnings",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$4,514,000",
+      "label": "Retained Earnings",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$3,099,000",
+      "label": "Retained Earnings",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$63,365,000",
+      "label": "Treasury Stock",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$61,362,000",
+      "label": "Treasury Stock",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$59,676,000",
+      "label": "Treasury Stock",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$58,005,000",
+      "label": "Treasury Stock",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$3,000",
+      "label": "Other Equity",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$69,000",
+      "label": "Other Equity",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$10,000",
+      "label": "Other Equity",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$41,000",
+      "label": "Other Equity",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$62,999,000",
+      "label": "Total Equity",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$57,568,000",
+      "label": "Total Equity",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$55,892,000",
+      "label": "Total Equity",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$54,750,000",
+      "label": "Total Equity",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$76,926,000",
+      "label": "Total Liabilities & Equity",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$69,226,000",
+      "label": "Total Liabilities & Equity",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$67,885,000",
+      "label": "Total Liabilities & Equity",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$67,580,000",
+      "label": "Total Liabilities & Equity",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,335,000",
+      "label": "Net Income",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,641,000",
+      "label": "Net Income",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$854,000",
+      "label": "Net Income",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,320,000",
+      "label": "Net Income",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,004,000",
+      "label": "Depreciation",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,064,000",
+      "label": "Depreciation",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,453,000",
+      "label": "Depreciation",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$4,451,000",
+      "label": "Depreciation",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,532,000",
+      "label": "Net Income Adjustments",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$434,000",
+      "label": "Net Income Adjustments",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$409,000",
+      "label": "Net Income Adjustments",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$360,000",
+      "label": "Net Income Adjustments",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$121,000",
+      "label": "Accounts Receivable",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,865,000",
+      "label": "Accounts Receivable",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,339,000",
+      "label": "Accounts Receivable",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$88,000",
+      "label": "Accounts Receivable",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$2,189,000",
+      "label": "Changes in Inventories",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,458,000",
+      "label": "Changes in Inventories",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$580,000",
+      "label": "Changes in Inventories",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,401,000",
+      "label": "Changes in Inventories",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$11,000",
+      "label": "Other Operating Activities",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$339,000",
+      "label": "Other Operating Activities",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$390,000",
+      "label": "Other Operating Activities",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$2,010,000",
+      "label": "Other Operating Activities",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$57,000",
+      "label": "Liabilities",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$886,000",
+      "label": "Liabilities",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$740,000",
+      "label": "Liabilities",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,477,000",
+      "label": "Liabilities",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$7,709,000",
+      "label": "Net Cash Flow-Operating",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,041,000",
+      "label": "Net Cash Flow-Operating",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,667,000",
+      "label": "Net Cash Flow-Operating",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$3,565,000",
+      "label": "Net Cash Flow-Operating",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$974,000",
+      "label": "Capital Expenditures",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$636,000",
+      "label": "Capital Expenditures",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$546,000",
+      "label": "Capital Expenditures",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$450,000",
+      "label": "Capital Expenditures",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$4,127,000",
+      "label": "Investments",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$81,000",
+      "label": "Investments",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$746,000",
+      "label": "Investments",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,638,000",
+      "label": "Investments",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$432,000",
+      "label": "Other Investing Activities",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$546,000",
+      "label": "Other Investing Activities",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$131,000",
+      "label": "Other Investing Activities",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$811,000",
+      "label": "Other Investing Activities",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$5,533,000",
+      "label": "Net Cash Flows-Investing",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,101,000",
+      "label": "Net Cash Flows-Investing",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,423,000",
+      "label": "Net Cash Flows-Investing",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,999,000",
+      "label": "Net Cash Flows-Investing",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,638,000",
+      "label": "Sale and Purchase of Stock",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,311,000",
+      "label": "Sale and Purchase of Stock",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,144,000",
+      "label": "Sale and Purchase of Stock",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$3,941,000",
+      "label": "Sale and Purchase of Stock",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,491,000",
+      "label": "Net Borrowings",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$750,000",
+      "label": "Net Borrowings",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$679,000",
+      "label": "Net Borrowings",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$284,000",
+      "label": "Other Financing Activities",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,000",
+      "label": "Other Financing Activities",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$2,000",
+      "label": "Other Financing Activities",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$2,000",
+      "label": "Other Financing Activities",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$431,000",
+      "label": "Net Cash Flows-Financing",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$2,062,000",
+      "label": "Net Cash Flows-Financing",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$1,146,000",
+      "label": "Net Cash Flows-Financing",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$3,264,000",
+      "label": "Net Cash Flows-Financing",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$1,745,000",
+      "label": "Net Cash Flow",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$122,000",
+      "label": "Net Cash Flow",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "-$902,000",
+      "label": "Net Cash Flow",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "unscaled_amount",
+      "lexeme": "$2,300,000",
+      "label": "Net Cash Flow",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    }
+  ],
+  "percents": [
+    {
+      "type": "percent",
+      "parts_per_hundred": "285.00264",
+      "label": "Current Ratio",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "261.62615",
+      "label": "Current Ratio",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "250.68022",
+      "label": "Current Ratio",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "235.8141",
+      "label": "Current Ratio",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "201.23744",
+      "label": "Quick Ratio",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "182.87323",
+      "label": "Quick Ratio",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "185.63313",
+      "label": "Quick Ratio",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "176.60543",
+      "label": "Quick Ratio",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "111.60233",
+      "label": "Cash Ratio",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "70.48482",
+      "label": "Cash Ratio",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "86.30588",
+      "label": "Cash Ratio",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "91.92966",
+      "label": "Cash Ratio",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "49.51644",
+      "label": "Gross Margin",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "49.3504",
+      "label": "Gross Margin",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "46.11993",
+      "label": "Gross Margin",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "44.92606",
+      "label": "Gross Margin",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "10.66428",
+      "label": "Operating Margin",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "7.36863",
+      "label": "Operating Margin",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "1.76808",
+      "label": "Operating Margin",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "5.35571",
+      "label": "Operating Margin",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "11.95185",
+      "label": "Pre-Tax Margin",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "7.71379",
+      "label": "Pre-Tax Margin",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "2.16931",
+      "label": "Pre-Tax Margin",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "5.01674",
+      "label": "Pre-Tax Margin",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "12.5148",
+      "label": "Profit Margin",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "6.36417",
+      "label": "Profit Margin",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "3.76543",
+      "label": "Profit Margin",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "5.59298",
+      "label": "Profit Margin",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "6.57153",
+      "label": "Pre-Tax ROE",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "3.45504",
+      "label": "Pre-Tax ROE",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "0.88027",
+      "label": "Pre-Tax ROE",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "2.16256",
+      "label": "Pre-Tax ROE",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "6.88106",
+      "label": "After Tax ROE",
+      "period_end": "12/27/2025",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "2.85054",
+      "label": "After Tax ROE",
+      "period_end": "12/28/2024",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "1.52795",
+      "label": "After Tax ROE",
+      "period_end": "12/30/2023",
+      "source": "nasdaq_financials"
+    },
+    {
+      "type": "percent",
+      "parts_per_hundred": "2.41096",
+      "label": "After Tax ROE",
+      "period_end": "12/31/2022",
+      "source": "nasdaq_financials"
+    }
+  ],
+  "ranges": [
+    {
+      "type": "labeled_decimal",
+      "label": "fifty_two_week_high",
+      "value": "658.52",
+      "source": "yahoo_chart"
+    },
+    {
+      "type": "labeled_decimal",
+      "label": "fifty_two_week_low",
+      "value": "188.22",
+      "source": "yahoo_chart"
+    }
+  ],
+  "labels": [
+    {
+      "type": "source_label",
+      "label": "company_name",
+      "value": "Advanced Micro Devices, Inc. Common Stock",
+      "source": "nasdaq_info"
+    },
+    {
+      "type": "source_label",
+      "label": "exchange",
+      "value": "NASDAQ-GS",
+      "source": "nasdaq_info"
+    },
+    {
+      "type": "source_label",
+      "label": "sector",
+      "value": "Technology",
+      "source": "nasdaq_summary"
+    },
+    {
+      "type": "source_label",
+      "label": "industry",
+      "value": "Semiconductors",
+      "source": "nasdaq_summary"
+    },
+    {
+      "type": "source_label",
+      "label": "fifty_two_week_high_low",
+      "value": "$658.52/$188.22",
+      "source": "nasdaq_summary"
+    }
+  ],
+  "insiders": [
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-15",
+      "filed": "2026-10-19",
+      "owner": "Norrod Forrest Eugene",
+      "code": "M",
+      "acquired_disposed": "A",
+      "shares": "7262",
+      "price": "84.85",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-15",
+      "filed": "2026-10-19",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "816",
+      "price": "535.15",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-15",
+      "filed": "2026-10-19",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "823",
+      "price": "536.11",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-15",
+      "filed": "2026-10-19",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "476",
+      "price": "537.39",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-15",
+      "filed": "2026-10-19",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "1208",
+      "price": "538.24",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-15",
+      "filed": "2026-10-19",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "917",
+      "price": "539.35",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-15",
+      "filed": "2026-10-19",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "1969",
+      "price": "540.31",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-15",
+      "filed": "2026-10-19",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "4699",
+      "price": "541.16",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-15",
+      "filed": "2026-10-19",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "2218",
+      "price": "542.09",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-15",
+      "filed": "2026-10-19",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "4136",
+      "price": "543.03",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-15",
+      "filed": "2026-10-19",
+      "owner": "Norrod Forrest Eugene",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "7262",
+      "price": "0",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000184/wk-form4_1792441001.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-15",
+      "filed": "2026-09-17",
+      "owner": "Norrod Forrest Eugene",
+      "code": "M",
+      "acquired_disposed": "A",
+      "shares": "7261",
+      "price": "84.85",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-15",
+      "filed": "2026-09-17",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "757",
+      "price": "498.30",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-15",
+      "filed": "2026-09-17",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "100",
+      "price": "498.98",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-15",
+      "filed": "2026-09-17",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "1017",
+      "price": "500.67",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-15",
+      "filed": "2026-09-17",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "1655",
+      "price": "501.70",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-15",
+      "filed": "2026-09-17",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "5878",
+      "price": "502.45",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-15",
+      "filed": "2026-09-17",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "4604",
+      "price": "504",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-15",
+      "filed": "2026-09-17",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "2225",
+      "price": "505.12",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-15",
+      "filed": "2026-09-17",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "726",
+      "price": "505.90",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-15",
+      "filed": "2026-09-17",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "299",
+      "price": "506.88",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-15",
+      "filed": "2026-09-17",
+      "owner": "Norrod Forrest Eugene",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "7261",
+      "price": "0",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000180/wk-form4_1789676486.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "5896",
+      "price": "503.74",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "13123",
+      "price": "504.75",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "12982",
+      "price": "505.63",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "10524",
+      "price": "506.62",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "8070",
+      "price": "507.71",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "7962",
+      "price": "508.78",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "8343",
+      "price": "509.71",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "2100",
+      "price": "510.74",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "300",
+      "price": "511.39",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "200",
+      "price": "512.47",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "400",
+      "price": "514.05",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "100",
+      "price": "515.55",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "2106",
+      "price": "503.72",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "4600",
+      "price": "504.76",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "4400",
+      "price": "505.57",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "4200",
+      "price": "506.60",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "3288",
+      "price": "507.75",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "2106",
+      "price": "508.90",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "3500",
+      "price": "509.74",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "500",
+      "price": "510.94",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "100",
+      "price": "512.59",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "200",
+      "price": "513.72",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-09-10",
+      "filed": "2026-09-14",
+      "owner": "Su Lisa T",
+      "code": "G",
+      "acquired_disposed": "D",
+      "shares": "35000",
+      "price": "0",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/wk-form4_1789417189.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-25",
+      "filed": "2026-08-27",
+      "owner": "Hu Jean X.",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "900",
+      "price": "470.13",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000145238526000008/wk-form4_1787864688.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-25",
+      "filed": "2026-08-27",
+      "owner": "Hu Jean X.",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "800",
+      "price": "471.14",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000145238526000008/wk-form4_1787864688.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-25",
+      "filed": "2026-08-27",
+      "owner": "Hu Jean X.",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "2513",
+      "price": "472.39",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000145238526000008/wk-form4_1787864688.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-25",
+      "filed": "2026-08-27",
+      "owner": "Hu Jean X.",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "2327",
+      "price": "473.43",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000145238526000008/wk-form4_1787864688.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-25",
+      "filed": "2026-08-27",
+      "owner": "Hu Jean X.",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "3831",
+      "price": "474.43",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000145238526000008/wk-form4_1787864688.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-25",
+      "filed": "2026-08-27",
+      "owner": "Hu Jean X.",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "1429",
+      "price": "475.70",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000145238526000008/wk-form4_1787864688.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-25",
+      "filed": "2026-08-27",
+      "owner": "Hu Jean X.",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "3100",
+      "price": "476.53",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000145238526000008/wk-form4_1787864688.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-25",
+      "filed": "2026-08-27",
+      "owner": "Hu Jean X.",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "100",
+      "price": "477.84",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000145238526000008/wk-form4_1787864688.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "M",
+      "acquired_disposed": "A",
+      "shares": "7261",
+      "price": "84.85",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "942",
+      "price": "453.26",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "1182",
+      "price": "454.18",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "2125",
+      "price": "455.62",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "2312",
+      "price": "456.49",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "1904",
+      "price": "457.44",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "400",
+      "price": "458.26",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "1630",
+      "price": "459.68",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "1500",
+      "price": "460.64",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "301",
+      "price": "462.59",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "321",
+      "price": "464.27",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "1455",
+      "price": "465.43",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "600",
+      "price": "466.26",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "S",
+      "acquired_disposed": "D",
+      "shares": "2589",
+      "price": "468.14",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-08-24",
+      "filed": "2026-08-26",
+      "owner": "Norrod Forrest Eugene",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "7261",
+      "price": "0",
+      "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000176/wk-form4_1787776918.xml",
+      "derivative": true
+    }
+  ],
+  "failures": [],
+  "adr_ratio": null,
+  "cache": [
+    {
+      "type": "cache_hit",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
+      "cached_at": "1792507932",
+      "age_seconds": "18153"
+    },
+    {
+      "type": "cache_hit",
+      "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
+      "cached_at": "1792507932",
+      "age_seconds": "18153"
+    },
+    {
+      "type": "cache_hit",
+      "url": "https://www.sec.gov/files/company_tickers.json",
+      "cached_at": "1792507932",
+      "age_seconds": "18152"
+    }
+  ],
+  "listing": "domestic"
+}

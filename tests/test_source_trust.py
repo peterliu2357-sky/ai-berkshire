@@ -28,6 +28,7 @@ from usmarket.claims import (  # noqa: E402
     ClaimId,
     DeriveTool,
     Dispute,
+    Excerpt,
     IrrRequest,
     Measure,
     PeerSnapshot,
@@ -513,9 +514,24 @@ class TestAdmitAndAudit(unittest.TestCase):
     def test_existing_micron_notes_pass_without_a_ledger(self):
         folder = _ROOT / "reports" / "Micron"
         snap = snapshot_from_json(json.loads((folder / "evidence" / "us-snapshot-MU.json").read_text(encoding="utf-8")))
+        ledger = None
+        excerpts: dict[str, bytes] = {}
+        peers = {}
+        ledger_path = folder / "evidence" / "source-ledger.json"
+        if ledger_path.exists():
+            ledger = load_ledger(ledger_path.read_text(encoding="utf-8"))
+            for claim in ledger.claims:
+                if isinstance(claim, Excerpt):
+                    excerpts[str(claim.id)] = (ledger_path.parent / "excerpts" / f"{claim.id}.txt").read_bytes()
+                elif isinstance(claim, PeerSnapshot):
+                    peers[claim.snapshot_path] = snapshot_from_json(
+                        json.loads((_ROOT / claim.snapshot_path).read_text(encoding="utf-8"))
+                    )
         for path in sorted(folder.glob("*.md")):
-            result = audit_report(path.read_text(encoding="utf-8"), snap, None, {})
+            result = audit_report(path.read_text(encoding="utf-8"), snap, ledger, excerpts, peers)
             self.assertEqual(result.status, "pass", (path.name, result.failures))
+        planted = audit_report("The extra figure is 123456789.\n", snap, ledger, excerpts, peers)
+        self.assertEqual(planted.status, "fail")
 
 
 class TestDerive(unittest.TestCase):

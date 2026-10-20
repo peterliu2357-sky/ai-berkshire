@@ -1,0 +1,444 @@
+{
+  "claims": [
+    {
+      "accessed": null,
+      "id": "ddr5-16gb-spot",
+      "inputs": [],
+      "measure": "ddr5_16gb_4800_session_average",
+      "published": "2026-10-20",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "count",
+      "url": "https://www.trendforce.com/price/dram/dram_spot",
+      "value": "60.70"
+    },
+    {
+      "accessed": null,
+      "id": "ddr4-16gb-spot",
+      "inputs": [],
+      "measure": "ddr4_16gb_2gx8_session_average",
+      "published": "2026-10-20",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "count",
+      "url": "https://www.trendforce.com/price/dram/dram_spot",
+      "value": "83.364"
+    },
+    {
+      "accessed": null,
+      "id": "ddr4-16gb-contract",
+      "inputs": [],
+      "measure": "ddr4_16gb_2gx8_session_average",
+      "published": "2026-08-31",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "count",
+      "url": "https://www.trendforce.com/price/dram/dram_spot",
+      "value": "50"
+    },
+    {
+      "accessed": null,
+      "id": "ddr5-sodimm-contract",
+      "inputs": [],
+      "measure": "ddr5_8gb_sodimm_session_average",
+      "published": "2026-08-31",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "count",
+      "url": "https://www.trendforce.com/price/dram/dram_spot",
+      "value": "133"
+    },
+    {
+      "accessed": null,
+      "id": "dram-qoq-low",
+      "inputs": [],
+      "measure": "dram_4q26_contract_qoq_low_percent",
+      "published": "2026-09-30",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://www.trendforce.com/presscenter/news/20260930-13258.html",
+      "value": "10"
+    },
+    {
+      "accessed": null,
+      "id": "dram-qoq-high",
+      "inputs": [],
+      "measure": "dram_4q26_contract_qoq_percent",
+      "published": "2026-09-30",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://www.trendforce.com/presscenter/news/20260930-13258.html",
+      "value": "15"
+    },
+    {
+      "accessed": null,
+      "id": "dram-qoq-news",
+      "inputs": [],
+      "measure": "dram_4q26_contract_qoq_percent",
+      "published": "2026-10-20",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://www.trendforce.com/news/2026/10/20/news-dram-prices-seen-rising-20-qoq-in-4q26-despite-slower-gains-ai-demand-tight-supply-support-outlook/",
+      "value": "20"
+    },
+    {
+      "accessed": null,
+      "id": "nand-qoq-low",
+      "inputs": [],
+      "measure": "nand_4q26_contract_qoq_low_percent",
+      "published": "2026-09-30",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://www.trendforce.com/presscenter/news/20260930-13258.html",
+      "value": "15"
+    },
+    {
+      "accessed": null,
+      "id": "nand-qoq-high",
+      "inputs": [],
+      "measure": "nand_4q26_contract_qoq_high_percent",
+      "published": "2026-09-30",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://www.trendforce.com/presscenter/news/20260930-13258.html",
+      "value": "20"
+    },
+    {
+      "accessed": null,
+      "id": "essd-bit-yoy",
+      "inputs": [],
+      "measure": "enterprise_ssd_bit_demand_yoy_percent",
+      "published": "2026-09-30",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://www.trendforce.com/presscenter/news/20260930-13258.html",
+      "value": "80"
+    },
+    {
+      "accessed": null,
+      "id": "hbm-8hi-low",
+      "inputs": [],
+      "measure": "hbm_8hi_cost_premium_low_percent",
+      "published": "2026-10-20",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://www.trendforce.com/news/2026/10/20/news-dram-prices-seen-rising-20-qoq-in-4q26-despite-slower-gains-ai-demand-tight-supply-support-outlook/",
+      "value": "10"
+    },
+    {
+      "accessed": null,
+      "id": "hbm-8hi-high",
+      "inputs": [],
+      "measure": "hbm_8hi_cost_premium_high_percent",
+      "published": "2026-10-20",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://www.trendforce.com/news/2026/10/20/news-dram-prices-seen-rising-20-qoq-in-4q26-despite-slower-gains-ai-demand-tight-supply-support-outlook/",
+      "value": "20"
+    },
+    {
+      "accessed": null,
+      "id": "samsung-ds-q2",
+      "inputs": [],
+      "measure": "samsung_ds_q2_2026_krw_trillion",
+      "published": "2026-07-30",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "count",
+      "url": "https://news.samsung.com/global/samsung-electronics-announces-second-quarter-2026-results",
+      "value": "127.5"
+    },
+    {
+      "accessed": null,
+      "id": "samsung-ds-op",
+      "inputs": [],
+      "measure": "samsung_ds_q2_2026_operating_krw_trillion",
+      "published": "2026-07-30",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "count",
+      "url": "https://news.samsung.com/global/samsung-electronics-announces-second-quarter-2026-results",
+      "value": "89.2"
+    },
+    {
+      "accessed": null,
+      "id": "samsung-q2",
+      "inputs": [],
+      "measure": "samsung_q2_2026_krw_trillion",
+      "published": "2026-07-30",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "count",
+      "url": "https://news.samsung.com/global/samsung-electronics-announces-second-quarter-2026-results",
+      "value": "171.5"
+    },
+    {
+      "accessed": null,
+      "id": "skh-q2",
+      "inputs": [],
+      "measure": "skhynix_q2_2026_krw_billion",
+      "published": "2026-07-29",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "count",
+      "url": "https://news.skhynix.com/en/q2-2026-business-results/",
+      "value": "79318.7"
+    },
+    {
+      "accessed": null,
+      "id": "skh-margin",
+      "inputs": [],
+      "measure": "skhynix_q2_2026_operating_margin_percent",
+      "published": "2026-07-29",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://news.skhynix.com/en/q2-2026-business-results/",
+      "value": "76"
+    },
+    {
+      "accessed": null,
+      "id": "skh-net-margin",
+      "inputs": [],
+      "measure": "skhynix_q2_2026_net_margin_percent",
+      "published": "2026-07-29",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://news.skhynix.com/en/q2-2026-business-results/",
+      "value": "118"
+    },
+    {
+      "accessed": null,
+      "id": "skh-yoy",
+      "inputs": [],
+      "measure": "skhynix_q2_2026_yoy_percent",
+      "published": "2026-07-29",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://news.skhynix.com/en/q2-2026-business-results/",
+      "value": "257"
+    },
+    {
+      "accessed": null,
+      "id": "skh-yoy-op",
+      "inputs": [],
+      "measure": "skhynix_q2_2026_yoy_operating_percent",
+      "published": "2026-07-29",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "percent",
+      "url": "https://news.skhynix.com/en/q2-2026-business-results/",
+      "value": "557"
+    },
+    {
+      "accessed": null,
+      "id": "fq1-2027-guide",
+      "inputs": [],
+      "measure": "fq1_2027_outlook_usd_ones",
+      "published": "2026-09-30",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "usd_ones",
+      "url": "https://investors.micron.com/news/press-release/2026/Micron-Technology-Inc--Reports-Record-Fiscal-Fourth-Quarter-and-Full-Year-2026-Results/",
+      "value": "61500000000"
+    },
+    {
+      "accessed": null,
+      "id": "fq1-2027-eps",
+      "inputs": [],
+      "measure": "fq1_2027_gaap_diluted_eps",
+      "published": "2026-09-30",
+      "quote_sha256": "",
+      "type": "cited",
+      "unit": "usd_per_share",
+      "url": "https://investors.micron.com/news/press-release/2026/Micron-Technology-Inc--Reports-Record-Fiscal-Fourth-Quarter-and-Full-Year-2026-Results/",
+      "value": "37.84"
+    },
+    {
+      "id": "ddr4-spot-vs-contract",
+      "measure": "ddr4_16gb_2gx8_session_average",
+      "members": [
+        "ddr4-16gb-spot",
+        "ddr4-16gb-contract"
+      ],
+      "type": "dispute"
+    },
+    {
+      "id": "dram-qoq-dispute",
+      "measure": "dram_4q26_contract_qoq_percent",
+      "members": [
+        "dram-qoq-high",
+        "dram-qoq-news"
+      ],
+      "type": "dispute"
+    },
+    {
+      "accession": "0000723125-26-000023",
+      "byte_end": 92972,
+      "byte_start": 92789,
+      "id": "mu-10k-export",
+      "measure": "export_control_prose",
+      "sha256": "0a62ebef0a7d15cb078d3cf632f3dc8a9b0cc804267744c242702587dba371b3",
+      "type": "excerpt"
+    },
+    {
+      "accession": "0000723125-26-000023",
+      "byte_end": 390753,
+      "byte_start": 390690,
+      "id": "mu-10k-customer",
+      "measure": "customer_concentration_prose",
+      "sha256": "de4c8e54c3a8e254091d0a6b77eb796c4b26ed5c37d2b4bc91275c14a7dd19ee",
+      "type": "excerpt"
+    },
+    {
+      "accession": "0000723125-26-000023",
+      "byte_end": 128562,
+      "byte_start": 128404,
+      "id": "mu-10k-hbm",
+      "measure": "hbm_demand_prose",
+      "sha256": "b1a81d624054e91c2654f573b098c172ac7b400ba123dfbc72a68b552401ce9c",
+      "type": "excerpt"
+    },
+    {
+      "accession": "0000723125-26-000023",
+      "byte_end": 39687,
+      "byte_start": 39544,
+      "id": "mu-10k-business",
+      "measure": "memory_portfolio_prose",
+      "sha256": "5ed959b58d7708322a05bca9f8b704905882331f9f1c7fb512c4eaf23ad3baaa",
+      "type": "excerpt"
+    },
+    {
+      "accession": "0000723125-25-000038",
+      "byte_end": 57528,
+      "byte_start": 57440,
+      "id": "mu-proxy-ceo",
+      "measure": "ceo_role_prose",
+      "sha256": "f20024053a48eb7deaac651b789879dfa337299f1af69245f83729eb99200fca",
+      "type": "excerpt"
+    },
+    {
+      "accession": "0000723125-25-000038",
+      "byte_end": 122415,
+      "byte_start": 122305,
+      "id": "mu-proxy-hbm",
+      "measure": "prior_year_hbm_mix_prose",
+      "sha256": "0578b9b9d6ced543f883f3a23a4b47dbef0eea158097b2702f0c670bf009e093",
+      "type": "excerpt"
+    },
+    {
+      "accession": "0000723125-26-000018",
+      "byte_end": 576,
+      "byte_start": 486,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000018/a2026q4ex991-pressrelease.htm",
+      "id": "mu-8k-ai",
+      "measure": "ai_demand_prose",
+      "sha256": "f482362ad885ec0f1c29d072d1f995ec60dfbd351d0aa4af993e8cb139d46f51",
+      "type": "excerpt"
+    },
+    {
+      "accession": "0000723125-26-000018",
+      "byte_end": 6107,
+      "byte_start": 5987,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000018/a2026q4ex991-pressrelease.htm",
+      "id": "mu-8k-guide",
+      "measure": "fq1_outlook_prose",
+      "sha256": "bdf23acb9d22801404e2b13ce0cf3fe90249aaaa4bec3c5277b75c781c445eb2",
+      "type": "excerpt"
+    },
+    {
+      "concept": "revenue",
+      "fiscal_year": 2022,
+      "id": "amd-rev-2022",
+      "measure": "amd_fy2022_top_line",
+      "snapshot_path": "reports/Micron/evidence/us-snapshot-AMD.json",
+      "type": "peer_snapshot"
+    },
+    {
+      "concept": "net_income",
+      "fiscal_year": 2022,
+      "id": "amd-ni-2022",
+      "measure": "amd_fy2022_bottom_line",
+      "snapshot_path": "reports/Micron/evidence/us-snapshot-AMD.json",
+      "type": "peer_snapshot"
+    },
+    {
+      "concept": "revenue",
+      "fiscal_year": 2020,
+      "id": "nvda-rev-2020",
+      "measure": "nvda_fy2020_top_line",
+      "snapshot_path": "reports/Micron/evidence/us-snapshot-NVDA.json",
+      "type": "peer_snapshot"
+    },
+    {
+      "concept": "net_income",
+      "fiscal_year": 2020,
+      "id": "nvda-ni-2020",
+      "measure": "nvda_fy2020_bottom_line",
+      "snapshot_path": "reports/Micron/evidence/us-snapshot-NVDA.json",
+      "type": "peer_snapshot"
+    },
+    {
+      "anchor": [
+        "mu-10k-hbm",
+        "ddr5-16gb-spot"
+      ],
+      "context": [
+        "dram-qoq-dispute"
+      ],
+      "id": "score-duan",
+      "stars": 2,
+      "type": "scored"
+    },
+    {
+      "anchor": [
+        "mu-10k-hbm",
+        "skh-margin"
+      ],
+      "context": [
+        "dram-qoq-dispute",
+        "ddr4-spot-vs-contract"
+      ],
+      "id": "score-buffett",
+      "stars": 2,
+      "type": "scored"
+    },
+    {
+      "anchor": [
+        "mu-10k-export",
+        "mu-proxy-ceo",
+        "mu-10k-customer"
+      ],
+      "context": [
+        "dram-qoq-dispute"
+      ],
+      "id": "score-lilu",
+      "stars": 3,
+      "type": "scored"
+    },
+    {
+      "anchor": [
+        "samsung-ds-q2",
+        "skh-q2",
+        "amd-rev-2022"
+      ],
+      "context": [
+        "dram-qoq-dispute"
+      ],
+      "id": "score-munger",
+      "stars": 2,
+      "type": "scored"
+    }
+  ],
+  "ticker": "MU"
+}
