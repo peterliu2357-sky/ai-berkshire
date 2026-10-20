@@ -57,6 +57,9 @@ _COMMANDS = [
     "python3 tools/us_market.py snapshot MU --out reports/Micron/evidence/us-snapshot-MU.json",
     "python3 tools/us_market.py analyze --snapshot reports/Micron/evidence/us-snapshot-MU.json",
 ]
+_AGENT_PATH = _ROOT / "local" / "sec_user_agent.txt"
+_AGENT_BYTES = _AGENT_PATH.read_bytes() if _AGENT_PATH.exists() else None
+_AGENT_MTIME = _AGENT_PATH.stat().st_mtime_ns if _AGENT_PATH.exists() else None
 
 
 def _read(name: str) -> bytes:
@@ -361,6 +364,62 @@ class TestCompanyfacts(unittest.TestCase):
         self.assertEqual(trades[0].shares, Decimal("100"))
         self.assertEqual(trades[0].code, "S")
 
+    def test_form4_splits_transaction_date_from_filing_date(self):
+        xml = b"""<?xml version="1.0"?>
+        <ownershipDocument>
+          <reportingOwner><rptOwnerName>RAY MICHAEL CHARLES</rptOwnerName></reportingOwner>
+          <nonDerivativeTransaction>
+            <transactionDate><value>2026-10-14</value></transactionDate>
+            <transactionCoding><transactionCode>S</transactionCode></transactionCoding>
+            <transactionAmounts>
+              <transactionShares><value>40</value></transactionShares>
+              <transactionPricePerShare><value>947.29</value></transactionPricePerShare>
+              <transactionAcquiredDisposedCode><value>D</value></transactionAcquiredDisposedCode>
+            </transactionAmounts>
+          </nonDerivativeTransaction>
+        </ownershipDocument>
+        """
+        trades = parse_form4(xml, "https://www.sec.gov/example.xml", date(2026, 10, 15))
+        self.assertEqual(trades[0].transaction_date, date(2026, 10, 14))
+        self.assertEqual(trades[0].filed, date(2026, 10, 15))
+
+    def test_derivative_only_form4_is_not_an_empty_failure(self):
+        xml = b"""<?xml version="1.0"?>
+        <ownershipDocument>
+          <reportingOwner><rptOwnerName>Ada Example</rptOwnerName></reportingOwner>
+          <derivativeTransaction>
+            <transactionDate><value>2026-10-14</value></transactionDate>
+            <transactionCoding><transactionCode>M</transactionCode></transactionCoding>
+            <transactionAmounts>
+              <transactionShares><value>10</value></transactionShares>
+              <transactionPricePerShare><value>0</value></transactionPricePerShare>
+              <transactionAcquiredDisposedCode><value>A</value></transactionAcquiredDisposedCode>
+            </transactionAmounts>
+          </derivativeTransaction>
+        </ownershipDocument>
+        """
+
+        def get(url):
+            if "company_tickers.json" in url:
+                return 200, json.dumps({"0": {"cik_str": 723125, "ticker": "MU", "title": "Micron"}}).encode()
+            if "submissions" in url:
+                body = {"filings": {"recent": {
+                    "form": ["4"],
+                    "filingDate": ["2026-10-15"],
+                    "accessionNumber": ["0001593199-26-000005"],
+                    "primaryDocument": ["primarydocument.xml"],
+                    "items": [""],
+                }}}
+                return 200, json.dumps(body).encode()
+            if url.endswith("/primarydocument.xml"):
+                return 200, xml
+            return 404, b""
+
+        snap = build_snapshot("MU", get)
+        self.assertEqual(len(snap.insiders), 1)
+        self.assertTrue(snap.insiders[0].derivative)
+        self.assertFalse(any(item.detail == "no insider rows" for item in snap.failures))
+
 
 class TestValuation(unittest.TestCase):
     def test_inventory_days_uses_period_length_once(self):
@@ -377,6 +436,15 @@ class TestValuation(unittest.TestCase):
         self.assertEqual(cycle.fiscal_years[-1], 2012)
         self.assertEqual(cycle.trough, Decimal(3))
         self.assertEqual(cycle.peak, Decimal(12))
+        self.assertEqual(cycle.gaps, ())
+
+    def test_through_cycle_window_is_calendar_years(self):
+        rows = [(year, Decimal(year)) for year in range(2001, 2013) if year != 2008]
+        cycle = through_cycle(rows)
+        self.assertIsNotNone(cycle)
+        self.assertEqual(cycle.fiscal_years[0], 2003)
+        self.assertNotIn(2002, cycle.fiscal_years)
+        self.assertEqual(cycle.gaps, (2008,))
 
     def test_through_cycle_median_is_not_the_peak(self):
         self.assertIsNone(through_cycle([(2020, Decimal("1"))] * 4))
@@ -466,6 +534,84 @@ class TestSnapshotAndCli(unittest.TestCase):
             item.source == "stale_cache" and item.detail == "age_seconds=100"
             for item in snap.failures
         ))
+
+    def test_html_error_page_without_cache_names_the_title(self):
+        page = b"<html><title>Nasdaq | Access Denied</title><body>blocked</body></html>"
+
+        def get(url):
+            if "/quote/MU/info" in url:
+                return 200, page
+            return 404, b""
+
+        snap = build_snapshot("MU", get)
+        self.assertTrue(any(
+            item.status == 200 and item.detail == "html error page: Nasdaq | Access Denied"
+            for item in snap.failures
+        ))
+        self.assertFalse(any(item.detail == "no print" for item in snap.failures))
+
+    def test_fresh_cache_hit_is_recorded_on_the_snapshot(self):
+        class Result(tuple):
+            def __new__(cls):
+                obj = tuple.__new__(cls, (404, b""))
+                obj.cached_at = 1700000000
+                obj.cache_age = 12
+                return obj
+
+        snap = build_snapshot("MU", lambda url: Result())
+        self.assertTrue(snap.cache)
+        self.assertEqual(snap.cache[0].cached_at, "1700000000")
+        self.assertEqual(snap.cache[0].age_seconds, "12")
+
+    def test_foreign_20f_market_cap_needs_an_adr_ratio(self):
+        chart = json.dumps({"chart": {"result": [{
+            "meta": {
+                "currency": "USD",
+                "regularMarketPrice": 100,
+                "regularMarketTime": 1700000000,
+                "currentTradingPeriod": {"regular": {"start": 1700003600, "end": 1700020000}},
+            },
+        }]}}).encode()
+        facts = json.dumps({"facts": {
+            "ifrs-full": {"Revenue": {"units": {"TWD": [{
+                "val": 9, "start": "2025-01-01", "end": "2025-12-31",
+                "form": "20-F", "filed": "2026-04-01", "fy": 2025,
+            }]}}},
+            "dei": {"EntityCommonStockSharesOutstanding": {"units": {"shares": [{
+                "val": 5000, "end": "2026-02-28", "form": "20-F", "filed": "2026-04-01",
+            }]}}},
+        }}).encode()
+        submissions = json.dumps({"filings": {"recent": {
+            "form": ["20-F"],
+            "filingDate": ["2026-04-01"],
+            "accessionNumber": ["0001046179-26-000001"],
+            "primaryDocument": ["tsm-20f.htm"],
+            "items": [""],
+        }}}).encode()
+        tickers = json.dumps({"0": {"cik_str": 1046179, "ticker": "TSM", "title": "TSMC"}}).encode()
+
+        def get(url):
+            if "query1.finance.yahoo.com" in url:
+                return 200, chart
+            if "company_tickers.json" in url:
+                return 200, tickers
+            if "submissions" in url:
+                return 200, submissions
+            if "companyfacts" in url:
+                return 200, facts
+            return 404, b""
+
+        snap = build_snapshot("TSM", get)
+        text = us_market.render_analysis(snap)
+        self.assertIn("market_cap: unavailable", text)
+        self.assertNotIn("market_cap: usd=500000", text)
+        self.assertTrue(any("ordinary-shares-per-adr" in item.detail for item in snap.failures))
+        self.assertTrue(any(item.detail == "gaap rows unavailable: ifrs or non-usd" for item in snap.failures))
+        self.assertEqual(snap.annual, ())
+        scaled = build_snapshot("TSM", get, adr_ratio=Decimal("5"))
+        scaled_text = us_market.render_analysis(scaled)
+        self.assertIn("market_cap: usd=100000", scaled_text)
+        self.assertFalse(any("ordinary-shares-per-adr" in item.detail for item in scaled.failures))
 
     def test_snapshot_exits_before_fetch_when_agent_missing(self):
         calls = []
@@ -658,6 +804,16 @@ class TestSecClient(unittest.TestCase):
         with self.assertRaises(SecConfigError):
             sec_user_agent(path="/tmp/does-not-exist-sec-ua.txt")
 
+    def test_placeholder_and_reserved_domains_are_rejected(self):
+        from usmarket.fetch import valid_sec_user_agent
+
+        self.assertFalse(valid_sec_user_agent("Your Name you@example.com"))
+        self.assertFalse(valid_sec_user_agent("Ada Lovelace ada@example.com"))
+        self.assertFalse(valid_sec_user_agent("Ada Lovelace ada@example.org"))
+        self.assertFalse(valid_sec_user_agent("Ada Lovelace ada@example.net"))
+        self.assertFalse(valid_sec_user_agent("Ada Lovelace ada@mail.example.com"))
+        self.assertTrue(valid_sec_user_agent("Ada Lovelace ada@research.test"))
+
     def test_declared_headers_retry_gzip_and_cache(self):
         import gzip
 
@@ -718,6 +874,21 @@ class TestSecClient(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertEqual(body, payload)
         self.assertEqual(len(calls), 3)
+
+    def test_fresh_cache_exposes_cached_at_and_age(self):
+        import base64
+
+        from usmarket.fetch import _cache_path, http_get
+
+        url = "https://www.sec.gov/files/company_tickers.json"
+        with tempfile.TemporaryDirectory() as directory:
+            path = _cache_path(directory, url)
+            os.makedirs(directory, exist_ok=True)
+            payload = {"status": 200, "saved": 1000, "body": base64.b64encode(b"{}").decode("ascii")}
+            Path(path).write_text(json.dumps(payload), encoding="utf-8")
+            result = http_get(url, "Ada Lovelace ada@research.test", opener=lambda *args, **kwargs: (_ for _ in ()).throw(AssertionError("live fetch")), cache_dir=directory, now=lambda: 1030)
+        self.assertEqual(result.cached_at, 1000)
+        self.assertEqual(result.cache_age, 30)
 
     def test_live_get_sends_declared_agent_to_sec_and_fred(self):
         seen = []
@@ -1048,6 +1219,14 @@ class TestCommandDocs(unittest.TestCase):
             self.assertNotIn("改用 `skills/investment-team-en.md`", text)
         self.assertIn("20-F", data)
         self.assertIn("40-F", data)
+
+
+class TestAgentFileUntouched(unittest.TestCase):
+    def test_repo_agent_file_bytes_match_the_start_of_the_suite(self):
+        after = _AGENT_PATH.read_bytes() if _AGENT_PATH.exists() else None
+        mtime = _AGENT_PATH.stat().st_mtime_ns if _AGENT_PATH.exists() else None
+        self.assertEqual(after, _AGENT_BYTES)
+        self.assertEqual(mtime, _AGENT_MTIME)
 
 
 if __name__ == "__main__":
