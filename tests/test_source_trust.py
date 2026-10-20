@@ -5,8 +5,11 @@ import argparse
 import contextlib
 import io
 import json
+import os
 import sys
+import tempfile
 import unittest
+from unittest.mock import patch
 from datetime import date, datetime, timezone
 from decimal import Decimal
 from pathlib import Path
@@ -14,6 +17,7 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_ROOT / "tools"))
 
+import source_ledger  # noqa: E402
 from financial_rigor import scenario_target_price  # noqa: E402
 from us_market import render_analysis  # noqa: E402
 from usmarket.claims import (  # noqa: E402
@@ -479,6 +483,233 @@ class TestParserAndVisibleText(unittest.TestCase):
         self.assertNotIn("var n", text)
         self.assertNotIn("color", text)
         self.assertEqual(visible_text(b"plain 7", "text/plain"), "plain 7")
+
+
+_AGENT = "Ada Lovelace ada@research-desk.test"
+_SENTENCE = "The board elected Ada."
+
+
+def _html_filing(times: int) -> bytes:
+    paragraphs = "".join(f"<p>{_SENTENCE}</p>" for _ in range(times))
+    return (
+        b"<html><style>.x{color:red}</style><script>var n=1</script><body>"
+        + paragraphs.encode("utf-8")
+        + b"</body></html>"
+    )
+
+
+class TestSourceLedgerCli(unittest.TestCase):
+    def test_admit_cited_prints_the_paste_line(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger = os.path.join(directory, "source-ledger.json")
+            with open(os.path.join(directory, "us-snapshot-MU.json"), "w", encoding="utf-8"):
+                pass
+            argv = [
+                "admit",
+                "cited",
+                "--ledger",
+                ledger,
+                "--id",
+                "dram-ddr5-tf",
+                "--measure",
+                "dram_spot_ddr5",
+                "--value",
+                "5.15",
+                "--unit",
+                "usd_per_gb",
+                "--url",
+                "https://www.trendforce.com/example/ddr5",
+                "--published",
+                "2026-03-18",
+            ]
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = source_ledger.main(argv)
+            self.assertEqual(code, 0)
+            self.assertEqual(
+                stdout.getvalue().strip(),
+                "{5.15}[c:dram-ddr5-tf https://www.trendforce.com/example/ddr5 "
+                "TrendForce published=2026-03-18 secondary]",
+            )
+            with open(ledger, encoding="utf-8") as handle:
+                stored = handle.read()
+            self.assertNotIn('"tier"', stored)
+            self.assertNotIn('"publisher"', stored)
+            self.assertNotIn("@", stored)
+            with contextlib.redirect_stdout(io.StringIO()):
+                again = source_ledger.main(argv)
+            self.assertEqual(again, 0)
+            with open(ledger, encoding="utf-8") as handle:
+                self.assertEqual(len(load_ledger(handle.read()).claims), 1)
+
+    def test_excerpt_fetch_hides_the_user_agent_and_deletes_the_download(self):
+        snap = _mu()
+        filing_url = snap.filings[0].url
+        calls = []
+        created = []
+        real_mkstemp = tempfile.mkstemp
+
+        def fake_get(url, user_agent, **kwargs):
+            calls.append((url, user_agent))
+            return 200, _html_filing(1)
+
+        def tracking_mkstemp(*args, **kwargs):
+            result = real_mkstemp(*args, **kwargs)
+            created.append(result[1])
+            return result
+
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot_path = os.path.join(directory, "us-snapshot-MU.json")
+            ledger_path = os.path.join(directory, "source-ledger.json")
+            out_path = os.path.join(directory, "excerpts", "proxy-ceo.txt")
+            with open(snapshot_path, "w", encoding="utf-8") as handle:
+                json.dump(snap.to_json(), handle)
+            argv = [
+                "admit",
+                "excerpt",
+                "--ledger",
+                ledger_path,
+                "--snapshot",
+                snapshot_path,
+                "--id",
+                "proxy-ceo",
+                "--measure",
+                "biography",
+                "--accession",
+                snap.filings[0].accession,
+                "--contains",
+                _SENTENCE,
+                "--out",
+                out_path,
+            ]
+            stdout = io.StringIO()
+            with patch.object(source_ledger, "http_get", fake_get), patch.object(
+                source_ledger, "sec_user_agent", return_value=_AGENT
+            ), patch.object(source_ledger.tempfile, "mkstemp", tracking_mkstemp), contextlib.redirect_stdout(stdout):
+                code = source_ledger.main(argv)
+            text = stdout.getvalue()
+            with open(out_path, encoding="utf-8") as handle:
+                slice_text = handle.read()
+            with open(ledger_path, encoding="utf-8") as handle:
+                ledger_text = handle.read()
+            self.assertEqual(code, 0)
+            self.assertEqual(calls, [(filing_url, _AGENT)])
+            self.assertIn(_SENTENCE, text)
+            self.assertIn("[q:proxy-ceo]", text)
+            self.assertIn("[/q]", text)
+            self.assertTrue(text.strip().splitlines()[0].endswith("primary]"))
+            self.assertNotIn("var n", text)
+            self.assertEqual(slice_text, _SENTENCE)
+            for surface in (text, slice_text, ledger_text, " ".join(argv)):
+                self.assertNotIn(_AGENT, surface)
+                self.assertNotIn("User-Agent:", surface)
+            self.assertTrue(created)
+            self.assertTrue(all(not os.path.exists(path) for path in created))
+            self.assertFalse(os.path.exists(out_path + ".tmp"))
+            with patch.object(source_ledger, "http_get", fake_get), patch.object(
+                source_ledger, "sec_user_agent", return_value=_AGENT
+            ), patch.object(source_ledger.tempfile, "mkstemp", tracking_mkstemp), contextlib.redirect_stdout(io.StringIO()):
+                again = source_ledger.main(argv)
+            self.assertEqual(again, 0)
+            with open(ledger_path, encoding="utf-8") as handle:
+                self.assertEqual(len(load_ledger(handle.read()).claims), 1)
+
+    def test_excerpt_match_failure_deletes_the_download_and_skips_the_ledger(self):
+        snap = _mu()
+        created = []
+        real_mkstemp = tempfile.mkstemp
+
+        def fake_get(url, user_agent, **kwargs):
+            return 200, _html_filing(2)
+
+        def tracking_mkstemp(*args, **kwargs):
+            result = real_mkstemp(*args, **kwargs)
+            created.append(result[1])
+            return result
+
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot_path = os.path.join(directory, "us-snapshot-MU.json")
+            ledger_path = os.path.join(directory, "source-ledger.json")
+            out_path = os.path.join(directory, "excerpts", "proxy-ceo.txt")
+            with open(snapshot_path, "w", encoding="utf-8") as handle:
+                json.dump(snap.to_json(), handle)
+            argv = [
+                "admit",
+                "excerpt",
+                "--ledger",
+                ledger_path,
+                "--snapshot",
+                snapshot_path,
+                "--id",
+                "proxy-ceo",
+                "--measure",
+                "biography",
+                "--accession",
+                snap.filings[0].accession,
+                "--contains",
+                _SENTENCE,
+                "--out",
+                out_path,
+            ]
+            stderr = io.StringIO()
+            with patch.object(source_ledger, "http_get", fake_get), patch.object(
+                source_ledger, "sec_user_agent", return_value=_AGENT
+            ), patch.object(source_ledger.tempfile, "mkstemp", tracking_mkstemp), contextlib.redirect_stdout(
+                io.StringIO()
+            ), contextlib.redirect_stderr(stderr):
+                code = source_ledger.main(argv)
+            self.assertEqual(code, 1)
+            self.assertNotIn(_AGENT, stderr.getvalue())
+            self.assertNotIn("User-Agent:", stderr.getvalue())
+            self.assertFalse(os.path.exists(ledger_path))
+            self.assertFalse(os.path.exists(out_path))
+            self.assertTrue(created)
+            self.assertTrue(all(not os.path.exists(path) for path in created))
+
+    def test_diverged_excerpt_slice_exits_2(self):
+        snap = _mu()
+
+        def fake_get(url, user_agent, **kwargs):
+            return 200, _html_filing(1)
+
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot_path = os.path.join(directory, "us-snapshot-MU.json")
+            ledger_path = os.path.join(directory, "source-ledger.json")
+            out_path = os.path.join(directory, "excerpts", "proxy-ceo.txt")
+            os.makedirs(os.path.dirname(out_path))
+            with open(out_path, "wb") as handle:
+                handle.write(b"other sentence")
+            with open(snapshot_path, "w", encoding="utf-8") as handle:
+                json.dump(snap.to_json(), handle)
+            argv = [
+                "admit",
+                "excerpt",
+                "--ledger",
+                ledger_path,
+                "--snapshot",
+                snapshot_path,
+                "--id",
+                "proxy-ceo",
+                "--measure",
+                "biography",
+                "--accession",
+                snap.filings[0].accession,
+                "--contains",
+                _SENTENCE,
+                "--out",
+                out_path,
+            ]
+            stderr = io.StringIO()
+            with patch.object(source_ledger, "http_get", fake_get), patch.object(
+                source_ledger, "sec_user_agent", return_value=_AGENT
+            ), contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(stderr):
+                code = source_ledger.main(argv)
+            self.assertEqual(code, 2)
+            self.assertNotIn(_AGENT, stderr.getvalue())
+            self.assertNotIn("User-Agent:", stderr.getvalue())
+            with open(out_path, "rb") as handle:
+                self.assertEqual(handle.read(), b"other sentence")
+            self.assertFalse(os.path.exists(ledger_path))
 
 
 if __name__ == "__main__":
