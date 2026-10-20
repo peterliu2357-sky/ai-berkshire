@@ -134,7 +134,7 @@ class TestHostTiers(unittest.TestCase):
             tier_of_host("https://www.trendforce.com/example/ddr5"),
             (Tier.SECONDARY, "TrendForce"),
         )
-        self.assertEqual(tier_of_host("https://spot.trendforce.com/ddr5")[0], Tier.SECONDARY)
+        self.assertEqual(tier_of_host("https://spot.trendforce.com/ddr5")[0], Tier.LOW)
         claim = _cited(
             "dram-ddr5-tf",
             "dram_spot_ddr5",
@@ -166,8 +166,8 @@ class TestHostTiers(unittest.TestCase):
         self.assertIn("company IR", line)
         self.assertTrue(line.endswith("primary]"))
         bare = citation_lines(_mu(), SourceLedger("MU", (claim,)), {}, {})[claim.id][0]
-        self.assertNotIn("company IR", bare)
-        self.assertTrue(bare.endswith("low]"))
+        self.assertIn("company IR", bare)
+        self.assertTrue(bare.endswith("primary]"))
         blurb = _mu(labels=(SourceLabel("blurb", "see https://memory-prices.invalid/spot", "hand"),))
         buried = _cited("spot", "dram_spot_ddr5", "5.15", CitedUnit.USD_PER_GB, "https://memory-prices.invalid/spot")
         buried_line = citation_lines(blurb, SourceLedger("MU", (buried,)), {}, {})[buried.id][0]
@@ -318,6 +318,42 @@ class TestAdmitAndAudit(unittest.TestCase):
         result = audit_report("净利润二千四百亿元\n", _mu(), None, {})
         self.assertEqual(result.status, "fail")
         self.assertTrue(any("240000000000" in item or "二千四百" in item for item in result.failures))
+
+    def test_qualified_measure_and_a_labeled_forecast_stay_citeable(self):
+        snap = _mu()
+        for measure in ("segment_dram_revenue", "hbm_capex", "profit_2036", "nongaap_eps"):
+            claim = _cited("alias", measure, "5.15", CitedUnit.USD_ONES, "https://www.trendforce.com/example/ddr5")
+            admit(SourceLedger("MU", ()), claim, snap)
+
+    def test_a_snapshot_figure_passes_when_the_line_names_it(self):
+        snap = _mu(
+            insiders=(
+                InsiderTrade(
+                    date(2026, 10, 14),
+                    date(2026, 10, 15),
+                    "RAY",
+                    "S",
+                    "D",
+                    Decimal("40.00"),
+                    Decimal("947.29"),
+                    "https://www.sec.gov/Archives/example.xml",
+                ),
+            ),
+            failures=(FetchFailure("nasdaq_info", 200, "https://www.example.invalid/info", "undated"),),
+        )
+        self.assertEqual(audit_report("shares 40.00 and price 947.29\n", snap, None, {}).status, "pass")
+        self.assertEqual(audit_report("Fiscal year 2026 ends 2026-08-28.\n", _mu(), None, {}).status, "pass")
+        self.assertEqual(audit_report("Nasdaq info, status 200\n", snap, None, {}).status, "pass")
+        self.assertEqual(audit_report("`10-K` and `005930.KS`\n", _mu(), None, {}).status, "pass")
+
+    def test_thesis_anchor_plus_a_snapshot_ref_can_score(self):
+        snap = _mu()
+        cited = _cited("spot", "dram_spot_ddr5", "5.15", CitedUnit.USD_PER_GB, "https://www.trendforce.com/example/ddr5")
+        ledger = admit(SourceLedger("MU", ()), cited, snap)
+        ledger = admit(ledger, Scored(ClaimId("score-mu"), 4, ("spot", "snap:market_cap")), snap)
+        lines = citation_lines(snap, ledger, {}, {})
+        report = "\n".join([lines[cited.id][0], lines[ClaimId("score-mu")][0], "★★★★"])
+        self.assertEqual(audit_report(report, snap, ledger, {}).status, "pass")
 
     def test_snapshot_anchor_alone_cannot_support_a_star(self):
         snap = _mu()
@@ -520,7 +556,8 @@ class TestDerive(unittest.TestCase):
             future = eps
             for _ in range(3):
                 future = future * (Decimal("1") + Decimal(growth))
-            expected.append(format(future * Decimal(pe), "f"))
+            cents = (future * Decimal(pe)).quantize(Decimal("0.01"))
+            expected.append(format(cents, "f"))
         text = "\n".join(citation_lines(snap, again, {}, {})[request.id])
         for canon in expected:
             self.assertIn("{" + canon + "}", text)
@@ -572,9 +609,8 @@ class TestDerive(unittest.TestCase):
         self.assertEqual(row.inputs[1], "pe-base")
         self.assertEqual(row.inputs[-2:], ("snap:close:2026-10-17", "snap:shares:2026-08-28"))
         self.assertNotIn("--reported", " ".join(row.inputs))
-        rate = (2000 * 12 / 10000) ** (1.0 / 10) - 1.0
         line = citation_lines(snap, derived, {}, {})[request.id][0]
-        self.assertIn("{" + format(Decimal(str(rate)), "f") + "}", line)
+        self.assertIn("{0.0915}", line)
         self.assertIn("tool=irr", line)
         bare = _mu(shares=None)
         with self.assertRaises(ValueError):

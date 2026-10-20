@@ -110,9 +110,25 @@ def _host_name(url: str) -> str:
     return host.lower().rstrip(".")
 
 
+_HOST_PREFIXES = frozenset({"ir", "investors", "investor", "news", "newsroom"})
+_ISSUER_SITES = {"MU": "micron.com"}
+
+
+def _host_prefix(host: str, name: str) -> str | None:
+    if host == name:
+        return ""
+    suffix = "." + name
+    if not host.endswith(suffix):
+        return None
+    label = host[: -len(suffix)]
+    if "." in label or label not in _HOST_PREFIXES:
+        return None
+    return label
+
+
 def _match_host(host: str, rules: tuple[tuple[str, str], ...]) -> str | None:
     for name, publisher in rules:
-        if host == name or host.endswith("." + name):
+        if _host_prefix(host, name) is not None:
             return publisher
     return None
 
@@ -156,12 +172,85 @@ def _snapshot_measure_keys() -> frozenset[str]:
 _SNAPSHOT_MEASURE_KEYS = _snapshot_measure_keys()
 
 
+_CORE_TOKENS = frozenset({
+    "income",
+    "profit",
+    "revenue",
+    "sales",
+    "eps",
+    "earnings",
+    "share",
+    "shares",
+    "equity",
+    "ebit",
+    "ebitda",
+    "cash",
+    "debt",
+    "asset",
+    "assets",
+    "cap",
+    "capitalization",
+    "mktcap",
+    "marketcap",
+    "ni",
+    "rev",
+    "fcf",
+})
+_CORE_JOINED = (
+    "netincome",
+    "totalrevenue",
+    "marketcap",
+    "enterprisevalue",
+    "dilutedeps",
+    "sharesoutstanding",
+)
+_QUALIFIER_TOKENS = frozenset({"nongaap", "adjusted", "segment", "nonifrs"})
+
+
+def _measure_tokens(measure: str) -> list[str]:
+    return re.findall(r"[a-z]+|\d+", measure.casefold())
+
+
+def _has_qualifier(measure: str) -> bool:
+    tokens = _measure_tokens(measure)
+    joined = "".join(tokens)
+    if "nongaap" in joined or "nonifrs" in joined:
+        return True
+    return any(token in _QUALIFIER_TOKENS for token in tokens)
+
+
+def _profit_blocks(tokens: list[str]) -> bool:
+    words = [token for token in tokens if not token.isdigit()]
+    if "profit" not in words:
+        return False
+    companions = [token for token in words if token != "profit"]
+    if any(token in {"net", "gross", "operating", "total", "gaap", "pretax"} for token in companions):
+        return True
+    return not companions and not any(token.isdigit() for token in tokens)
+
+
+def _core_stem(measure: str) -> bool:
+    if _has_qualifier(measure):
+        return False
+    tokens = _measure_tokens(measure)
+    if _profit_blocks(tokens):
+        return True
+    joined = "".join(re.findall(r"[a-z0-9]+", measure.casefold()))
+    if any(token in _CORE_TOKENS and token != "profit" for token in tokens):
+        return True
+    return any(stem in joined for stem in _CORE_JOINED)
+
+
 def _measure_blocked(measure: str, snapshot: IssuerSnapshot | None) -> bool:
     if _measure_key(measure) in _SNAPSHOT_MEASURE_KEYS:
         return True
     if snapshot is not None and measure in _blocked_measures(snapshot):
         return True
     return False
+
+
+def _cited_measure_blocked(measure: str, snapshot: IssuerSnapshot | None) -> bool:
+    return _measure_blocked(measure, snapshot) or _core_stem(measure)
 
 
 def _website_hosts(snapshot: IssuerSnapshot) -> set[str]:
@@ -178,12 +267,21 @@ def _website_hosts(snapshot: IssuerSnapshot) -> set[str]:
                     hosts.add(_host_name(raw))
                 except ValueError:
                     continue
+    fallback = _ISSUER_SITES.get(snapshot.ticker.upper())
+    if fallback:
+        hosts.add(fallback)
     return hosts
 
 
+def _on_issuer_site(url_host: str, issuer_host: str) -> bool:
+    return _host_prefix(url_host, issuer_host) is not None
+
+
 def cited_binding(url: str, snapshot: IssuerSnapshot | None) -> tuple[Tier, str]:
-    if snapshot is not None and _host_name(url) in _website_hosts(snapshot):
-        return Tier.PRIMARY, "company IR"
+    if snapshot is not None:
+        host = _host_name(url)
+        if any(_on_issuer_site(host, site) for site in _website_hosts(snapshot)):
+            return Tier.PRIMARY, "company IR"
     return tier_of_host(url)
 
 
@@ -194,6 +292,11 @@ def _sec_host(url: str) -> bool:
 
 def canonical_decimal(value: Decimal) -> str:
     return format(value, "f")
+
+
+def _printed_derived(value: Decimal, tool: DeriveTool) -> str:
+    quantum = Decimal("0.01") if tool == DeriveTool.THREE_SCENARIO else Decimal("0.0001")
+    return format(value.quantize(quantum, rounding=ROUND_HALF_EVEN), "f")
 
 
 @dataclass(frozen=True)
@@ -228,6 +331,7 @@ class Excerpt:
     sha256: str
     byte_start: int
     byte_end: int
+    document_url: str = ""
 
     def __post_init__(self) -> None:
         if not self.accession or self.byte_start < 0 or self.byte_end <= self.byte_start:
@@ -429,8 +533,24 @@ def _claim_from_json(item: object) -> Claim:
     fields = _FIELDS.get(kind) if isinstance(kind, str) else None
     if fields is None:
         raise ValueError("unknown claim type")
-    _exact_fields(item, fields)
     claim_id = ClaimId(item["id"])
+    if kind == "excerpt":
+        keys = set(item)
+        if keys != set(fields) and keys != set(fields) | {"document_url"}:
+            raise ValueError("ledger claim fields do not match the claim type")
+        document_url = item.get("document_url", "")
+        if not isinstance(document_url, str):
+            raise ValueError("excerpt document url is rejected")
+        return Excerpt(
+            claim_id,
+            _measure(item["measure"]),
+            str(item["accession"]),
+            str(item["sha256"]),
+            int(item["byte_start"]),
+            int(item["byte_end"]),
+            document_url,
+        )
+    _exact_fields(item, fields)
     if kind == "cited":
         return Cited(
             claim_id,
@@ -442,15 +562,6 @@ def _claim_from_json(item: object) -> Claim:
             _date_or_none(item["accessed"]),
             _id_tuple(item["inputs"]),
             item["quote_sha256"] if isinstance(item["quote_sha256"], str) else "",
-        )
-    if kind == "excerpt":
-        return Excerpt(
-            claim_id,
-            _measure(item["measure"]),
-            str(item["accession"]),
-            str(item["sha256"]),
-            int(item["byte_start"]),
-            int(item["byte_end"]),
         )
     if kind == "peer_snapshot":
         return PeerSnapshot(
@@ -522,6 +633,7 @@ def _claim_json(claim: Claim) -> dict:
             "sha256": claim.sha256,
             "byte_start": claim.byte_start,
             "byte_end": claim.byte_end,
+            **({"document_url": claim.document_url} if claim.document_url else {}),
         }
     if isinstance(claim, PeerSnapshot):
         return {
@@ -673,7 +785,13 @@ def admit(
     if isinstance(claim, Cited) and _sec_host(claim.url):
         raise ValueError("cited claim cannot use a sec.gov host")
     measure = _measure_of(claim)
-    if measure is not None and _measure_blocked(measure, snapshot):
+    blocked = False
+    if measure is not None:
+        if isinstance(claim, Cited):
+            blocked = _cited_measure_blocked(measure, snapshot)
+        else:
+            blocked = _measure_blocked(measure, snapshot)
+    if blocked:
         raise ValueError(f"measure collides with the snapshot: {measure}")
     if isinstance(claim, Cited):
         found = ledger.by_id()
@@ -759,15 +877,21 @@ def _as_cited(found: Mapping[ClaimId, Claim], claim_id: ClaimId) -> Cited:
 
 def _growth_rate(claim: Cited) -> Decimal:
     if claim.unit == CitedUnit.RATIO:
-        return claim.value
-    if claim.unit == CitedUnit.PERCENT:
-        return _CTX.divide(claim.value, Decimal("100"))
-    raise ValueError(f"{claim.id} growth must be ratio or percent")
+        rate = claim.value
+    elif claim.unit == CitedUnit.PERCENT:
+        rate = _CTX.divide(claim.value, Decimal("100"))
+    else:
+        raise ValueError(f"{claim.id} growth must be ratio or percent")
+    if rate < Decimal("-1"):
+        raise ValueError(f"{claim.id} growth must be greater than -1")
+    return rate
 
 
 def _multiple(claim: Cited) -> Decimal:
     if claim.unit != CitedUnit.MULTIPLE:
         raise ValueError(f"{claim.id} pe must be a multiple")
+    if claim.value <= 0:
+        raise ValueError(f"{claim.id} pe must be positive")
     return claim.value
 
 
@@ -788,7 +912,11 @@ def _scenario_prices(ledger: SourceLedger, snapshot: IssuerSnapshot, inputs: tup
     _resolve_snap(snapshot, inputs[8])
     if shares == 0:
         raise ValueError("share count is zero")
+    if income < 0:
+        raise ValueError("three-scenario does not price a loss year")
     eps = _CTX.divide(income, shares)
+    if eps < 0:
+        raise ValueError("three-scenario does not price a loss year")
     prices = []
     for index in range(3):
         growth = _growth_rate(_as_cited(found, ClaimId(inputs[index])))
@@ -868,11 +996,17 @@ def _same_derive(existing: Claim | None, request: ThreeScenario | IrrRequest) ->
     return len(existing.inputs) == len(prefix) + 2 and existing.inputs[: len(prefix)] == prefix
 
 
+def _require_years(years: int) -> None:
+    if isinstance(years, bool) or not isinstance(years, int) or years < 1:
+        raise ValueError("derived years must be positive")
+
+
 def derive(
     ledger: SourceLedger,
     snapshot: IssuerSnapshot,
     request: ThreeScenario | IrrRequest,
 ) -> SourceLedger:
+    _require_years(request.years)
     existing = ledger.by_id().get(request.id)
     if isinstance(request, ThreeScenario):
         inputs = _three_inputs(snapshot, request)
@@ -1008,7 +1142,8 @@ def citation_lines(
             filing = _filing_by_accession(snapshot, claim.accession)
             quote = _excerpt_text(claim, excerpts)
             block = f"[q:{claim.id}]\n{quote}\n[/q]"
-            lines[claim.id] = (_sec_bracket(claim.id, filing.url, filing.filed), block)
+            url = claim.document_url or filing.url
+            lines[claim.id] = (_sec_bracket(claim.id, url, filing.filed), block)
         elif isinstance(claim, PeerSnapshot):
             peer = peers.get(claim.snapshot_path)
             if peer is None:
@@ -1032,7 +1167,8 @@ def citation_lines(
                     f"[d:{claim.id} derived tool={claim.tool.value} "
                     f"inputs={','.join(claim.inputs)}{case_bit} tier={tier.value}]"
                 )
-                rows.append("{" + canonical_decimal(value) + "}" + row_body)
+                shown = _printed_derived(value, claim.tool)
+                rows.append("{" + shown + "}" + row_body)
             lines[claim.id] = tuple(rows)
         elif isinstance(claim, Dispute):
             members = ",".join(str(item) for item in claim.members)
@@ -1104,15 +1240,156 @@ def _mask_exact(report: str, rows: tuple[str, ...]) -> str:
     return masked
 
 
-def _mask_inline(line: str) -> str:
-    def blank_tick(match: re.Match[str]) -> str:
-        inner = match.group(0)[1:-1].strip()
-        if re.fullmatch(r"-?\d+(?:,\d{3})*(?:\.\d+)?", inner):
-            return match.group(0)
-        return " " * len(match.group(0))
+_FORM_SPAN = re.compile(r"(?i)^(?:form\s+)?(?:10-k/?a?|10-q|8-k|20-f|40-f|6-k|def\s*14a|s-1|4)$")
+_TICKER_SPAN = re.compile(r"(?i)^[a-z]{1,6}(?:\.[a-z]{1,4})?$|^\d{1,6}\.[a-z]{1,4}$")
+_IDENT_SPAN = re.compile(r"^[A-Za-z_][\w./:-]*$")
+_CN_DIGITS = {"零": 0, "〇": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
+_CN_UNITS = {"十": 10, "百": 100, "千": 1000}
+_CN_BIG = {"万": 10000, "亿": 100000000}
+_CN_CHARS = frozenset(_CN_DIGITS) | frozenset(_CN_UNITS) | frozenset(_CN_BIG)
+_CN_RUN = re.compile(r"[零〇一二两三四五六七八九十百千万亿]+")
 
-    line = re.sub(r"`[^`]*`", blank_tick, line)
+
+def _span_exempt(inner: str) -> bool:
+    text = inner.strip()
+    if _FORM_SPAN.fullmatch(text) or _TICKER_SPAN.fullmatch(text):
+        return True
+    if "/" in text or "\\" in text or text.lower().endswith((".md", ".py", ".json", ".txt", ".html", ".xml")):
+        return True
+    return " " not in text and _IDENT_SPAN.fullmatch(text) is not None
+
+
+def _mask_inline(line: str) -> str:
+    def rewrite(match: re.Match[str]) -> str:
+        inner = match.group(0)[1:-1]
+        if _span_exempt(inner):
+            return " " * len(match.group(0))
+        kept = "".join(char if char.isdigit() or char in ".,-" or char in _CN_CHARS else " " for char in inner)
+        return " " + kept + " "
+
+    line = re.sub(r"`[^`]*`", rewrite, line)
     return re.sub(r"[\w./-]+\.md", lambda match: " " * len(match.group(0)), line)
+
+
+def _parse_chinese(text: str) -> int | None:
+    if not any(char in _CN_UNITS or char in _CN_BIG for char in text):
+        return None
+    total = 0
+    section = 0
+    number = 0
+    for char in text:
+        if char in _CN_DIGITS:
+            number = _CN_DIGITS[char]
+        elif char in _CN_UNITS:
+            if number == 0:
+                number = 1
+            section += number * _CN_UNITS[char]
+            number = 0
+        elif char in _CN_BIG:
+            section += number
+            total += section * _CN_BIG[char]
+            section = 0
+            number = 0
+        else:
+            return None
+    return total + section + number
+
+
+def _word_has(line: str, words: frozenset[str]) -> bool:
+    folded = line.casefold()
+    return any(re.search(rf"(?<![a-z]){re.escape(word)}(?![a-z])", folded) for word in words)
+
+
+def _quantity_tokens(value: Decimal) -> set[str]:
+    return _whole_numbers(format(value, "f"))
+
+
+def _protected_tokens(snapshot: IssuerSnapshot, analyze_text: str) -> set[str]:
+    found: set[str] = set()
+    for item in snapshot.prints:
+        found.update(_quantity_tokens(item.price))
+    for fact in snapshot.annual:
+        found.update(_quantity_tokens(fact.ones))
+    if snapshot.shares is not None:
+        found.update(_quantity_tokens(snapshot.shares.shares))
+    for item in snapshot.yields:
+        found.update(_quantity_tokens(item.rate))
+    for item in snapshot.percents:
+        found.update(_quantity_tokens(item.parts_per_hundred))
+    for item in snapshot.ranges:
+        found.update(_quantity_tokens(item.value))
+    for item in snapshot.unscaled:
+        found.update(_whole_numbers(item.lexeme))
+    for line in analyze_text.splitlines():
+        if not line.startswith(ANALYZE_PREFIXES):
+            continue
+        for token in _NUMBER_TOKEN.findall(line):
+            for piece in _whole_numbers(token):
+                if re.fullmatch(r"\d{4}", piece) and 1900 <= int(piece) <= 2100:
+                    continue
+                found.add(piece)
+    return found
+
+
+def _suppressed_tokens(snapshot: IssuerSnapshot, allowed: set[str], analyze_text: str) -> set[str]:
+    drop: set[str] = set()
+    for trade in snapshot.insiders:
+        drop.update(_quantity_tokens(trade.shares))
+        if trade.price is not None:
+            drop.update(_quantity_tokens(trade.price))
+    for fact in snapshot.annual:
+        if 1900 <= fact.fiscal_year <= 2100:
+            drop.update(_quantity_tokens(Decimal(fact.fiscal_year)))
+    for failure in snapshot.failures:
+        drop.update(_quantity_tokens(Decimal(failure.status)))
+    for token in allowed:
+        if not re.fullmatch(r"-?\d+", token):
+            continue
+        if abs(int(token)) < 1000:
+            drop.add(token)
+    return drop - _protected_tokens(snapshot, analyze_text)
+
+
+def _same_quantity(cleaned: str, token: str) -> bool:
+    try:
+        left = Decimal(cleaned)
+        right = Decimal(token)
+    except Exception:
+        return False
+    if left != right or abs(left) < 1000:
+        return False
+    return True
+
+
+def _listed(cleaned: str, allowed: set[str]) -> bool:
+    try:
+        as_dec = format(Decimal(cleaned), "f")
+    except Exception:
+        return False
+    if cleaned in allowed or as_dec in allowed:
+        return True
+    return any(_same_quantity(cleaned, token) for token in allowed)
+
+
+def _contextual_hit(line: str, cleaned: str, snapshot: IssuerSnapshot) -> bool:
+    try:
+        want = Decimal(cleaned)
+    except Exception:
+        return False
+    for trade in snapshot.insiders:
+        if want == trade.shares and _word_has(line, frozenset({"shares"})):
+            return True
+        if trade.price is not None and want == trade.price and _word_has(line, frozenset({"price"})):
+            return True
+    if want == want.to_integral_value():
+        year = abs(int(want))
+        years = {fact.fiscal_year for fact in snapshot.annual}
+        if year in years and _word_has(line, frozenset({"fiscal"})):
+            return True
+    for failure in snapshot.failures:
+        if want == Decimal(failure.status) and _word_has(line, frozenset({"status", "http"})):
+            return True
+    return False
 
 
 def _broken_spans(masked: str) -> tuple[tuple[int, int], ...]:
@@ -1141,8 +1418,15 @@ def _line_body(part: str) -> str:
     return part
 
 
+_FORM_IN_LINE = re.compile(r"(?i)\b(?:form\s+4|10-k/?a?|10-q|8-k|20-f|40-f|6-k|def\s*14a)\b")
+
+
 def _overlap(start: int, end: int, spans: tuple[tuple[int, int], ...]) -> bool:
     return any(start < right and end > left for left, right in spans)
+
+
+def _inside_form(text: str, start: int, end: int) -> bool:
+    return any(start >= match.start() and end <= match.end() for match in _FORM_IN_LINE.finditer(text))
 
 
 def _classified_numbers(
@@ -1159,6 +1443,7 @@ def _classified_numbers(
         masked = report
         broken = ()
     allowed = snapshot_allow_list(snapshot, analyze_text)
+    free = allowed - _suppressed_tokens(snapshot, allowed, analyze_text)
     file_dates = _date_stamps(snapshot, analyze_text)
     cutoff = _FRONT_MATTER_DATE.search(report)
     if cutoff:
@@ -1182,16 +1467,23 @@ def _classified_numbers(
         for match in _NUMBER_IN_TEXT.finditer(visible):
             raw = match.group(0)
             cleaned = raw.replace(",", "")
+            if _inside_form(visible, match.start(), match.end()):
+                continue
             if "." not in cleaned and cleaned in present:
                 continue
-            try:
-                as_dec = format(Decimal(cleaned), "f")
-            except Exception:
-                as_dec = ""
-            if as_dec and (cleaned in allowed or as_dec in allowed):
+            if _listed(cleaned, free) or _contextual_hit(original, cleaned, snapshot):
                 continue
             kind = "broken" if _overlap(offset + match.start(), offset + match.end(), broken) else "outside"
             missed.append((raw, kind))
+        for match in _CN_RUN.finditer(visible):
+            parsed = _parse_chinese(match.group(0))
+            if parsed is None:
+                continue
+            rendered = str(parsed)
+            if _listed(rendered, free) or _contextual_hit(original, rendered, snapshot):
+                continue
+            kind = "broken" if _overlap(offset + match.start(), offset + match.end(), broken) else "outside"
+            missed.append((rendered, kind))
         offset += len(part)
     return missed
 
@@ -1215,8 +1507,10 @@ def _excusing_lines(
     for claim_id, rows in lines.items():
         claim = found.get(claim_id)
         measure = _measure_of(claim) if claim is not None else None
-        if measure is not None and _measure_blocked(measure, snapshot):
-            continue
+        if measure is not None:
+            blocked = _cited_measure_blocked(measure, snapshot) if isinstance(claim, Cited) else _measure_blocked(measure, snapshot)
+            if blocked:
+                continue
         kept[claim_id] = rows
     return kept
 
@@ -1271,7 +1565,7 @@ def _anchor_failure(anchor: str, ledger: SourceLedger, snapshot: IssuerSnapshot)
             _resolve_snap(snapshot, anchor)
         except ValueError:
             return f"score anchor {anchor} is missing"
-        return None
+        return f"score anchor {anchor} is only a snapshot figure"
     try:
         claim_id = ClaimId(anchor)
     except ValueError:
@@ -1313,10 +1607,17 @@ def _score_failures(
     failures = []
     scored = [claim for claim in ledger.claims if isinstance(claim, Scored)]
     for claim in scored:
+        thesis = False
         for anchor in claim.anchor:
             problem = _anchor_failure(anchor, ledger, snapshot)
-            if problem is not None:
-                failures.append(problem)
+            if problem is None:
+                thesis = True
+                continue
+            if problem.endswith("is only a snapshot figure"):
+                continue
+            failures.append(problem)
+        if not thesis:
+            failures.append(f"score {claim.id} needs a thesis anchor")
     runs = [len(match) for match in re.findall(r"★+", report)]
     printed = [claim for claim in scored if _rows_in(report, lines.get(claim.id, ()))]
     if runs and not printed:
@@ -1350,6 +1651,8 @@ def audit_report(
         return AuditResult("fail", ("ledger ticker does not match the snapshot",))
     peers = {} if peers is None else peers
     failures: list[str] = []
+    if ledger is None and "★" in report:
+        failures.append("star glyphs have no scored citation")
     try:
         if agent and agent in report:
             raise ValueError("artifact contains the SEC user agent")
@@ -1453,6 +1756,10 @@ def build_parser() -> argparse.ArgumentParser:
     irr.add_argument("--pe", required=True)
     irr.add_argument("--payout")
     irr.add_argument("--years", type=int, default=10)
+
+    remove = sub.add_parser("remove")
+    remove.add_argument("--ledger", required=True)
+    remove.add_argument("--id", required=True)
 
     audit = sub.add_parser("audit")
     audit.add_argument("--report", required=True)

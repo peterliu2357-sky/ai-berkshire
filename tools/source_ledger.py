@@ -4,10 +4,12 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import sys
 import tempfile
 from datetime import date
 from decimal import Decimal, InvalidOperation
+from urllib.parse import urlsplit
 
 _TOOLS = os.path.dirname(os.path.abspath(__file__))
 if _TOOLS not in sys.path:
@@ -37,7 +39,7 @@ from usmarket.claims import (  # noqa: E402
     visible_text,
     write_ledger,
 )
-from usmarket.fetch import SecConfigError, http_get, sec_user_agent  # noqa: E402
+from usmarket.fetch import SecConfigError, http_get, repo_root, sec_user_agent  # noqa: E402
 from usmarket.types import (  # noqa: E402
     IssuerSnapshot,
     snapshot_from_json,
@@ -180,20 +182,21 @@ def _cmd_cited(args, agent: str) -> int:
 
 def _cmd_peer(args, agent: str) -> int:
     peer = _read_snapshot(args.snapshot)
+    stored = _repo_relative(args.snapshot)
     ledger = _load_ledger(args.ledger, None)
     claim = PeerSnapshot(
         ClaimId(args.id),
         Measure(args.measure),
-        args.snapshot,
+        stored,
         args.concept,
         args.fiscal_year,
     )
     updated = admit(ledger, claim, None)
-    return _save_and_print(args.ledger, None, updated, claim.id, {}, {args.snapshot: peer}, agent)
+    return _save_and_print(args.ledger, None, updated, claim.id, {}, {stored: peer}, agent)
 
 
 def _peer_amount(member: PeerSnapshot) -> Decimal:
-    peer = _read_snapshot(member.snapshot_path)
+    peer = _read_snapshot(_resolve_repo_path(member.snapshot_path))
     rows = [
         fact
         for fact in peer.annual
@@ -237,6 +240,50 @@ def _markup_type(body: bytes) -> str:
     if head.startswith(b"<") or b"<html" in head or b"<p" in head or b"<div" in head:
         return "text/html"
     return "text/plain"
+
+
+def _repo_relative(path: str) -> str:
+    root = os.path.realpath(repo_root())
+    candidate = path if os.path.isabs(path) else os.path.abspath(path)
+    real = os.path.realpath(candidate)
+    if os.path.commonpath([root, real]) != root:
+        raise ValueError("peer snapshot must sit inside the repo")
+    return os.path.relpath(real, root).replace(os.sep, "/")
+
+
+def _resolve_repo_path(path: str) -> str:
+    if os.path.isabs(path):
+        return path
+    return os.path.join(repo_root(), path)
+
+
+def _index_url(document_url: str) -> str:
+    parts = urlsplit(document_url)
+    chunks = [item for item in parts.path.split("/") if item]
+    if len(chunks) < 2:
+        raise ValueError("excerpt filing url has no archive directory")
+    base = "/".join(chunks[:-1])
+    return f"{parts.scheme}://{parts.netloc}/{base}/index.json"
+
+
+def _exhibit_urls(index_url: str, body: bytes) -> list[str]:
+    try:
+        data = json.loads(body.decode("utf-8"))
+    except json.JSONDecodeError as error:
+        raise ValueError("excerpt index is not json") from error
+    items = ((data.get("directory") or {}).get("item")) or []
+    if isinstance(items, dict):
+        items = [items]
+    prefix = index_url.rsplit("/", 1)[0]
+    found = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        name = str(item.get("name") or "")
+        kind = str(item.get("type") or "")
+        if kind.upper().startswith("EX-99") or re.search(r"(?i)ex-?99", name):
+            found.append(prefix + "/" + name)
+    return found
 
 
 def _unique_span(text: str, needle: str) -> tuple[int, int]:
@@ -288,7 +335,30 @@ def _cmd_excerpt(args) -> int:
             print(f"excerpt fetch failed with status {status}", file=sys.stderr)
             return 1
         text = visible_text(body, _markup_type(body))
-        byte_start, byte_end = _unique_span(text, args.contains)
+        document_url = ""
+        if text.count(args.contains) == 1:
+            byte_start, byte_end = _unique_span(text, args.contains)
+        elif text.count(args.contains) > 1:
+            raise ValueError("excerpt match is not unique")
+        else:
+            index_url = _index_url(matches[0].url)
+            index_status, index_body = http_get(index_url, agent)
+            hits = []
+            if index_status == 200:
+                for exhibit_url in _exhibit_urls(index_url, index_body):
+                    exhibit_status, exhibit_body = http_get(exhibit_url, agent)
+                    if exhibit_status != 200:
+                        continue
+                    exhibit_text = visible_text(exhibit_body, _markup_type(exhibit_body))
+                    count = exhibit_text.count(args.contains)
+                    if count > 1:
+                        raise ValueError("excerpt match is not unique")
+                    if count == 1:
+                        start, end = _unique_span(exhibit_text, args.contains)
+                        hits.append((exhibit_url, start, end))
+            if len(hits) != 1:
+                raise ValueError("excerpt match is not unique")
+            document_url, byte_start, byte_end = hits[0]
         blob = args.contains.encode("utf-8")
         assert_no_secret(args.contains, agent)
         digest = hashlib.sha256(blob).hexdigest()
@@ -307,6 +377,7 @@ def _cmd_excerpt(args) -> int:
             digest,
             byte_start,
             byte_end,
+            document_url,
         )
         updated = admit(ledger, claim, snapshot)
         return _save_and_print(
@@ -365,9 +436,22 @@ def _load_excerpts(ledger_path: str, ledger: SourceLedger) -> dict[str, bytes]:
 def _load_peers(ledger: SourceLedger) -> dict[str, IssuerSnapshot]:
     peers = {}
     for claim in ledger.claims:
-        if isinstance(claim, PeerSnapshot) and claim.snapshot_path not in peers and os.path.exists(claim.snapshot_path):
-            peers[claim.snapshot_path] = _read_snapshot(claim.snapshot_path)
+        if not isinstance(claim, PeerSnapshot) or claim.snapshot_path in peers:
+            continue
+        path = _resolve_repo_path(claim.snapshot_path)
+        if os.path.exists(path):
+            peers[claim.snapshot_path] = _read_snapshot(path)
     return peers
+
+
+def _cmd_remove(args) -> int:
+    ledger = _load_ledger(args.ledger, None)
+    kept = tuple(item for item in ledger.claims if str(item.id) != args.id)
+    if len(kept) == len(ledger.claims):
+        raise ValueError(f"claim {args.id} is missing")
+    write_ledger(args.ledger, SourceLedger(ledger.ticker, kept), _optional_agent())
+    print(f"removed {args.id}")
+    return 0
 
 
 def _cmd_audit(args) -> int:
@@ -408,6 +492,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "audit":
             return _cmd_audit(args)
+        if args.command == "remove":
+            return _cmd_remove(args)
         if args.command == "derive":
             if not getattr(args, "kind", None):
                 parser.print_help(sys.stderr)

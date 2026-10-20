@@ -600,6 +600,22 @@ def _archive_url(cik: str, accession: str, filename: str) -> str:
     )
 
 
+def issuer_website(body: bytes) -> str | None:
+    data = _loads(body)
+    if not isinstance(data, dict):
+        return None
+    for key in ("investorWebsite", "website"):
+        raw = data.get(key)
+        if not isinstance(raw, str) or not raw.strip():
+            continue
+        text = raw.strip()
+        if text.startswith("http://"):
+            text = "https://" + text[len("http://") :]
+        if text.startswith("https://"):
+            return text
+    return None
+
+
 def parse_submissions(body: bytes, cik: str) -> list[FilingRef]:
     data = _loads(body)
     if data is None:
@@ -1146,6 +1162,9 @@ def build_snapshot(ticker: str, get, adr_ratio: Decimal | None = None) -> Issuer
             pass
         elif status == 200:
             filings = parse_submissions(body, cik)
+            site = issuer_website(body)
+            if site:
+                labels.append(SourceLabel("website", site, "sec_submissions"))
             submissions_ok = True
         else:
             failures.append(_failure("sec_submissions", status, sub_url))
