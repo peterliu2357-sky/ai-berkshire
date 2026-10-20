@@ -1652,5 +1652,199 @@ class TestRoundFourBypasses(unittest.TestCase):
         self.assertNotIn("Overflow", str(caught.exception))
 
 
+def _cycle_snapshot() -> IssuerSnapshot:
+    return _mu(
+        prints=(
+            MarketPrint(
+                "MU",
+                Decimal("904.9"),
+                PrintKind.OFFICIAL_CLOSE,
+                datetime(2026, 10, 19, 20, 0, tzinfo=timezone.utc),
+                "yahoo_chart",
+            ),
+        ),
+        shares=ShareCount(Decimal("1131423212"), date(2026, 10, 2), "EntityCommonStockSharesOutstanding"),
+        annual=(
+            AnnualFact(2026, date(2026, 9, 3), "net_income", Decimal("84969000000"), date(2026, 10, 9), "NetIncomeLoss"),
+            AnnualFact(2026, date(2026, 9, 3), "revenue", Decimal("133188000000"), date(2026, 10, 9), "Revenues"),
+            AnnualFact(2023, date(2023, 8, 31), "net_income", Decimal("-5833000000"), date(2023, 10, 6), "NetIncomeLoss"),
+            AnnualFact(2023, date(2023, 8, 31), "revenue", Decimal("15540000000"), date(2023, 10, 6), "Revenues"),
+        ),
+    )
+
+
+def _audited(snap: IssuerSnapshot, measure: str, value: str, prose: str, unit: CitedUnit = CitedUnit.USD_ONES, url: str = "https://www.reuters.com/markets/example"):
+    claim = _cited("cited", measure, value, unit, url)
+    ledger = admit(SourceLedger("MU", ()), claim, snap)
+    line = citation_lines(snap, ledger, {}, {})[claim.id][0]
+    return audit_report(prose.format(line=line), snap, ledger, {})
+
+
+class TestRoundFiveBypasses(unittest.TestCase):
+    def test_prose_label_rejects_a_mislabeled_citation(self):
+        snap = _cycle_snapshot()
+        samples = (
+            ("capex_2026", "99000000000", "Fiscal 2026 GAAP net income was {line}.\n"),
+            ("buyback_amount", "2000000000000", "Market cap is {line}.\n"),
+            ("wafer_starts", "2000000000", "Shares outstanding: {line}.\n", CitedUnit.COUNT),
+            ("dram_cash_cost", "150000000000", "Fiscal 2026 revenue was {line}.\n"),
+            ("hbm_tam", "150000000000", "收入为 {line}。\n"),
+            ("hbm_tam", "99000000000", "净利润为 {line}。\n"),
+            ("profit_2036", "99000000000", "Bottom line was {line}.\n"),
+            ("capex_2026", "99000000000", "Bottom line was {line}.\n"),
+            ("buyback_amount", "2000000000000", "EV is {line}.\n"),
+        )
+        for sample in samples:
+            measure, value, prose = sample[0], sample[1], sample[2]
+            unit = sample[3] if len(sample) > 3 else CitedUnit.USD_ONES
+            result = _audited(snap, measure, value, prose, unit)
+            self.assertEqual(result.status, "fail", (measure, prose, result.failures))
+            self.assertTrue(any("worded" in item for item in result.failures), result.failures)
+        explicit = _audited(snap, "profit_2036", "99000000000", "Bottom line in 2036 was {line}.\n")
+        self.assertEqual(explicit.status, "pass", explicit.failures)
+
+    def test_valuation_multiples_and_oversized_labels_need_a_citation(self):
+        snap = _mu()
+        blocked = (
+            "Micron trades at 150x earnings.\n",
+            "P/E of 150x.\n",
+            "EV/EBITDA 12x.\n",
+            "Market cap is 50x revenue.\n",
+            "Net income grew 99x.\n",
+            "Micron trades at 4x book.\n",
+            "Top 25 customers.\n",
+            "The die is 1200-layer.\n",
+            "HBM12 is the roadmap.\n",
+            "DDR10 is not a product.\n",
+            "The stack is 40-Hi.\n",
+            "The plan is FY2035.\n",
+            "The node is FY1999.\n",
+        )
+        for text in blocked:
+            result = audit_report(text, snap, None, {})
+            self.assertEqual(result.status, "fail", (text, result.failures))
+        allowed = (
+            "The die is 4x.\nShares 100 as of 2026-08-28.\n",
+            "HBM3E 12-Hi, 232-layer, Top 3, FY26, FY2031, DDR5 and LPDDR5X.\nShares 100 as of 2026-08-28.\n",
+        )
+        for text in allowed:
+            result = audit_report(text, snap, None, {})
+            self.assertEqual(result.status, "pass", (text, result.failures))
+
+    def test_common_phrasing_owns_the_named_concept(self):
+        snap = _cycle_snapshot()
+        stolen = (
+            "Net income for fiscal 2026 was 133,188,000,000.\n",
+            "Net income, per the 10-K, was 133,188,000,000.\n",
+            "Net income, per the 8-K, was 133,188,000,000.\n",
+            "Net income, per Form 4, was 133,188,000,000.\n",
+            "Fiscal 2023 revenue was 133,188,000,000.\n",
+            "Revenue fell. Net income was 133,188,000,000.\n",
+            "133,188,000,000 of net income.\n",
+            "Bottom line was 133,188,000,000.\n",
+            "Top line was 84,969,000,000.\n",
+            "Income was 133,188,000,000.\n",
+            "收入为 84,969,000,000。\n",
+            "市值为 133,188,000,000。\n",
+            "Net income was $133.2 billion.\n",
+            "| Metric | FY2023 |\n| --- | --- |\n| Revenue | 133,188,000,000 |\n",
+            "|  | FY2026 |\n| --- | --- |\n| Net income | 133,188,000,000 |\n",
+        )
+        for text in stolen:
+            result = audit_report(text, snap, None, {})
+            self.assertEqual(result.status, "fail", (text, result.failures))
+        owned = (
+            "Fiscal 2026 revenue was 133,188,000,000.\n",
+            "Fiscal 2023 revenue was 15,540,000,000.\n",
+            "133,188,000,000 of revenue.\n",
+            "Bottom line was 84,969,000,000.\n",
+            "Top line was 133,188,000,000.\n",
+            "Income was 84,969,000,000.\n",
+            "收入为 133,188,000,000。\n",
+            "Revenue was $133.2 billion.\n",
+            "Net income was $85.0B.\n",
+            "收入为1331.88亿。\n",
+            "|  | FY2026 | FY2023 |\n| --- | --- | --- |\n| Revenue | 133,188,000,000 | 15,540,000,000 |\n| Net income | 84,969,000,000 | -5,833,000,000 |\n",
+        )
+        for text in owned:
+            result = audit_report(text, snap, None, {})
+            self.assertEqual(result.status, "pass", (text, result.failures))
+
+    def test_product_labels_rounded_figures_and_bullets_stay_quiet(self):
+        snap = _cycle_snapshot()
+        quiet = (
+            "The plan covers the next 10 years.\n",
+            "Gen 5, G9 NAND, 8-high, 24GB, 128 GB, 300mm and 7nm.\n",
+            "In 2027 the node is still open. CY2026 is the filed year.\n",
+            "| 2024 | 2025 | 2026 |\n| --- | --- | --- |\n| cycle | cycle | cycle |\n",
+            "● DRAM is the larger slice.\n",
+            "■ Note on the cycle.\n",
+        )
+        for text in quiet:
+            result = audit_report(text, snap, None, {})
+            self.assertEqual(result.status, "pass", (text, result.failures))
+        for text in ("♦♦♦\n", "✶✶✶\n"):
+            result = audit_report(text + "Shares outstanding are 1131423212.\n", snap, None, {})
+            self.assertEqual(result.status, "fail", text)
+            self.assertTrue(any("star" in item or "score" in item for item in result.failures), result.failures)
+        unlabeled = audit_report("The figure is $133.2 billion.\n", snap, None, {})
+        self.assertEqual(unlabeled.status, "fail", unlabeled.failures)
+        tight = audit_report("Net income was $84.9 billion.\n", snap, None, {})
+        self.assertEqual(tight.status, "fail", tight.failures)
+
+    def test_realistic_micron_note_passes(self):
+        snap = _cycle_snapshot()
+        segment = _cited(
+            "dram-rev",
+            "segment_dram_revenue",
+            "50000000000",
+            CitedUnit.USD_ONES,
+            "https://www.reuters.com/markets/micron-dram",
+        )
+        price = _cited(
+            "asp",
+            "dram_contract_price",
+            "3.50",
+            CitedUnit.USD_PER_GB,
+            "https://www.trendforce.com/example/ddr5",
+        )
+        ledger = admit(admit(SourceLedger("MU", ()), segment, snap), price, snap)
+        lines = citation_lines(snap, ledger, {}, {})
+        note = f"""---
+title: Micron sample note
+date: 2026-10-20
+---
+
+# Micron sample note, 2026-10-20
+
+Data cutoff is 2026-10-20. Evidence is the issuer snapshot. Not investment advice.
+
+The official close is 904.9 USD. Shares outstanding are 1131423212. Market cap is 1023824864538.8 USD.
+
+Fiscal 2026 revenue was 133,188,000,000. Revenue was $133.2 billion. 收入为1331.88亿。
+Net income was $85.0B. The bottom line was 84,969,000,000. Fiscal 2023 revenue was 15,540,000,000.
+
+DRAM revenue was {lines[segment.id][0]} of total revenue 133,188,000,000.
+The DRAM contract price was {lines[price.id][0]}.
+
+HBM3E 12-Hi, G9 NAND, 8-high, 24GB and 128 GB dies, 300mm wafers, 7nm, Gen 5.
+Over the next 10 years, In 2027 the stack is still 2x. CY2026 is the latest filed year.
+
+|  | FY2026 | FY2023 |
+| --- | --- | --- |
+| Revenue | 133,188,000,000 | 15,540,000,000 |
+| Net income | 84,969,000,000 | -5,833,000,000 |
+
+| 2024 | 2025 | 2026 |
+| --- | --- | --- |
+| cycle | cycle | cycle |
+
+● DRAM is the larger slice.
+■ Note on the cycle.
+"""
+        result = audit_report(note, snap, ledger, {})
+        self.assertEqual(result.status, "pass", result.failures)
+
+
 if __name__ == "__main__":
     unittest.main()
