@@ -1346,7 +1346,7 @@ class TestRoundThreeBypasses(unittest.TestCase):
         with self.assertRaises(ValueError) as caught:
             derive(ledger, snap, request)
         self.assertIn("greater than -1", str(caught.exception))
-        loss = _cited("profit-loss", "terminal_profit", "-5", CitedUnit.USD_ONES, "https://www.trendforce.com/profit")
+        loss = _cited("profit-loss", "profit_2037", "-5", CitedUnit.USD_ONES, "https://www.trendforce.com/profit")
         zero = _cited("profit-zero", "terminal_zero", "0", CitedUnit.USD_ONES, "https://www.reuters.com/profit")
         ledger = admit(admit(ledger, loss, snap), zero, snap)
         for profit_id in ("profit-loss", "profit-zero"):

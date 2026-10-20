@@ -8,7 +8,7 @@ import os
 import re
 from dataclasses import dataclass
 from datetime import date
-from decimal import ROUND_HALF_EVEN, Context, Decimal
+from decimal import ROUND_HALF_EVEN, Context, Decimal, InvalidOperation, Overflow
 from enum import Enum
 from typing import Mapping
 from urllib.parse import urlsplit
@@ -224,7 +224,22 @@ _CAPITAL_TOKENS = frozenset({
 _CAPITAL_JOINED = ("marketcap", "enterprisevalue", "sharesoutstanding", "equityvalue", "sharecount")
 _SYNONYM_TOKENS = frozenset({"turnover", "topline"})
 _SYNONYM_JOINED = ("bottomline",)
-_PROFIT_COMPANIONS = frozenset({"net", "gross", "operating", "total", "gaap", "pretax"})
+_CURRENT_MARKERS = frozenset({"ttm", "latest", "reported", "actual"})
+_RESULT_TOKENS = frozenset({
+    "income",
+    "profit",
+    "revenue",
+    "sales",
+    "eps",
+    "earnings",
+    "ni",
+    "rev",
+    "ebit",
+    "ebitda",
+    "fcf",
+    "turnover",
+    "topline",
+})
 
 
 def _joined_measure(measure: str) -> str:
@@ -239,12 +254,29 @@ def _has_qualifier(measure: str) -> bool:
     return any(token in _QUALIFIER_TOKENS for token in tokens)
 
 
-def _year_stamps(measure: str) -> tuple[int, ...]:
-    found = []
+def _expand_fy(text: str) -> int | None:
+    if not text.isdigit() or len(text) not in (2, 4):
+        return None
+    year = int(text) if len(text) == 4 else 2000 + int(text)
+    if 1900 <= year <= 2100:
+        return year
+    return None
+
+
+def _period_years(measure: str) -> tuple[int, ...]:
+    found: list[int] = []
     for token in _measure_tokens(measure):
-        if len(token) == 4 and token.isdigit() and 1900 <= int(token) <= 2100:
+        if len(token) == 4 and token.isdigit() and 1900 <= int(token) <= 2100 and int(token) not in found:
             found.append(int(token))
+    for match in re.finditer(r"fy(\d{2}|\d{4})", measure.casefold()):
+        year = _expand_fy(match.group(1))
+        if year is not None and year not in found:
+            found.append(year)
     return tuple(found)
+
+
+def _year_stamps(measure: str) -> tuple[int, ...]:
+    return _period_years(measure)
 
 
 def _latest_fiscal_year(snapshot: IssuerSnapshot | None) -> int | None:
@@ -253,8 +285,17 @@ def _latest_fiscal_year(snapshot: IssuerSnapshot | None) -> int | None:
     return max(fact.fiscal_year for fact in snapshot.annual)
 
 
+def _marked_current(measure: str) -> bool:
+    tokens = _measure_tokens(measure)
+    if any(token in _CURRENT_MARKERS for token in tokens):
+        return True
+    return "last" in tokens and "year" in tokens
+
+
 def _future_forecast(measure: str, snapshot: IssuerSnapshot | None) -> bool:
-    stamps = _year_stamps(measure)
+    if _marked_current(measure):
+        return False
+    stamps = _period_years(measure)
     latest = _latest_fiscal_year(snapshot)
     if not stamps or latest is None:
         return False
@@ -269,29 +310,73 @@ def _unqualifiable(measure: str) -> bool:
     return any(stem in joined for stem in _CAPITAL_JOINED)
 
 
-def _profit_is_core(measure: str, snapshot: IssuerSnapshot | None) -> bool:
-    tokens = _measure_tokens(measure)
-    words = [token for token in tokens if not token.isdigit()]
-    if "profit" not in words:
-        return False
-    if _future_forecast(measure, snapshot):
-        return False
-    companions = [token for token in words if token != "profit"]
-    if not companions:
+def _is_operating_metric(measure: str) -> bool:
+    key = _measure_key(measure)
+    if key.endswith("share") and not key.endswith("shares"):
         return True
-    return any(token in _PROFIT_COMPANIONS for token in companions)
+    if key in {"inventorydays", "dramcashcost"}:
+        return True
+    return "epsgrowth" in key
 
 
 def _core_stem(measure: str, snapshot: IssuerSnapshot | None = None) -> bool:
+    if _future_forecast(measure, snapshot) or _is_operating_metric(measure):
+        return False
     tokens = _measure_tokens(measure)
     joined = _joined_measure(measure)
-    if any(token in _SYNONYM_TOKENS for token in tokens) or any(stem in joined for stem in _SYNONYM_JOINED):
+    if any(token in _CORE_TOKENS or token in _SYNONYM_TOKENS for token in tokens):
         return True
-    if _profit_is_core(measure, snapshot):
+    return any(stem in joined for stem in (*_CORE_JOINED, *_SYNONYM_JOINED))
+
+
+def _result_stem(measure: str) -> bool:
+    if _is_operating_metric(measure):
+        return False
+    tokens = _measure_tokens(measure)
+    joined = _joined_measure(measure)
+    if any(token in _RESULT_TOKENS or token in _SYNONYM_TOKENS for token in tokens):
         return True
-    if any(token in _CORE_TOKENS and token != "profit" for token in tokens):
-        return True
-    return any(stem in joined for stem in _CORE_JOINED)
+    return any(stem in joined for stem in (*_CORE_JOINED, *_SYNONYM_JOINED))
+
+
+def _stem_concept(measure: str) -> str:
+    tokens = set(_measure_tokens(measure))
+    joined = _joined_measure(measure)
+    if "enterprisevalue" in joined:
+        return "enterprise_value"
+    if tokens & _CAPITAL_TOKENS or any(stem in joined for stem in _CAPITAL_JOINED):
+        if tokens & {"cap", "capitalization", "mktcap", "marketcap", "mcap"} or "marketcap" in joined:
+            return "market_cap"
+        if "equity" in tokens or "equityvalue" in joined:
+            return "equity"
+        return "shares"
+    if "eps" in tokens or "dilutedeps" in joined:
+        return "eps"
+    if tokens & {"revenue", "sales", "turnover", "topline", "rev"} or "totalrevenue" in joined:
+        return "revenue"
+    if "operating" in tokens and tokens & {"income", "profit"}:
+        return "operating_income"
+    if "gross" in tokens and "profit" in tokens:
+        return "gross_profit"
+    if tokens & {"income", "profit", "earnings", "ni"} or "netincome" in joined or "bottomline" in joined:
+        return "net_income"
+    key = _measure_key(measure)
+    return key or measure
+
+
+def _actual_concept(measure: str, snapshot: IssuerSnapshot | None) -> str | None:
+    if snapshot is None:
+        return None
+    key = _measure_key(measure)
+    for fact in snapshot.annual:
+        if _measure_key(fact.concept) == key:
+            return fact.concept
+    for line in render_analysis(snapshot).splitlines():
+        head, _, rest = line.partition(":")
+        if _measure_key(head) != key or "unavailable" in rest:
+            continue
+        return head
+    return None
 
 
 def _measure_blocked(measure: str, snapshot: IssuerSnapshot | None) -> bool:
@@ -302,14 +387,22 @@ def _measure_blocked(measure: str, snapshot: IssuerSnapshot | None) -> bool:
     return False
 
 
+def _collision_concept(measure: str, snapshot: IssuerSnapshot | None) -> str | None:
+    if _is_operating_metric(measure):
+        return _actual_concept(measure, snapshot)
+    if _unqualifiable(measure) or _measure_key(measure) in _SNAPSHOT_MEASURE_KEYS:
+        return _stem_concept(measure)
+    if snapshot is not None and measure in _blocked_measures(snapshot):
+        return measure
+    if _future_forecast(measure, snapshot) or _has_qualifier(measure):
+        return None
+    if _core_stem(measure, snapshot):
+        return _stem_concept(measure)
+    return None
+
+
 def _cited_measure_blocked(measure: str, snapshot: IssuerSnapshot | None) -> bool:
-    if _measure_blocked(measure, snapshot) or _unqualifiable(measure):
-        return True
-    if _future_forecast(measure, snapshot):
-        return False
-    if _has_qualifier(measure):
-        return False
-    return _core_stem(measure, snapshot)
+    return _collision_concept(measure, snapshot) is not None
 
 
 def _website_hosts(snapshot: IssuerSnapshot) -> set[str]:
@@ -845,13 +938,16 @@ def admit(
         raise ValueError("cited claim cannot use a sec.gov host")
     measure = _measure_of(claim)
     blocked = False
+    concept = None
     if measure is not None:
         if isinstance(claim, Cited):
-            blocked = _cited_measure_blocked(measure, snapshot)
+            concept = _collision_concept(measure, snapshot)
+            blocked = concept is not None
         else:
             blocked = _measure_blocked(measure, snapshot)
     if blocked:
-        raise ValueError(f"measure collides with the snapshot: {measure}")
+        detail = f" concept={concept}" if concept else ""
+        raise ValueError(f"measure collides with the snapshot: {measure}{detail}")
     if isinstance(claim, Cited):
         found = ledger.by_id()
         for item in claim.inputs:
@@ -963,6 +1059,8 @@ def _ratio_value(claim: Cited) -> Decimal:
 
 
 def _scenario_prices(ledger: SourceLedger, snapshot: IssuerSnapshot, inputs: tuple[str, ...], years: int) -> tuple[Decimal, ...]:
+    if years > 100:
+        raise ValueError("three-scenario years are too large")
     if len(inputs) != 9:
         raise ValueError("three-scenario inputs are incomplete")
     found = ledger.by_id()
@@ -980,7 +1078,10 @@ def _scenario_prices(ledger: SourceLedger, snapshot: IssuerSnapshot, inputs: tup
     for index in range(3):
         growth = _growth_rate(_as_cited(found, ClaimId(inputs[index])))
         pe = _multiple(_as_cited(found, ClaimId(inputs[index + 3])))
-        prices.append(scenario_target_price(eps, growth, pe, years))
+        try:
+            prices.append(scenario_target_price(eps, growth, pe, years))
+        except (Overflow, InvalidOperation) as error:
+            raise ValueError("three-scenario years are too large") from error
     return tuple(prices)
 
 
@@ -1581,6 +1682,185 @@ def _inside_form(text: str, start: int, end: int) -> bool:
     return any(start >= match.start() and end <= match.end() for match in _FORM_IN_LINE.finditer(text))
 
 
+_ONES_WORD = {
+    "a": 1,
+    "an": 1,
+    "one": 1,
+    "two": 2,
+    "three": 3,
+    "four": 4,
+    "five": 5,
+    "six": 6,
+    "seven": 7,
+    "eight": 8,
+    "nine": 9,
+    "ten": 10,
+    "eleven": 11,
+    "twelve": 12,
+    "thirteen": 13,
+    "fourteen": 14,
+    "fifteen": 15,
+    "sixteen": 16,
+    "seventeen": 17,
+    "eighteen": 18,
+    "nineteen": 19,
+}
+_TENS_WORD = {
+    "twenty": 20,
+    "thirty": 30,
+    "forty": 40,
+    "fifty": 50,
+    "sixty": 60,
+    "seventy": 70,
+    "eighty": 80,
+    "ninety": 90,
+}
+_SCALE_WORD = {"million": 6, "billion": 9, "trillion": 12}
+_NUMBER_WORD = "|".join(sorted(set(_ONES_WORD) | set(_TENS_WORD), key=len, reverse=True))
+_MAGNITUDE = re.compile(
+    rf"(?i)(?<![a-z])(?:(a|an)\s+hundred|(\d+(?:\.\d+)?)|((?:{_NUMBER_WORD})(?:[-\s](?:{_NUMBER_WORD}))?))\s+"
+    r"(million|billion|trillion)\b(?:\s+dollars)?"
+)
+_LABEL_NUMBER = (
+    re.compile(r"(?i)\bHBM\d+E?\b"),
+    re.compile(r"(?i)\b\d+-?Hi\b"),
+    re.compile(r"(?i)\b1[- ]?(?:gamma|beta|alpha|delta|γ|β|α)\b"),
+    re.compile(r"(?i)\b\d+-layer\b"),
+    re.compile(r"(?i)\bQ[1-4]\b"),
+    re.compile(r"(?i)\bFY\d{2,4}\b"),
+    re.compile(r"(?i)\bTop\s+\d+\b"),
+    re.compile(r"(?i)\b\d+(?:\.\d+)?x\b"),
+    re.compile(r"(?i)\b(?:LP)?DDR\d+X?\b"),
+    re.compile(r"(?i)\bGDDR\d+X?\b"),
+)
+_NAMED_CONCEPT = (
+    ("operating income", "operating_income"),
+    ("gross profit", "gross_profit"),
+    ("net income", "net_income"),
+    ("net profit", "net_income"),
+    ("market capitalization", "market_cap"),
+    ("market cap", "market_cap"),
+    ("market_cap", "market_cap"),
+    ("marketcap", "market_cap"),
+    ("share count", "shares"),
+    ("净利润", "net_income"),
+    ("净利", "net_income"),
+    ("营业收入", "revenue"),
+    ("营收", "revenue"),
+    ("revenue", "revenue"),
+    ("sales", "revenue"),
+    ("turnover", "revenue"),
+    ("earnings", "net_income"),
+    ("shares", "shares"),
+)
+_NEARBY_CONCEPT = {
+    "net_income": frozenset({"operating_income", "gross_profit"}),
+    "operating_income": frozenset({"net_income"}),
+    "gross_profit": frozenset({"net_income"}),
+}
+
+
+def _words_to_int(text: str) -> int | None:
+    parts = [part for part in re.split(r"[-\s]+", text.casefold()) if part]
+    if len(parts) == 1 and parts[0] in _ONES_WORD:
+        return _ONES_WORD[parts[0]]
+    if len(parts) == 1 and parts[0] in _TENS_WORD:
+        return _TENS_WORD[parts[0]]
+    if len(parts) == 2 and parts[0] in _TENS_WORD and parts[1] in _ONES_WORD:
+        return _TENS_WORD[parts[0]] + _ONES_WORD[parts[1]]
+    return None
+
+
+def _english_magnitudes(visible: str) -> list[tuple[str, int, int]]:
+    found: list[tuple[str, int, int]] = []
+    for match in _MAGNITUDE.finditer(visible):
+        scale = _SCALE_WORD[match.group(4).casefold()]
+        if match.group(1):
+            base = Decimal(100)
+        elif match.group(2):
+            base = Decimal(match.group(2))
+        else:
+            parsed = _words_to_int(match.group(3) or "")
+            if parsed is None:
+                continue
+            base = Decimal(parsed)
+        amount = base * (Decimal(10) ** scale)
+        found.append((format(amount, "f"), match.start(), match.end()))
+    return found
+
+
+def _label_spans(line: str) -> tuple[tuple[int, int], ...]:
+    spans = []
+    for pattern in _LABEL_NUMBER:
+        spans.extend((match.start(), match.end()) for match in pattern.finditer(line))
+    return tuple(spans)
+
+
+def _inside_span(start: int, end: int, spans: tuple[tuple[int, int], ...]) -> bool:
+    return any(start >= left and end <= right for left, right in spans)
+
+
+def _concepts_before(line: str, start: int) -> set[str]:
+    window = line[max(0, start - 80) : start]
+    folded = window.casefold()
+    found: set[str] = set()
+    for phrase, concept in _NAMED_CONCEPT:
+        idx = folded.rfind(phrase)
+        if idx >= 0 and not re.search(r"\d", folded[idx + len(phrase) :]):
+            found.add(concept)
+    profit_at = folded.rfind("profit")
+    if profit_at >= 0 and not re.search(r"\d", folded[profit_at + len("profit") :]):
+        prefix = folded[:profit_at]
+        if not prefix.endswith(("gross ", "operating ", "net ")):
+            found.add("net_income")
+    return found
+
+
+def _line_years(line: str) -> set[int]:
+    found = {int(match.group(0)) for match in re.finditer(r"\b(?:19|20)\d{2}\b", line)}
+    for match in re.finditer(r"(?i)\bfy(\d{2}|\d{4})\b", line):
+        year = _expand_fy(match.group(1))
+        if year is not None:
+            found.add(year)
+    return found
+
+
+def _core_owners(snapshot: IssuerSnapshot, want: Decimal) -> list[tuple[str, int | None]]:
+    owners = [(fact.concept, fact.fiscal_year) for fact in snapshot.annual if fact.ones == want]
+    if snapshot.shares is not None and snapshot.shares.shares == want:
+        owners.append(("shares", None))
+    try:
+        cap = _recomputed_cap(snapshot)
+    except ValueError:
+        cap = None
+    if cap is not None and cap == want:
+        owners.append(("market_cap", None))
+    return owners
+
+
+def _ownership_failure(line: str, start: int, cleaned: str, snapshot: IssuerSnapshot) -> str | None:
+    named = _concepts_before(line, start)
+    if not named:
+        return None
+    try:
+        want = Decimal(cleaned)
+    except Exception:
+        return None
+    owners = _core_owners(snapshot, want)
+    if not owners:
+        return None
+    years = _line_years(line[max(0, start - 80) : start])
+    nearby: set[str] = set()
+    for concept in named:
+        nearby.update(_NEARBY_CONCEPT.get(concept, ()))
+    for owner, year in owners:
+        if owner in named:
+            return None
+        if owner in nearby and year is not None and year in years:
+            return None
+    return f"{sorted(named)[0]} does not own {cleaned} ({owners[0][0]})"
+
+
 def _classified_numbers(
     report: str,
     snapshot: IssuerSnapshot,
@@ -1609,6 +1889,9 @@ def _classified_numbers(
     for index, part in enumerate(parts):
         original = originals[index] if index < len(originals) else ""
         visible = _mask_inline(_line_body(part))
+        labels = _label_spans(visible)
+        magnitudes = _english_magnitudes(visible)
+        magnitude_spans = tuple((start, end) for _rendered, start, end in magnitudes)
         present: set[str] = set()
         for stamp in file_dates:
             if stamp in original:
@@ -1619,11 +1902,16 @@ def _classified_numbers(
         for match in _NUMBER_IN_TEXT.finditer(visible):
             raw = match.group(0)
             cleaned = raw.replace(",", "")
-            if _inside_form(visible, match.start(), match.end()):
+            if _inside_form(visible, match.start(), match.end()) or _inside_span(match.start(), match.end(), labels):
+                continue
+            if _inside_span(match.start(), match.end(), magnitude_spans):
                 continue
             if "." not in cleaned and cleaned in present:
                 continue
             if _listed(cleaned, free) or _contextual_hit(original, cleaned, snapshot):
+                owned = _ownership_failure(original, match.start(), cleaned, snapshot)
+                if owned and _listed(cleaned, free):
+                    missed.append((owned, "owner"))
                 continue
             kind = "broken" if _overlap(offset + match.start(), offset + match.end(), broken) else "outside"
             missed.append((raw, kind))
@@ -1637,6 +1925,13 @@ def _classified_numbers(
             kind = "broken" if _overlap(offset + match.start(), offset + match.end(), broken) else "outside"
             missed.append((rendered, kind))
         for rendered, start, end in _chinese_values(visible):
+            if _listed(rendered, free) or _contextual_hit(original, rendered, snapshot):
+                continue
+            kind = "broken" if _overlap(offset + start, offset + end, broken) else "outside"
+            missed.append((rendered, kind))
+        for rendered, start, end in magnitudes:
+            if _inside_span(start, end, labels):
+                continue
             if _listed(rendered, free) or _contextual_hit(original, rendered, snapshot):
                 continue
             kind = "broken" if _overlap(offset + start, offset + end, broken) else "outside"
@@ -1763,15 +2058,25 @@ _GAAP_PHRASES = (
     "net income",
     "operating income",
     "gross profit",
+    "净利润",
+    "净利",
 )
 _QUALIFIER_WORDS = ("nongaap", "non-gaap", "non gaap", "adjusted", "segment", "nonifrs", "non-ifrs")
 
 
+_SCORE_WORD = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
+
+
 def _score_runs(report: str) -> list[int]:
-    runs = [len(match) for match in re.findall(r"[★☆⭐]+", report)]
+    runs = [len(match) for match in re.findall(r"[★☆⭐✪✭✮✯🌟]+", report)]
+    runs.extend(len(match) for match in re.findall(r"(?<![*\w])\*{4,}(?![*\w])", report))
+    runs.extend(len(match) for match in re.findall(r"●+", report))
+    runs.extend(len(match) for match in re.findall(r"■+", report))
     digits = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5}
     for match in re.finditer(r"([一二三四五])星", report):
         runs.append(digits[match.group(1)])
+    for match in re.finditer(r"(?i)\b(one|two|three|four|five)\s+stars?\b", report):
+        runs.append(_SCORE_WORD[match.group(1).casefold()])
     return runs
 
 
@@ -1827,9 +2132,11 @@ def _qualified_failures(
 ) -> list[str]:
     failures = []
     for claim in ledger.claims:
-        if not isinstance(claim, Cited) or not _has_qualifier(str(claim.measure)):
+        if not isinstance(claim, Cited):
             continue
         measure = str(claim.measure)
+        if not _result_stem(measure):
+            continue
         if _unqualifiable(measure):
             continue
         for row in lines.get(claim.id, ()):
@@ -1843,7 +2150,7 @@ def _qualified_failures(
                     continue
                 for phrase in _GAAP_PHRASES:
                     if phrase in prose:
-                        failures.append(f"qualified {measure} is worded as {phrase}")
+                        failures.append(f"cited {measure} is worded as {phrase}")
                         break
         concept = _underlying_concept(measure)
         if concept is None or _future_forecast(measure, snapshot):
@@ -1943,6 +2250,8 @@ def audit_report(
     for raw, kind in _classified_numbers(report, snapshot, analyze, usable):
         if kind == "broken":
             failures.append(f"{name} number {raw} has no tiered citation")
+        elif kind == "owner":
+            failures.append(f"{name} {raw}")
         else:
             failures.append(f"{name} cites {raw} which is not in the snapshot")
     if failures:
