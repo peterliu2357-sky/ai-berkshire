@@ -411,6 +411,87 @@ class TestSnapshotAndCli(unittest.TestCase):
         self.assertIn(b"blocked", body)
 
 
+class TestSecClient(unittest.TestCase):
+    def tearDown(self):
+        os.environ.pop("SEC_USER_AGENT", None)
+
+    def test_missing_or_noreply_agent_is_rejected(self):
+        from usmarket.fetch import SecConfigError, sec_user_agent
+
+        os.environ.pop("SEC_USER_AGENT", None)
+        with self.assertRaises(SecConfigError):
+            sec_user_agent(path="/tmp/does-not-exist-sec-ua.txt")
+        os.environ["SEC_USER_AGENT"] = (
+            "AI Berkshire peterliu2357-sky@users.noreply.github.com"
+        )
+        with self.assertRaises(SecConfigError):
+            sec_user_agent(path="/tmp/does-not-exist-sec-ua.txt")
+        os.environ["SEC_USER_AGENT"] = "not-an-email"
+        with self.assertRaises(SecConfigError):
+            sec_user_agent(path="/tmp/does-not-exist-sec-ua.txt")
+
+    def test_declared_headers_retry_gzip_and_cache(self):
+        import gzip
+
+        from usmarket.fetch import http_get
+
+        calls = []
+        delays = []
+
+        class Response:
+            def __init__(self, status, body, headers):
+                self.status = status
+                self._body = body
+                self.headers = headers
+
+            def read(self):
+                return self._body
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+        payload = b'{"ok":true}'
+        packed = gzip.compress(payload)
+
+        def opener(request, timeout):
+            calls.append(request)
+            if len(calls) < 3:
+                raise urllib.error.HTTPError(
+                    request.full_url, 403, "no", {}, io.BytesIO(b"no")
+                )
+            return Response(200, packed, {"Content-Encoding": "gzip"})
+
+        with tempfile.TemporaryDirectory() as directory:
+            status, body = http_get(
+                "https://www.sec.gov/files/company_tickers.json",
+                "Your Name you@example.com",
+                opener=opener,
+                sleep=delays.append,
+                cache_dir=directory,
+                attempts=3,
+            )
+            self.assertEqual(status, 200)
+            self.assertEqual(body, payload)
+            self.assertEqual(len(calls), 3)
+            self.assertEqual(calls[0].get_header("User-agent"), "Your Name you@example.com")
+            self.assertIn("gzip", calls[0].get_header("Accept-encoding"))
+            self.assertTrue(delays)
+            status, body = http_get(
+                "https://www.sec.gov/files/company_tickers.json",
+                "Your Name you@example.com",
+                opener=opener,
+                sleep=delays.append,
+                cache_dir=directory,
+                attempts=3,
+            )
+        self.assertEqual(status, 200)
+        self.assertEqual(body, payload)
+        self.assertEqual(len(calls), 3)
+
+
 class TestMicronReport(unittest.TestCase):
     def test_every_number_is_in_the_snapshot(self):
         snapshot_path = _ROOT / "reports" / "Micron" / "evidence" / "us-snapshot-MU.json"

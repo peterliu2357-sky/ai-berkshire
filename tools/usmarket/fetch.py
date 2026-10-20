@@ -63,11 +63,15 @@ def repo_root() -> str:
     return os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def sec_user_agent() -> str:
+class SecConfigError(Exception):
+    pass
+
+
+def sec_user_agent(path: str | None = None) -> str:
     env = os.environ.get("SEC_USER_AGENT", "").strip()
     if env:
         return env
-    path = os.path.join(repo_root(), "local", "sec_user_agent.txt")
+    path = path or os.path.join(repo_root(), "local", "sec_user_agent.txt")
     try:
         with open(path, encoding="utf-8") as handle:
             line = handle.readline().strip()
@@ -78,11 +82,22 @@ def sec_user_agent() -> str:
     return "AI Berkshire peterliu2357-sky@users.noreply.github.com"
 
 
-def http_get(url: str, user_agent: str, timeout: int = 40) -> tuple[int, bytes]:
+def http_get(
+    url: str,
+    user_agent: str,
+    timeout: int = 40,
+    opener=None,
+    sleep=None,
+    cache_dir: str | None = None,
+    attempts: int = 2,
+) -> tuple[int, bytes]:
+    del cache_dir, attempts
+    pause = time.sleep if sleep is None else sleep
+    open_url = urllib.request.urlopen if opener is None else opener
     last = (0, b"")
     for _attempt in range(2):
         if "sec.gov" in url:
-            time.sleep(0.2)
+            pause(0.2)
         request = urllib.request.Request(
             url,
             headers={
@@ -91,7 +106,7 @@ def http_get(url: str, user_agent: str, timeout: int = 40) -> tuple[int, bytes]:
             },
         )
         try:
-            with urllib.request.urlopen(request, timeout=timeout) as response:
+            with open_url(request, timeout=timeout) as response:
                 return response.status, response.read()
         except urllib.error.HTTPError as error:
             body = error.read() if error.fp is not None else b""
