@@ -50,7 +50,7 @@ This skill is generated from `skills/investment-research.md` so Claude Code and 
 ### 第一步：数据收集
 
 > **数据源规范**：参见 `skills/financial-data.md`。所有财务数据必须来自两个独立来源，误差>1%须标记。
-> - 美股：macrotrends（主）+ stockanalysis（副）
+> - 中概 ADR：macrotrends（主）+ stockanalysis（副）。美国本土 10-K 与在美上市的 20-F/40-F 改走 `skills/financial-data.md` 的「美国本土上市公司」一节和 `skills/us-market.md`，不要把股本传入 `three-scenario`。报告默认中文，只有用户要求英文或传入 `lang=en` 时才用 `skills/investment-team-en.md`。
 > - 港股：aastocks（主）+ macrotrends ADR（副）
 > - A股：东方财富（主）+ 巨潮资讯（副）
 
@@ -366,7 +366,7 @@ python3 tools/report_audit.py extract \
 
 **Step 2 — 取数核验：**
 对清单中每个数据点，按 `skills/financial-data.md` 规范从可靠信源取数
-（美股：macrotrends+stockanalysis；港股：aastocks+macrotrends；A股：东方财富+巨潮资讯），
+（中概 ADR：macrotrends+stockanalysis；美国本土 10-K 与在美上市 20-F/40-F 改走 `skills/financial-data.md` 本土一节，默认中文，`lang=en` 才用英文技能；港股：aastocks+macrotrends；A股：东方财富+巨潮资讯），
 填入 `fetched_value` / `fetched_source` / `fetched_value2` / `fetched_source2`。
 
 **Step 3 — 输出判决：**

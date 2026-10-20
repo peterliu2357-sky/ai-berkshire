@@ -1,0 +1,127 @@
+{
+  "facts": {
+    "us-gaap": {
+      "NetIncomeLoss": {
+        "units": {
+          "USD": [
+            {
+              "start": "2024-08-30",
+              "end": "2025-08-28",
+              "val": 100,
+              "fy": 2025,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2025-10-01"
+            },
+            {
+              "start": "2024-08-30",
+              "end": "2025-08-28",
+              "val": 999,
+              "fy": 2025,
+              "fp": "FY",
+              "form": "10-K/A",
+              "filed": "2025-10-15"
+            },
+            {
+              "start": "2025-05-30",
+              "end": "2025-08-28",
+              "val": 50,
+              "fy": 2025,
+              "fp": "Q4",
+              "form": "10-Q",
+              "filed": "2025-10-20"
+            },
+            {
+              "start": "2024-08-30",
+              "end": "2025-08-28",
+              "val": 1,
+              "fy": 2025,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2025-10-16",
+              "segment": {"dimension": "ProductAxis"}
+            }
+          ]
+        }
+      },
+      "CostOfGoodsAndServicesSold": {
+        "units": {
+          "USD": [
+            {
+              "start": "2024-08-30",
+              "end": "2025-08-28",
+              "val": 2,
+              "fy": 2025,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2025-10-15"
+            }
+          ]
+        }
+      },
+      "InventoryNet": {
+        "units": {
+          "USD": [
+            {
+              "end": "2025-08-28",
+              "val": 10,
+              "fy": 2025,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2025-10-15"
+            },
+            {
+              "start": "2024-08-30",
+              "end": "2025-08-28",
+              "val": 77,
+              "fy": 2025,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2025-10-15"
+            }
+          ]
+        }
+      },
+      "WeightedAverageNumberOfDilutedSharesOutstanding": {
+        "units": {
+          "shares": [
+            {
+              "start": "2024-08-30",
+              "end": "2025-08-28",
+              "val": 888888,
+              "form": "10-K",
+              "filed": "2025-12-01"
+            }
+          ]
+        }
+      },
+      "CommonStockSharesOutstanding": {
+        "units": {
+          "shares": [
+            {
+              "start": "2024-08-30",
+              "end": "2025-08-28",
+              "val": 500,
+              "form": "10-K",
+              "filed": "2025-12-01"
+            }
+          ]
+        }
+      }
+    },
+    "dei": {
+      "EntityCommonStockSharesOutstanding": {
+        "units": {
+          "shares": [
+            {
+              "end": "2025-08-28",
+              "val": 1122334455,
+              "form": "10-K",
+              "filed": "2025-10-15"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

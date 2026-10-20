@@ -1,0 +1,29 @@
+---
+title: Micron risk and management, Li Lu view, 2026-10-20
+date: 2026-10-20
+type: 研究
+---
+
+# Micron risk and management, Li Lu view, 2026-10-20
+
+Data cutoff is 2026-10-20. Source file `evidence/us-snapshot-MU.json`. Not investment advice.
+
+The failures list has one row: Nasdaq info, status 200, detail `undated last sale`. Submissions include a `10-K`, a `10-Q`, an `8-K`, a proxy, and `Form 4` filings. The latest `10-K` was filed 2026-10-09. `Form 4` primary documents were fetched with the `xsl` directory removed. The insider list is not empty. One parsed row is owner RAY MICHAEL CHARLES, transaction date 2026-10-14, filing date 2026-10-15, code S, acquired_disposed D, shares 40.00, price 947.29. The `filed` value on that row is the Form 4 filing date. The transaction date is separate. Other parsed rows use codes A, F, and M. Some of those rows are derivative transactions. The proxy text was not read, so this is not a management score.
+
+The accounting risk that remains is the unscaled Nasdaq table. The Market Cap lexeme `1,023,824,864,539` is the computed cap 1023824864538.8 rounded to a dollar. It still has no scale field, so the dollar cap in this note is the official close times the EDGAR share count.
+
+Share count 1131423212 is dated 2026-10-02, after the fiscal year end 2026-09-03 and before the `10-K` filing date 2026-10-09. Using an older share count would change the cap. The file has this instant fact, not a weighted average.
+
+Price risk is which close is selected. The daily bar on 2026-10-19T13:30:00+00:00 is 904.90 USD, and that clock is the bar stamp, not the closing auction. The chart print is 904.9 USD at 2026-10-19T20:00:00+00:00. The tool uses the later timestamp. The fifty-two-week labels span 192.4 to 1255.0. A buyer who anchors on 878.84 from 2026-10-16T13:30:00+00:00 is using an earlier close that is also in the file.
+
+The hurdle check does not clear. Earnings yield on the ten-year median is 0.005945352775488605368121573015 against a Treasury par rate of 0.0515. FRED on 2026-10-16 is 0.0509, so the two yield sources are close, and the gap to the median yield is not a one-source artifact.
+
+Fiscal year 2026 stock-based compensation is 1333000000 against GAAP net income of 84969000000. The ratio is 0.01568807447422000965057844626. The net income figure already deducts that cost.
+
+Export-control exposure and customer concentration are not in the snapshot. Saying either is high or low would fill a blank.
+
+Judgment: the downside that can be stated is a peak year against a ten-year median that does not clear a Treasury yield of 0.0515, plus a capex ratio of 3.231821530043144270230453541. The counterpoint is that `Form 4` rows were parsed, two yield sources agree on the first digits of the rate, and the share count is an EDGAR instant fact rather than a vendor string.
+
+No star score.
+
+> "风险控制是投资的第一要务。" Li Lu. The control available here is to keep the ten-year median and the peak on the same page, and to leave the missing peer and the missing bit price blank.

@@ -29,6 +29,32 @@ This skill is generated from `skills/financial-data.md` so Claude Code and Codex
 | 2（副） | **stockanalysis** | stockanalysis.com/stocks/{ticker}/financials | 直接访问，无需注册 |
 | 原始一手 | SEC EDGAR | sec.gov/cgi-bin/browse-edgar | 10-K / 10-Q 原文 |
 
+### 美国本土上市公司（10-K / 10-Q，如 MU、AAPL）
+
+上一节的中概 ADR（PDD、腾讯 ADR、网易 ADR）继续用 macrotrends + stockanalysis，不要改走下面三条命令。同一三条命令也覆盖在美上市、向 SEC 提交 20-F 或 40-F 的非中国发行人，例如 TSM、ASML、NVO。它们不是中概 ADR，也不是韩国或台湾本地股。韩国、台湾本地发行人不是 EDGAR 10-K 申报主体，只可 `quote` 对照行情，不可把 snapshot 里的空 filings 写成已取得年报。报告默认中文。只有用户要求英文或传入 `lang=en` 时，才改走 `skills/investment-team-en.md`。
+
+20-F/40-F 封面股本是普通股，行情价格是 ADR。没有显式的「每份 ADR 对应多少普通股」时，市值、以及依赖市值的收益率检验，都写不可得，并保留失败原因。已知比率时才在 snapshot 上附加 `--adr-ratio`（例如 TSM 为 5）。不要把 ADR 价格乘普通股股数。submissions 失败或年报类型无法判断时，同样不算市值，除非传入了这个比率；传入后按普通股数除以比率。companyfacts 只有 `us-gaap` 的美元事实会进入 annual。IFRS 或非美元申报写明 GAAP 行不可得，并视为外国发行人，不要把那些单位换算成美元净利润。
+
+运行 snapshot 之前设置环境变量 `SEC_USER_AGENT`，形状是名字加真实邮箱。文档里的 `Your Name you@example.com` 只说明形状，这个字面值以及 example.com、example.org、example.net 会被拒绝。noreply 地址会被拒绝。这个值只留在本机，不要写入仓库。
+
+命令与 README 的 `US listings` 小节逐字相同：
+
+```bash
+python3 tools/us_market.py quote MU
+python3 tools/us_market.py snapshot MU --out reports/Micron/evidence/us-snapshot-MU.json
+python3 tools/us_market.py analyze --snapshot reports/Micron/evidence/us-snapshot-MU.json
+```
+
+- 货币是美元。`analyze` 只读 snapshot 文件，不再发网络请求。
+- 官方收盘价必须带 `kind=official_close` 和来源时间。盘前、盘后、无时间戳的打印不得拿来算收益率或市值。
+- Nasdaq 报表单元格没有单位字段时，JSON 里是 `unscaled_amount`，只有 lexeme。禁止把它当成美元，也禁止拿 Nasdaq 市值字符串去填 `verify-market-cap --reported`。
+- 美国本土 10-K 的市值只用官方收盘价 × EDGAR 流通在外股数（原始股数，不是加权平均股，也不是亿股）。没有股本就写明市值不可得。20-F/40-F 在没有 `--adr-ratio` 时市值不可得。不要把同一乘积再传给 `verify-market-cap --reported`，那是用计算结果核对自身。Nasdaq 市值字符串没有单位，也不能当作独立的美元市值。
+- 美国本土股本禁止传入 `three-scenario --shares`（该参数单位是亿股）。
+- GAAP 净利润已经扣除股权激励。不要把 SBC 加回，也不要再减一次。公司 non-GAAP 加回 SBC 的口径不是门槛收益。
+- 周期收益用 GAAP 净利润中位数。窗口是最新会计年度往前数的十个日历年度，不是任意十行。窗口里缺年要写出来。落在窗口里的年度不足五个，写历史不足。不用峰值代替中位数。
+- 门槛利率取较晚的 10 年期美债。同一天优先 Treasury.gov 票面收益率，其次 FRED DGS10。只有一条序列时就用那一条。
+- SEC 返回非 200 时，snapshot 仍保存行情、收益率和失败记录，filings 保持为空。报告只能引用文件里真实出现的字段。
+
 ### 港股（腾讯0700、网易9999、美团3690等）
 
 | 优先级 | 来源 | URL | 获取方式 |

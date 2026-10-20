@@ -1,0 +1,1208 @@
+from __future__ import annotations
+
+import base64
+import csv
+import gzip
+import hashlib
+import http.client
+import io
+import json
+import os
+import re
+import sys
+import tempfile
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+import zlib
+import xml.etree.ElementTree as ET
+from datetime import date, datetime, timezone
+from decimal import Decimal, InvalidOperation
+from zoneinfo import ZoneInfo
+
+from usmarket.types import (
+    AnnualFact,
+    CacheHit,
+    FetchFailure,
+    FilingRef,
+    InsiderTrade,
+    IssuerSnapshot,
+    LabeledDecimal,
+    MarketPrint,
+    Percent,
+    PrintKind,
+    ShareCount,
+    SourceLabel,
+    TreasuryYield,
+    UnscaledAmount,
+)
+
+_ET = ZoneInfo("America/New_York")
+_ANNUAL_FORMS = ("10-K", "20-F", "40-F")
+_FLOW_TAGS = {
+    "revenue": (
+        "RevenueFromContractWithCustomerExcludingAssessedTax",
+        "Revenues",
+        "SalesRevenueNet",
+    ),
+    "cogs": ("CostOfGoodsAndServicesSold", "CostOfRevenue", "CostOfGoodsSold"),
+    "gross_profit": ("GrossProfit",),
+    "operating_income": ("OperatingIncomeLoss",),
+    "net_income": ("NetIncomeLoss",),
+    "sbc": ("ShareBasedCompensation", "AllocatedShareBasedCompensationExpense"),
+    "depreciation": (
+        "DepreciationDepletionAndAmortization",
+        "DepreciationAndAmortization",
+    ),
+    "capex": ("PaymentsToAcquirePropertyPlantAndEquipment",),
+    "cfo": ("NetCashProvidedByUsedInOperatingActivities",),
+    "buybacks": ("PaymentsForRepurchaseOfCommonStock",),
+}
+_SHARE_TAGS = (
+    "EntityCommonStockSharesOutstanding",
+    "CommonStockSharesOutstanding",
+)
+_INSTANT_TAGS = {
+    "inventory": ("InventoryNet",),
+}
+
+
+def repo_root() -> str:
+    return os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+class SecConfigError(Exception):
+    pass
+
+
+_RETRY_STATUS = {403, 429, 500, 502, 503, 504}
+_CACHE_TTL = 12 * 60 * 60
+_STALE_MAX = 7 * 24 * 60 * 60
+_RESERVED_DOMAINS = ("example.com", "example.org", "example.net")
+_NEXT_SEC = 0.0
+
+
+class HttpResult(tuple):
+    def __new__(cls, status, body, stale_age=None, cached_at=None, cache_age=None):
+        obj = tuple.__new__(cls, (int(status), body))
+        obj.stale_age = stale_age
+        obj.cached_at = cached_at
+        obj.cache_age = cache_age
+        return obj
+
+
+def _error_page(body: bytes) -> bool:
+    head = body.lstrip()[:400].lower()
+    return (
+        head.startswith(b"<!doctype")
+        or head.startswith(b"<html")
+        or head.startswith(b"<head")
+        or b"<title>" in head
+    )
+
+
+def _reserved_domain(domain: str) -> bool:
+    host = domain.lower().rstrip(".")
+    return any(host == name or host.endswith("." + name) for name in _RESERVED_DOMAINS)
+
+
+def valid_sec_user_agent(value: str) -> bool:
+    text = value.strip()
+    if not text or "noreply" in text.lower():
+        return False
+    if text == "Your Name you@example.com":
+        return False
+    parts = text.split()
+    if len(parts) < 2:
+        return False
+    email = parts[-1]
+    if email.count("@") != 1:
+        return False
+    local, domain = email.split("@", 1)
+    labels = domain.split(".")
+    if not local or len(labels) < 2 or any(not label for label in labels):
+        return False
+    if _reserved_domain(domain):
+        return False
+    return True
+
+
+def sec_user_agent(path: str | None = None) -> str:
+    chosen = os.environ.get("SEC_USER_AGENT", "").strip()
+    if not chosen:
+        path = (
+            path
+            or os.environ.get("SEC_USER_AGENT_FILE")
+            or os.path.join(repo_root(), "local", "sec_user_agent.txt")
+        )
+        try:
+            with open(path, encoding="utf-8") as handle:
+                chosen = handle.readline().strip()
+        except OSError:
+            chosen = ""
+    if not valid_sec_user_agent(chosen):
+        raise SecConfigError(
+            "SEC_USER_AGENT must be a real name and email. "
+            "noreply addresses and example.com, example.org, and example.net are rejected. "
+            "Set it in the environment or in local/sec_user_agent.txt. Do not commit it."
+        )
+    return chosen
+
+
+def default_cache_dir() -> str:
+    return os.path.join(repo_root(), "local", "http-cache")
+
+
+def _cache_path(cache_dir: str, url: str) -> str:
+    name = hashlib.sha256(url.encode("utf-8")).hexdigest()
+    return os.path.join(cache_dir, name + ".json")
+
+
+def _load_cache(cache_dir: str | None, url: str):
+    if not cache_dir:
+        return None
+    path = _cache_path(cache_dir, url)
+    try:
+        with open(path, encoding="utf-8") as handle:
+            data = json.load(handle)
+        body = base64.b64decode(data["body"])
+        return int(data["status"]), body, float(data["saved"])
+    except (OSError, json.JSONDecodeError, KeyError, ValueError):
+        return None
+
+
+def _store_cache(cache_dir: str | None, url: str, status: int, body: bytes, clock) -> None:
+    if not cache_dir or status != 200 or _error_page(body):
+        return
+    os.makedirs(cache_dir, exist_ok=True)
+    payload = {
+        "status": status,
+        "saved": clock(),
+        "body": base64.b64encode(body).decode("ascii"),
+    }
+    path = _cache_path(cache_dir, url)
+    fd, tmp = tempfile.mkstemp(prefix=".http-cache-", dir=cache_dir)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            json.dump(payload, handle)
+        os.replace(tmp, path)
+    except Exception:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
+def _decode_body(headers, body: bytes) -> bytes:
+    encoding = ""
+    if headers is not None:
+        getter = getattr(headers, "get", None)
+        encoding = str(getter("Content-Encoding") or "") if getter else ""
+    encoding = encoding.lower()
+    if "gzip" in encoding or body[:2] == b"\x1f\x8b":
+        try:
+            return gzip.decompress(body)
+        except OSError:
+            return body
+    if "deflate" in encoding:
+        try:
+            return zlib.decompress(body)
+        except zlib.error:
+            return body
+    return body
+
+
+def _pace(url: str, pause, clock) -> None:
+    global _NEXT_SEC
+    if "sec.gov" not in url:
+        return
+    wait = _NEXT_SEC - clock()
+    if wait > 0:
+        pause(wait)
+    _NEXT_SEC = clock() + 0.12
+
+
+def http_get(
+    url: str,
+    user_agent: str,
+    timeout: int = 15,
+    opener=None,
+    sleep=None,
+    cache_dir: str | None = None,
+    attempts: int = 3,
+    now=None,
+) -> tuple[int, bytes]:
+    pause = time.sleep if sleep is None else sleep
+    clock = time.time if now is None else now
+    open_url = urllib.request.urlopen if opener is None else opener
+    cached = _load_cache(cache_dir, url)
+    if cached is not None and clock() - cached[2] <= _CACHE_TTL:
+        saved = cached[2]
+        return HttpResult(cached[0], cached[1], cached_at=saved, cache_age=clock() - saved)
+    host = urllib.parse.urlparse(url).hostname or ""
+    last = (0, b"")
+    for attempt in range(attempts):
+        _pace(url, pause, time.monotonic)
+        request = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": user_agent,
+                "Accept": "application/json,text/csv,text/plain,*/*",
+                "Accept-Encoding": "gzip, deflate",
+                "Host": host,
+            },
+        )
+        try:
+            with open_url(request, timeout=timeout) as response:
+                status = int(getattr(response, "status", 200))
+                body = _decode_body(getattr(response, "headers", {}), response.read())
+        except urllib.error.HTTPError as error:
+            status = int(error.code)
+            raw = error.read() if error.fp is not None else b""
+            body = _decode_body(error.headers, raw)
+        except (
+            urllib.error.URLError,
+            TimeoutError,
+            ConnectionResetError,
+            http.client.IncompleteRead,
+            http.client.RemoteDisconnected,
+        ) as error:
+            reason = getattr(error, "reason", error)
+            status, body = 0, str(reason).encode("utf-8", "replace")
+        last = (status, body)
+        if status == 200 and not _error_page(body):
+            _store_cache(cache_dir, url, status, body, clock)
+            return HttpResult(status, body)
+        if status == 200 and _error_page(body):
+            last = (status, body)
+            break
+        if status not in _RETRY_STATUS and status != 0:
+            break
+        if attempt == attempts - 1:
+            break
+        pause(0.5 * (2 ** attempt))
+    if cached is not None and clock() - cached[2] <= _STALE_MAX:
+        age = clock() - cached[2]
+        print(f"using cached response after fetch failed: {url}", file=sys.stderr)
+        return HttpResult(cached[0], cached[1], age)
+    return HttpResult(last[0], last[1])
+
+
+def yahoo_chart_url(ticker: str, host: str = "query1") -> str:
+    return (
+        f"https://{host}.finance.yahoo.com/v8/finance/chart/"
+        f"{ticker}?range=5d&interval=1d"
+    )
+
+
+def nasdaq_info_url(ticker: str) -> str:
+    return f"https://api.nasdaq.com/api/quote/{ticker}/info?assetclass=stocks"
+
+
+def nasdaq_summary_url(ticker: str) -> str:
+    return f"https://api.nasdaq.com/api/quote/{ticker}/summary?assetclass=stocks"
+
+
+def nasdaq_financials_url(ticker: str) -> str:
+    return f"https://api.nasdaq.com/api/company/{ticker}/financials?frequency=1"
+
+
+def sec_tickers_url() -> str:
+    return "https://www.sec.gov/files/company_tickers.json"
+
+
+def sec_submissions_url(cik: str) -> str:
+    return f"https://data.sec.gov/submissions/CIK{cik}.json"
+
+
+def sec_facts_url(cik: str) -> str:
+    return f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
+
+
+def fred_dgs10_url() -> str:
+    return "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10"
+
+
+def treasury_yield_url(year: int) -> str:
+    return (
+        "https://home.treasury.gov/resource-center/data-chart-center/"
+        f"interest-rates/daily-treasury-rates.csv/{year}/all"
+        "?type=daily_treasury_yield_curve"
+        f"&field_tdr_date_value={year}&page&_format=csv"
+    )
+
+
+def _loads(body: bytes) -> dict | None:
+    try:
+        data = json.loads(body.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    if not isinstance(data, dict):
+        return None
+    return data
+
+
+def _price_text(text: str) -> Decimal | None:
+    cleaned = text.strip().replace("$", "").replace(",", "")
+    if cleaned in {"", "--", "N/A"}:
+        return None
+    try:
+        return Decimal(cleaned)
+    except Exception:
+        return None
+
+
+def _parse_et(text: str) -> datetime | None:
+    cleaned = text.replace("Closed at ", "").replace(" ET", "").strip()
+    try:
+        parsed = datetime.strptime(cleaned, "%b %d, %Y %I:%M %p")
+    except ValueError:
+        return None
+    return parsed.replace(tzinfo=_ET)
+
+
+def parse_yahoo_chart(body: bytes, ticker: str) -> tuple[list[MarketPrint], list[LabeledDecimal], str]:
+    data = _loads(body)
+    if data is None:
+        return [], [], "yahoo chart was not JSON"
+    result = (data.get("chart") or {}).get("result") or []
+    if not result:
+        return [], [], "yahoo chart had no result"
+    meta = result[0].get("meta") or {}
+    if meta.get("currency") != "USD":
+        return [], [], f"yahoo currency is {meta.get('currency')}"
+    price = meta.get("regularMarketPrice")
+    stamp = meta.get("regularMarketTime")
+    period = (meta.get("currentTradingPeriod") or {}).get("regular") or {}
+    prints: list[MarketPrint] = []
+    start = None
+    if price is not None and stamp is not None and period.get("start") and period.get("end"):
+        as_of = datetime.fromtimestamp(int(stamp), timezone.utc)
+        start = datetime.fromtimestamp(int(period["start"]), timezone.utc)
+        end = datetime.fromtimestamp(int(period["end"]), timezone.utc)
+        if start <= as_of < end:
+            kind = PrintKind.INTRADAY_LAST
+        else:
+            kind = PrintKind.OFFICIAL_CLOSE
+        prints.append(
+            MarketPrint(ticker, Decimal(str(price)), kind, as_of, "yahoo_chart")
+        )
+    if start is not None:
+        timestamps = result[0].get("timestamp") or []
+        quote_rows = (result[0].get("indicators") or {}).get("quote") or []
+        closes = quote_rows[0].get("close") if quote_rows else None
+        for bar_stamp, raw in zip(timestamps, closes or []):
+            if bar_stamp is None or raw is None:
+                continue
+            bar_at = datetime.fromtimestamp(int(bar_stamp), timezone.utc)
+            if bar_at >= start:
+                continue
+            cents = Decimal(str(raw)).quantize(Decimal("0.01"))
+            prints.append(
+                MarketPrint(ticker, cents, PrintKind.OFFICIAL_CLOSE, bar_at, "yahoo_daily_close")
+            )
+    ranges: list[LabeledDecimal] = []
+    for label, key in (
+        ("fifty_two_week_high", "fiftyTwoWeekHigh"),
+        ("fifty_two_week_low", "fiftyTwoWeekLow"),
+    ):
+        raw = meta.get(key)
+        if raw is None:
+            continue
+        ranges.append(LabeledDecimal(label, Decimal(str(raw)), "yahoo_chart"))
+    return prints, ranges, ""
+
+
+def parse_nasdaq_info(body: bytes, ticker: str) -> tuple[list[MarketPrint], str]:
+    data = _loads(body)
+    if data is None or not isinstance(data.get("data"), dict):
+        return [], "nasdaq info was not JSON"
+    payload = data["data"]
+    status = str(payload.get("marketStatus") or "")
+    prints: list[MarketPrint] = []
+    primary = payload.get("primaryData") or {}
+    primary_at = _parse_et(str(primary.get("lastTradeTimestamp") or ""))
+    primary_price = _price_text(str(primary.get("lastSalePrice") or ""))
+    undated = False
+    if primary_price is not None and primary_at is not None:
+        if status in {"Pre-Market", "After-Hours"}:
+            kind = PrintKind.EXTENDED_HOURS
+        elif status == "Open":
+            kind = PrintKind.INTRADAY_LAST
+        else:
+            kind = PrintKind.OFFICIAL_CLOSE
+        prints.append(MarketPrint(ticker, primary_price, kind, primary_at, "nasdaq_info"))
+    elif primary_price is not None:
+        undated = True
+    secondary = payload.get("secondaryData") or {}
+    secondary_text = str(secondary.get("lastTradeTimestamp") or "")
+    secondary_at = _parse_et(secondary_text)
+    secondary_price = _price_text(str(secondary.get("lastSalePrice") or ""))
+    if secondary_price is not None and secondary_at is not None and "Closed at" in secondary_text:
+        prints.append(
+            MarketPrint(
+                ticker,
+                secondary_price,
+                PrintKind.OFFICIAL_CLOSE,
+                secondary_at,
+                "nasdaq_info",
+            )
+        )
+    if not prints and undated:
+        return prints, "undated last sale"
+    return prints, ""
+
+
+def nasdaq_text_labels(info_body: bytes, summary_body: bytes) -> list[SourceLabel]:
+    found: list[SourceLabel] = []
+    info = _loads(info_body) or {}
+    data = info.get("data") if isinstance(info.get("data"), dict) else {}
+    if data.get("companyName"):
+        found.append(SourceLabel("company_name", str(data["companyName"]), "nasdaq_info"))
+    if data.get("exchange"):
+        found.append(SourceLabel("exchange", str(data["exchange"]), "nasdaq_info"))
+    summary = _loads(summary_body) or {}
+    block = {}
+    if isinstance(summary.get("data"), dict):
+        raw = (summary["data"].get("summaryData") or {})
+        if isinstance(raw, dict):
+            block = raw
+    for key, label in (
+        ("Sector", "sector"),
+        ("Industry", "industry"),
+        ("FiftTwoWeekHighLow", "fifty_two_week_high_low"),
+    ):
+        cell = block.get(key) or {}
+        if not isinstance(cell, dict):
+            continue
+        value = str(cell.get("value") or "").strip()
+        if value and value not in {"N/A", "--"}:
+            found.append(SourceLabel(label, value, "nasdaq_summary"))
+    return found
+
+
+def parse_nasdaq_summary_cap(body: bytes) -> UnscaledAmount | None:
+    data = _loads(body)
+    if data is None:
+        return None
+    summary = (data.get("data") or {}).get("summaryData") or {}
+    cell = summary.get("MarketCap") or {}
+    lexeme = str(cell.get("value") or "").strip()
+    if not lexeme or lexeme in {"N/A", "--"}:
+        return None
+    return UnscaledAmount(lexeme, "Market Cap", "", "nasdaq_summary")
+
+
+def parse_nasdaq_financials(body: bytes) -> tuple[list[UnscaledAmount], list[Percent]]:
+    data = _loads(body)
+    if data is None:
+        return [], []
+    tables = data.get("data") or {}
+    unscaled: list[UnscaledAmount] = []
+    percents: list[Percent] = []
+    for table_name in ("incomeStatementTable", "balanceSheetTable", "cashFlowTable", "financialRatiosTable"):
+        table = tables.get(table_name) or {}
+        headers = table.get("headers") or {}
+        for row in table.get("rows") or []:
+            label = str(row.get("value1") or "").strip()
+            if not label:
+                continue
+            for key, period in headers.items():
+                if key == "value1":
+                    continue
+                cell = str(row.get(key) or "").strip()
+                if cell in {"", "--", "N/A"}:
+                    continue
+                period_end = str(period)
+                if "%" in cell and "$" not in cell:
+                    number = _price_text(cell.replace("%", ""))
+                    if number is None:
+                        continue
+                    percents.append(Percent(number, label, period_end, "nasdaq_financials"))
+                elif "$" in cell:
+                    unscaled.append(UnscaledAmount(cell, label, period_end, "nasdaq_financials"))
+    return unscaled, percents
+
+
+def _later(current: TreasuryYield | None, candidate: TreasuryYield) -> TreasuryYield:
+    if current is None or candidate.as_of > current.as_of:
+        return candidate
+    return current
+
+
+def parse_fred_dgs10(body: bytes) -> TreasuryYield | None:
+    text = body.decode("utf-8", "replace").lstrip("\ufeff")
+    lines = text.splitlines()
+    if not lines or "DGS10" not in lines[0]:
+        return None
+    latest: TreasuryYield | None = None
+    for row in csv.DictReader(io.StringIO(text)):
+        raw = (row.get("DGS10") or "").strip()
+        if raw in {"", "."}:
+            continue
+        date_text = (row.get("DATE") or row.get("observation_date") or "").strip()
+        try:
+            rate = (Decimal(raw) / Decimal(100)).quantize(Decimal("0.0001"))
+            as_of = date.fromisoformat(date_text)
+        except Exception:
+            continue
+        latest = _later(latest, TreasuryYield(as_of, rate, "fred_dgs10"))
+    return latest
+
+
+def parse_treasury_par(body: bytes) -> TreasuryYield | None:
+    text = body.decode("utf-8", "replace")
+    lines = text.splitlines()
+    if not lines or "10 Yr" not in lines[0]:
+        return None
+    latest: TreasuryYield | None = None
+    for row in csv.DictReader(io.StringIO(text)):
+        raw = (row.get("10 Yr") or "").strip()
+        if raw in {"", "N/A", "."}:
+            continue
+        try:
+            as_of = datetime.strptime(row["Date"], "%m/%d/%Y").date()
+            rate = (Decimal(raw) / Decimal(100)).quantize(Decimal("0.0001"))
+        except Exception:
+            continue
+        latest = _later(latest, TreasuryYield(as_of, rate, "treasury_par"))
+    return latest
+
+
+def parse_cik(body: bytes, ticker: str) -> str | None:
+    data = _loads(body)
+    if data is None:
+        return None
+    wanted = ticker.upper()
+    rows = data.values() if all(isinstance(item, dict) for item in data.values()) else data
+    if isinstance(data, dict) and "0" not in data and "cik_str" in data:
+        rows = [data]
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        if str(row.get("ticker", "")).upper() == wanted:
+            return f"{int(row['cik_str']):010d}"
+    return None
+
+
+def _raw_document(filename: str) -> str:
+    parts = [part for part in filename.split("/") if part and not part.lower().startswith("xsl")]
+    return "/".join(parts) if parts else filename
+
+
+def _archive_url(cik: str, accession: str, filename: str) -> str:
+    acc = accession.replace("-", "")
+    return (
+        f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{acc}/"
+        f"{_raw_document(filename)}"
+    )
+
+
+def parse_submissions(body: bytes, cik: str) -> list[FilingRef]:
+    data = _loads(body)
+    if data is None:
+        return []
+    recent = (data.get("filings") or {}).get("recent") or {}
+    forms = recent.get("form") or []
+    dates = recent.get("filingDate") or []
+    accessions = recent.get("accessionNumber") or []
+    docs = recent.get("primaryDocument") or []
+    items = recent.get("items") or []
+    found: list[FilingRef] = []
+    form4 = 0
+    for index, form in enumerate(forms):
+        item = items[index] if index < len(items) else ""
+        keep = form in {"10-K", "10-Q", "10-K/A", "DEF 14A", "20-F", "40-F", "6-K"}
+        if form == "8-K" and "2.02" in str(item):
+            keep = True
+        if form == "4" and form4 < 5:
+            keep = True
+            form4 += 1
+        if not keep:
+            continue
+        if index >= len(accessions) or index >= len(docs) or index >= len(dates):
+            continue
+        accession = accessions[index]
+        filename = docs[index]
+        found.append(
+            FilingRef(
+                form=form,
+                filed=date.fromisoformat(dates[index]),
+                accession=accession,
+                url=_archive_url(cik, accession, filename),
+            )
+        )
+    return found
+
+
+def _iso(value: str | None) -> date | None:
+    if not value:
+        return None
+    try:
+        return date.fromisoformat(value[:10])
+    except ValueError:
+        return None
+
+
+def _note_period(chosen, frames, earliest, entry, key, filed):
+    previous = chosen.get(key)
+    if previous is None or filed >= str(previous.get("filed") or ""):
+        chosen[key] = entry
+    frame = _annual_frame(entry)
+    if frame:
+        frames[key] = frame
+    raw = entry.get("fy")
+    if raw not in (None, ""):
+        prior = earliest.get(key)
+        if prior is None or filed < prior[0]:
+            earliest[key] = (filed, int(raw))
+
+
+def _resolved_rows(chosen, frames, earliest) -> list[dict]:
+    resolved: list[dict] = []
+    for key, entry in chosen.items():
+        item = dict(entry)
+        if key in frames:
+            item["frame"] = frames[key]
+        else:
+            item["frame"] = None
+            if key in earliest:
+                item["fy"] = earliest[key][1]
+        resolved.append(item)
+    return resolved
+
+
+def _instant_rows(entries: list[dict]) -> list[dict]:
+    chosen: dict[str, dict] = {}
+    frames: dict[str, str] = {}
+    earliest: dict[str, tuple[str, int]] = {}
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("start"):
+            continue
+        if entry.get("segment") or entry.get("segments"):
+            continue
+        form = str(entry.get("form") or "")
+        if not form.startswith(_ANNUAL_FORMS):
+            continue
+        end = _iso(entry.get("end"))
+        if end is None:
+            continue
+        _note_period(chosen, frames, earliest, entry, end.isoformat(), str(entry.get("filed") or ""))
+    return _resolved_rows(chosen, frames, earliest)
+
+
+def _annual_frame(entry: dict) -> str:
+    frame = str(entry.get("frame") or "")
+    if frame.startswith("CY") and frame[2:].isdigit():
+        return frame
+    return ""
+
+
+def _annual_rows(entries: list[dict]) -> list[dict]:
+    chosen: dict[str, dict] = {}
+    frames: dict[str, str] = {}
+    earliest: dict[str, tuple[str, int]] = {}
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("segment") or entry.get("segments"):
+            continue
+        form = str(entry.get("form") or "")
+        if not form.startswith(_ANNUAL_FORMS):
+            continue
+        start = _iso(entry.get("start"))
+        end = _iso(entry.get("end"))
+        if start is None or end is None:
+            continue
+        span = (end - start).days
+        if span < 300 or span > 380:
+            continue
+        _note_period(chosen, frames, earliest, entry, end.isoformat(), str(entry.get("filed") or ""))
+    return _resolved_rows(chosen, frames, earliest)
+
+
+def _best_tag_rows(gaap: dict, tags: tuple[str, ...], row_fn) -> tuple[str, list[dict]]:
+    best_tag = ""
+    best_rows: list[dict] = []
+    best_key = None
+    for tag in tags:
+        node = gaap.get(tag) or {}
+        units = (node.get("units") or {}).get("USD") or []
+        rows = row_fn(units)
+        if not rows:
+            continue
+        end = max(str(row.get("end") or "") for row in rows)
+        key = (end, len(rows))
+        if best_key is None or key > best_key:
+            best_key = key
+            best_tag = tag
+            best_rows = rows
+    return best_tag, best_rows
+
+
+def _fiscal_year(row: dict, end: date) -> int:
+    frame = str(row.get("frame") or "")
+    if frame.startswith("CY") and frame[2:].isdigit():
+        return int(frame[2:])
+    raw = row.get("fy")
+    if raw not in (None, ""):
+        return int(raw)
+    return end.year
+
+
+def _facts_from_rows(concept: str, tag: str, rows: list[dict], keep_start: bool) -> list[AnnualFact]:
+    found: list[AnnualFact] = []
+    for row in rows:
+        end = _iso(row.get("end"))
+        filed = _iso(row.get("filed"))
+        if end is None or filed is None:
+            continue
+        found.append(
+            AnnualFact(
+                fiscal_year=_fiscal_year(row, end),
+                end=end,
+                concept=concept,
+                ones=Decimal(str(row["val"])),
+                filed=filed,
+                tag=tag,
+                start=_iso(row.get("start")) if keep_start else None,
+            )
+        )
+    return found
+
+
+def parse_companyfacts(body: bytes) -> tuple[list[AnnualFact], ShareCount | None]:
+    data = _loads(body)
+    if data is None:
+        return [], None
+    facts = data.get("facts") or {}
+    gaap = facts.get("us-gaap") or {}
+    annual: list[AnnualFact] = []
+    for concept, tags in _FLOW_TAGS.items():
+        tag, rows = _best_tag_rows(gaap, tags, _annual_rows)
+        annual.extend(_facts_from_rows(concept, tag, rows, True))
+    for concept, tags in _INSTANT_TAGS.items():
+        tag, rows = _best_tag_rows(gaap, tags, _instant_rows)
+        annual.extend(_facts_from_rows(concept, tag, rows, False))
+    shares = _latest_shares(facts)
+    return annual, shares
+
+
+def _latest_shares(facts: dict) -> ShareCount | None:
+    candidates: list[tuple[str, dict]] = []
+    for namespace in ("dei", "us-gaap"):
+        bucket = facts.get(namespace) or {}
+        for tag in _SHARE_TAGS:
+            units = ((bucket.get(tag) or {}).get("units") or {}).get("shares") or []
+            for entry in units:
+                if not isinstance(entry, dict):
+                    continue
+                if entry.get("start"):
+                    continue
+                if entry.get("segment") or entry.get("segments"):
+                    continue
+                end = _iso(entry.get("end"))
+                if end is None:
+                    continue
+                candidates.append((tag, entry))
+    if not candidates:
+        return None
+    tag, entry = max(
+        candidates,
+        key=lambda item: (str(item[1].get("end") or ""), str(item[1].get("filed") or "")),
+    )
+    end = _iso(entry.get("end"))
+    if end is None:
+        return None
+    return ShareCount(Decimal(str(entry["val"])), end, tag)
+
+
+def _local(tag: str) -> str:
+    return tag.split("}", 1)[-1] if "}" in tag else tag
+
+
+def _value_text(node, name: str) -> str:
+    for item in node.iter():
+        if _local(item.tag) != name:
+            continue
+        for child in item.iter():
+            if _local(child.tag) == "value" and child.text:
+                return child.text.strip()
+        if item.text and item.text.strip():
+            return item.text.strip()
+    return ""
+
+
+def _trade_from_node(node, owner: str, url: str, filed: date, derivative: bool) -> InsiderTrade | None:
+    code = _value_text(node, "transactionCode")
+    acquired = _value_text(node, "transactionAcquiredDisposedCode")
+    shares_text = _value_text(node, "transactionShares")
+    price_text = _value_text(node, "transactionPricePerShare")
+    when = _iso(_value_text(node, "transactionDate"))
+    if not code or not shares_text or when is None:
+        return None
+    price = Decimal(price_text) if price_text else None
+    return InsiderTrade(
+        when,
+        filed,
+        owner,
+        code,
+        acquired,
+        Decimal(shares_text),
+        price,
+        url,
+        derivative,
+    )
+
+
+def _has_derivative_node(body: bytes) -> bool:
+    try:
+        root = ET.fromstring(body)
+    except ET.ParseError:
+        return False
+    names = {"derivativeTransaction", "derivativeHolding"}
+    return any(_local(node.tag) in names for node in root.iter())
+
+
+def parse_form4(body: bytes, url: str, filed: date) -> list[InsiderTrade]:
+    try:
+        root = ET.fromstring(body)
+    except ET.ParseError:
+        return []
+    owners = []
+    for node in root.iter():
+        if _local(node.tag) == "rptOwnerName" and node.text:
+            owners.append(node.text.strip())
+    owner = owners[0] if owners else ""
+    trades: list[InsiderTrade] = []
+    for node in root.iter():
+        name = _local(node.tag)
+        if name == "nonDerivativeTransaction":
+            trade = _trade_from_node(node, owner, url, filed, False)
+        elif name == "derivativeTransaction":
+            trade = _trade_from_node(node, owner, url, filed, True)
+        else:
+            continue
+        if trade is not None:
+            trades.append(trade)
+    return trades
+
+
+def companyfacts_issue(body: bytes) -> str:
+    data = _loads(body)
+    if data is None:
+        return ""
+    facts = data.get("facts") or {}
+    ifrs = bool(facts.get("ifrs-full"))
+    saw_usd = False
+    saw_other = False
+    for node in (facts.get("us-gaap") or {}).values():
+        if not isinstance(node, dict):
+            continue
+        units = node.get("units") or {}
+        if units.get("USD"):
+            saw_usd = True
+        for key, rows in units.items():
+            if key not in {"USD", "shares", "pure"} and rows:
+                saw_other = True
+    if not (ifrs or (saw_other and not saw_usd)):
+        return ""
+    annual, _shares = parse_companyfacts(body)
+    if annual:
+        return ""
+    return "gaap rows unavailable: ifrs or non-usd"
+
+
+def positive_adr_ratio(value) -> Decimal | None:
+    if value is None or value == "":
+        return None
+    try:
+        number = value if isinstance(value, Decimal) else Decimal(str(value))
+        if number.is_finite() and number > 0:
+            return number
+    except InvalidOperation:
+        return None
+    return None
+
+
+def resolve_listing(filings, submissions_ok: bool, foreign_facts: bool) -> str:
+    if foreign_facts:
+        return "depositary"
+    if not submissions_ok:
+        return "unknown"
+    annual = [
+        item for item in filings
+        if str(item.form).startswith(("10-K", "20-F", "40-F"))
+    ]
+    if not annual:
+        return "unknown"
+    if str(annual[0].form).startswith(("20-F", "40-F")):
+        return "depositary"
+    return "domestic"
+
+
+def _failure(source: str, status: int, url: str, detail: str = "") -> FetchFailure:
+    return FetchFailure(source, status, url, detail)
+
+
+def _html_title(body: bytes) -> str:
+    match = re.search(br"<title>(.*?)</title>", body, re.IGNORECASE | re.DOTALL)
+    if match is None:
+        return ""
+    return re.sub(r"\s+", " ", match.group(1).decode("utf-8", "replace")).strip()
+
+
+def _with_stale(get, failures: list[FetchFailure], cache_hits: list[CacheHit] | None = None):
+    blocked: set[str] = set()
+
+    def tracked(url: str):
+        result = get(url)
+        status = int(result[0])
+        body = result[1]
+        stale = getattr(result, "stale_age", None)
+        cached_at = getattr(result, "cached_at", None)
+        cache_age = getattr(result, "cache_age", None)
+        if cached_at is not None and stale is None and cache_hits is not None:
+            age = 0 if cache_age is None else int(cache_age)
+            cache_hits.append(CacheHit(url, str(int(cached_at)), str(age)))
+        if stale is not None:
+            failures.append(_failure("stale_cache", status, url, f"age_seconds={int(stale)}"))
+        if status == 200 and _error_page(body) and cached_at is None and stale is None:
+            title = _html_title(body)
+            detail = "html error page" if not title else f"html error page: {title}"
+            failures.append(_failure("http", status, url, detail))
+            blocked.add(url)
+            return status, b""
+        return status, body
+
+    tracked.blocked = blocked
+    return tracked
+
+
+def _blocked(get, url: str) -> bool:
+    return url in getattr(get, "blocked", ())
+
+
+def fetch_quotes(ticker: str, get) -> tuple[tuple[MarketPrint, ...], tuple[FetchFailure, ...]]:
+    prints: list[MarketPrint] = []
+    failures: list[FetchFailure] = []
+    get = _with_stale(get, failures)
+    chart_url = yahoo_chart_url(ticker)
+    status, body = get(chart_url)
+    if status != 200 and not _blocked(get, chart_url):
+        alt = yahoo_chart_url(ticker, "query2")
+        alt_status, alt_body = get(alt)
+        if alt_status == 200 and not _blocked(get, alt):
+            chart_url, status, body = alt, alt_status, alt_body
+    if _blocked(get, chart_url):
+        pass
+    elif status == 200:
+        found, _, detail = parse_yahoo_chart(body, ticker)
+        prints.extend(found)
+        if detail:
+            failures.append(_failure("yahoo_chart", status, chart_url, detail))
+    else:
+        failures.append(_failure("yahoo_chart", status, chart_url))
+    info_url = nasdaq_info_url(ticker)
+    status, body = get(info_url)
+    if _blocked(get, info_url):
+        pass
+    elif status == 200:
+        found, detail = parse_nasdaq_info(body, ticker)
+        prints.extend(found)
+        if detail:
+            failures.append(_failure("nasdaq_info", status, info_url, detail))
+        elif not found:
+            failures.append(_failure("nasdaq_info", status, info_url, "no print"))
+    else:
+        failures.append(_failure("nasdaq_info", status, info_url))
+    return tuple(prints), tuple(failures)
+
+
+def build_snapshot(ticker: str, get, adr_ratio: Decimal | None = None) -> IssuerSnapshot:
+    prints: list[MarketPrint] = []
+    ranges: list[LabeledDecimal] = []
+    unscaled: list[UnscaledAmount] = []
+    percents: list[Percent] = []
+    yields: list[TreasuryYield] = []
+    filings: list[FilingRef] = []
+    annual: list[AnnualFact] = []
+    insiders: list[InsiderTrade] = []
+    failures: list[FetchFailure] = []
+    cache_hits: list[CacheHit] = []
+    get = _with_stale(get, failures, cache_hits)
+    labels: list[SourceLabel] = []
+    shares: ShareCount | None = None
+    info_body = b""
+    summary_body = b""
+
+    chart_url = yahoo_chart_url(ticker)
+    status, body = get(chart_url)
+    if status != 200 and not _blocked(get, chart_url):
+        alt = yahoo_chart_url(ticker, "query2")
+        alt_status, alt_body = get(alt)
+        if alt_status == 200 and not _blocked(get, alt):
+            chart_url, status, body = alt, alt_status, alt_body
+    if _blocked(get, chart_url):
+        pass
+    elif status == 200:
+        found, span, detail = parse_yahoo_chart(body, ticker)
+        prints.extend(found)
+        ranges.extend(span)
+        if detail:
+            failures.append(_failure("yahoo_chart", status, chart_url, detail))
+    else:
+        failures.append(_failure("yahoo_chart", status, chart_url))
+
+    info_url = nasdaq_info_url(ticker)
+    status, body = get(info_url)
+    if _blocked(get, info_url):
+        pass
+    elif status == 200:
+        info_body = body
+        found, detail = parse_nasdaq_info(body, ticker)
+        prints.extend(found)
+        if detail:
+            failures.append(_failure("nasdaq_info", status, info_url, detail))
+        elif not found:
+            failures.append(_failure("nasdaq_info", status, info_url, "no print"))
+    else:
+        failures.append(_failure("nasdaq_info", status, info_url))
+
+    summary_url = nasdaq_summary_url(ticker)
+    status, body = get(summary_url)
+    if _blocked(get, summary_url):
+        pass
+    elif status == 200:
+        summary_body = body
+        cap = parse_nasdaq_summary_cap(body)
+        if cap is not None:
+            unscaled.append(cap)
+    else:
+        failures.append(_failure("nasdaq_summary", status, summary_url))
+    labels.extend(nasdaq_text_labels(info_body, summary_body))
+
+    fin_url = nasdaq_financials_url(ticker)
+    status, body = get(fin_url)
+    if _blocked(get, fin_url):
+        pass
+    elif status == 200:
+        cells, ratios = parse_nasdaq_financials(body)
+        unscaled.extend(cells)
+        percents.extend(ratios)
+    else:
+        failures.append(_failure("nasdaq_financials", status, fin_url))
+
+    fred_url = fred_dgs10_url()
+    status, body = get(fred_url)
+    if _blocked(get, fred_url):
+        pass
+    elif status == 200:
+        found = parse_fred_dgs10(body)
+        if found is not None:
+            yields.append(found)
+        else:
+            failures.append(_failure("fred_dgs10", status, fred_url, "no numeric DGS10 row"))
+    else:
+        failures.append(_failure("fred_dgs10", status, fred_url))
+
+    year = date.today().year
+    treasury_url = treasury_yield_url(year)
+    status, body = get(treasury_url)
+    if _blocked(get, treasury_url):
+        pass
+    elif status == 200:
+        found = parse_treasury_par(body)
+        if found is not None:
+            yields.append(found)
+        else:
+            failures.append(_failure("treasury_par", status, treasury_url, "no 10 Yr row"))
+    else:
+        failures.append(_failure("treasury_par", status, treasury_url))
+
+    tickers_url = sec_tickers_url()
+    status, body = get(tickers_url)
+    cik = None
+    sub_url = ""
+    if _blocked(get, tickers_url):
+        pass
+    elif status == 200:
+        cik = parse_cik(body, ticker)
+        if cik is None:
+            failures.append(_failure("sec_company_tickers", status, tickers_url, "ticker missing"))
+    else:
+        failures.append(_failure("sec_company_tickers", status, tickers_url))
+
+    submissions_ok = False
+    foreign_facts = False
+    if cik is not None:
+        sub_url = sec_submissions_url(cik)
+        status, body = get(sub_url)
+        if _blocked(get, sub_url):
+            pass
+        elif status == 200:
+            filings = parse_submissions(body, cik)
+            submissions_ok = True
+        else:
+            failures.append(_failure("sec_submissions", status, sub_url))
+        facts_url = sec_facts_url(cik)
+        status, body = get(facts_url)
+        if _blocked(get, facts_url):
+            pass
+        elif status == 200:
+            annual, shares = parse_companyfacts(body)
+            issue = companyfacts_issue(body)
+            if issue:
+                foreign_facts = True
+                failures.append(_failure("sec_companyfacts", status, facts_url, issue))
+        else:
+            failures.append(_failure("sec_companyfacts", status, facts_url))
+        for filing in filings:
+            if filing.form != "4":
+                continue
+            status, body = get(filing.url)
+            if _blocked(get, filing.url):
+                continue
+            if status != 200:
+                failures.append(_failure("sec_form4", status, filing.url))
+                continue
+            parsed = parse_form4(body, filing.url, filing.filed)
+            if parsed:
+                insiders.extend(parsed)
+            elif not _has_derivative_node(body):
+                failures.append(_failure("sec_form4", status, filing.url, "no insider rows"))
+
+    listing = resolve_listing(filings, submissions_ok, foreign_facts)
+    stored_ratio = positive_adr_ratio(adr_ratio)
+    if listing != "domestic":
+        if stored_ratio is None:
+            detail = (
+                "market cap unavailable: filing type unknown"
+                if listing == "unknown"
+                else "market cap unavailable without an explicit ordinary-shares-per-adr ratio"
+            )
+            failures.append(_failure("adr_ratio", 0, sub_url, detail))
+    else:
+        stored_ratio = None
+
+    return IssuerSnapshot(
+        ticker=ticker,
+        prints=tuple(prints),
+        filings=tuple(filings),
+        annual=tuple(annual),
+        shares=shares,
+        yields=tuple(yields),
+        unscaled=tuple(unscaled),
+        percents=tuple(percents),
+        ranges=tuple(ranges),
+        labels=tuple(labels),
+        insiders=tuple(insiders),
+        failures=tuple(failures),
+        adr_ratio=stored_ratio,
+        cache=tuple(cache_hits),
+        listing=listing,
+    )
