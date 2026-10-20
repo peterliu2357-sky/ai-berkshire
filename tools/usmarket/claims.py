@@ -11,10 +11,12 @@ from datetime import date
 from decimal import ROUND_HALF_EVEN, Context, Decimal
 from enum import Enum
 from typing import Mapping
+from urllib.parse import urlsplit
 
 from financial_rigor import scenario_target_price
 from terminal_value import irr_from_terminal
 from us_market import ANALYZE_PREFIXES, render_analysis
+from usmarket.fetch import _FLOW_TAGS, _INSTANT_TAGS, _SHARE_TAGS
 from usmarket.types import IssuerSnapshot
 from usmarket.value import market_cap, official_close
 
@@ -100,7 +102,9 @@ def weakest(tiers: tuple[Tier, ...]) -> Tier:
 def _host_name(url: str) -> str:
     if not url.startswith("https://"):
         raise ValueError("cited url must be https")
-    host = url[len("https://") :].split("/", 1)[0].split("@")[-1].split(":", 1)[0]
+    host = urlsplit(url).hostname
+    if not host:
+        raise ValueError("cited url has no host")
     if host.startswith("www."):
         host = host[4:]
     return host.lower().rstrip(".")
@@ -124,9 +128,47 @@ def tier_of_host(url: str) -> tuple[Tier, str]:
     return Tier.LOW, host
 
 
+_WEBSITE_LABELS = frozenset({"website", "companywebsite", "ir", "companyir"})
+
+
+def _measure_key(value: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", value.casefold())
+
+
+def _snapshot_measure_keys() -> frozenset[str]:
+    keys = {
+        "shares",
+        "sharecount",
+        "sharesoutstanding",
+        "marketcap",
+        "equityvalue",
+        "mcap",
+    }
+    for concept, tags in {**_FLOW_TAGS, **_INSTANT_TAGS}.items():
+        keys.add(_measure_key(concept))
+        keys.update(_measure_key(tag) for tag in tags)
+    keys.update(_measure_key(tag) for tag in _SHARE_TAGS)
+    for prefix in ANALYZE_PREFIXES:
+        keys.add(_measure_key(prefix.rstrip(":")))
+    return frozenset(keys)
+
+
+_SNAPSHOT_MEASURE_KEYS = _snapshot_measure_keys()
+
+
+def _measure_blocked(measure: str, snapshot: IssuerSnapshot | None) -> bool:
+    if _measure_key(measure) in _SNAPSHOT_MEASURE_KEYS:
+        return True
+    if snapshot is not None and measure in _blocked_measures(snapshot):
+        return True
+    return False
+
+
 def _website_hosts(snapshot: IssuerSnapshot) -> set[str]:
     hosts: set[str] = set()
     for item in snapshot.labels:
+        if _measure_key(item.label) not in _WEBSITE_LABELS:
+            continue
         for text in (item.label, item.value):
             for match in _URL_IN_TEXT.finditer(text):
                 raw = match.group(0).rstrip(".,);]")
@@ -631,8 +673,13 @@ def admit(
     if isinstance(claim, Cited) and _sec_host(claim.url):
         raise ValueError("cited claim cannot use a sec.gov host")
     measure = _measure_of(claim)
-    if snapshot is not None and measure is not None and measure in _blocked_measures(snapshot):
+    if measure is not None and _measure_blocked(measure, snapshot):
         raise ValueError(f"measure collides with the snapshot: {measure}")
+    if isinstance(claim, Cited):
+        found = ledger.by_id()
+        for item in claim.inputs:
+            if item not in found:
+                raise ValueError(f"estimate input {item} is missing")
     if isinstance(claim, Excerpt):
         if snapshot is None or not any(item.accession == claim.accession for item in snapshot.filings):
             raise ValueError("excerpt accession is not on the snapshot")
@@ -827,10 +874,6 @@ def derive(
     request: ThreeScenario | IrrRequest,
 ) -> SourceLedger:
     existing = ledger.by_id().get(request.id)
-    if existing is not None:
-        if _same_derive(existing, request):
-            return ledger
-        raise ValueError(f"claim {request.id} already exists with a different payload")
     if isinstance(request, ThreeScenario):
         inputs = _three_inputs(snapshot, request)
         _scenario_prices(ledger, snapshot, inputs, request.years)
@@ -839,7 +882,24 @@ def derive(
         inputs = _irr_inputs(snapshot, request)
         _irr_rate(ledger, snapshot, inputs, request.years)
         claim = Derived(request.id, DeriveTool.IRR, inputs, request.years)
-    return SourceLedger(ledger.ticker, ledger.claims + (claim,))
+    if existing is None:
+        return SourceLedger(ledger.ticker, ledger.claims + (claim,))
+    if not _same_derive(existing, request):
+        raise ValueError(f"claim {request.id} already exists with a different payload")
+    if existing == claim or _refs_resolve(snapshot, existing.inputs):
+        return ledger
+    replaced = tuple(claim if item.id == request.id else item for item in ledger.claims)
+    return SourceLedger(ledger.ticker, replaced)
+
+
+def _refs_resolve(snapshot: IssuerSnapshot, inputs: tuple[str, ...]) -> bool:
+    try:
+        for token in inputs:
+            if token.startswith("snap:"):
+                _resolve_snap(snapshot, token)
+    except ValueError:
+        return False
+    return True
 
 
 def _input_tier(
@@ -852,7 +912,7 @@ def _input_tier(
         return Tier.PRIMARY
     claim = ledger.by_id().get(ClaimId(token))
     if isinstance(claim, Cited):
-        return cited_binding(claim.url, snapshot)[0]
+        return _cited_tier(claim, ledger, snapshot)
     if isinstance(claim, (Excerpt, PeerSnapshot)):
         return Tier.PRIMARY
     raise ValueError(f"derived input {token} has no tier")
@@ -862,8 +922,32 @@ def _derived_tier(claim: Derived, ledger: SourceLedger, snapshot: IssuerSnapshot
     return weakest(tuple(_input_tier(token, ledger, snapshot) for token in claim.inputs))
 
 
-def _cited_line(claim: Cited, snapshot: IssuerSnapshot | None) -> str:
-    tier, publisher = cited_binding(claim.url, snapshot)
+def _cited_tier(
+    claim: Cited,
+    ledger: SourceLedger,
+    snapshot: IssuerSnapshot | None,
+    seen: set[str] | None = None,
+) -> Tier:
+    tier, _publisher = cited_binding(claim.url, snapshot)
+    if not claim.inputs:
+        return tier
+    seen = set() if seen is None else set(seen)
+    if str(claim.id) in seen:
+        raise ValueError(f"estimate inputs cycle at {claim.id}")
+    seen.add(str(claim.id))
+    found = ledger.by_id()
+    ranks = [tier]
+    for item in claim.inputs:
+        other = found.get(item)
+        if not isinstance(other, Cited):
+            raise ValueError(f"estimate input {item} must be cited")
+        ranks.append(_cited_tier(other, ledger, snapshot, seen))
+    return weakest(tuple(ranks))
+
+
+def _cited_line(claim: Cited, ledger: SourceLedger, snapshot: IssuerSnapshot | None) -> str:
+    tier = _cited_tier(claim, ledger, snapshot)
+    _tier, publisher = cited_binding(claim.url, snapshot)
     when = "published" if claim.published is not None else "accessed"
     day = claim.published if claim.published is not None else claim.accessed
     pieces = [f"[c:{claim.id}", claim.url, publisher, f"{when}={day.isoformat()}"]
@@ -883,14 +967,9 @@ def _filing_by_accession(snapshot: IssuerSnapshot, accession: str):
 
 def _filing_for_date(snapshot: IssuerSnapshot, filed: date):
     same = [item for item in snapshot.filings if item.filed == filed]
-    if len(same) == 1:
-        return same[0]
-    annual = [item for item in snapshot.filings if str(item.form).startswith(("10-K", "20-F", "40-F"))]
-    if annual:
-        return max(annual, key=lambda item: item.filed)
-    if snapshot.filings:
-        return max(snapshot.filings, key=lambda item: item.filed)
-    raise ValueError("snapshot has no filing url")
+    if len(same) != 1:
+        raise ValueError(f"peer fact filed {filed.isoformat()} does not match one filing")
+    return same[0]
 
 
 def _sec_bracket(claim_id: ClaimId, url: str, filed: date) -> str:
@@ -924,7 +1003,7 @@ def citation_lines(
     lines: dict[ClaimId, tuple[str, ...]] = {}
     for claim in ledger.claims:
         if isinstance(claim, Cited):
-            lines[claim.id] = (_cited_line(claim, snapshot),)
+            lines[claim.id] = (_cited_line(claim, ledger, snapshot),)
         elif isinstance(claim, Excerpt):
             filing = _filing_by_accession(snapshot, claim.accession)
             quote = _excerpt_text(claim, excerpts)
@@ -940,15 +1019,21 @@ def citation_lines(
             lines[claim.id] = (f"{{{canon}}}{_sec_bracket(claim.id, filing.url, fact.filed)}",)
         elif isinstance(claim, Derived):
             tier = _derived_tier(claim, ledger, snapshot)
-            body = (
-                f"[d:{claim.id} derived tool={claim.tool.value} "
-                f"inputs={','.join(claim.inputs)} tier={tier.value}]"
-            )
             if claim.tool == DeriveTool.THREE_SCENARIO:
                 values = _scenario_prices(ledger, snapshot, claim.inputs, claim.years)
+                cases = ("bull", "base", "bear")
             else:
                 values = (_irr_rate(ledger, snapshot, claim.inputs, claim.years),)
-            lines[claim.id] = tuple("{" + canonical_decimal(value) + "}" + body for value in values)
+                cases = ("",)
+            rows = []
+            for value, case in zip(values, cases):
+                case_bit = f" case={case}" if case else ""
+                row_body = (
+                    f"[d:{claim.id} derived tool={claim.tool.value} "
+                    f"inputs={','.join(claim.inputs)}{case_bit} tier={tier.value}]"
+                )
+                rows.append("{" + canonical_decimal(value) + "}" + row_body)
+            lines[claim.id] = tuple(rows)
         elif isinstance(claim, Dispute):
             members = ",".join(str(item) for item in claim.members)
             lines[claim.id] = (f"[dispute:{claim.id} members={members}]",)
@@ -1020,9 +1105,14 @@ def _mask_exact(report: str, rows: tuple[str, ...]) -> str:
 
 
 def _mask_inline(line: str) -> str:
-    line = re.sub(r"`[^`]+`", lambda match: " " * len(match.group(0)), line)
-    line = re.sub(r"[\w./-]+\.md", lambda match: " " * len(match.group(0)), line)
-    return line
+    def blank_tick(match: re.Match[str]) -> str:
+        inner = match.group(0)[1:-1].strip()
+        if re.fullmatch(r"-?\d+(?:,\d{3})*(?:\.\d+)?", inner):
+            return match.group(0)
+        return " " * len(match.group(0))
+
+    line = re.sub(r"`[^`]*`", blank_tick, line)
+    return re.sub(r"[\w./-]+\.md", lambda match: " " * len(match.group(0)), line)
 
 
 def _broken_spans(masked: str) -> tuple[tuple[int, int], ...]:
@@ -1120,13 +1210,12 @@ def _excusing_lines(
     ledger: SourceLedger,
     lines: Mapping[ClaimId, tuple[str, ...]],
 ) -> dict[ClaimId, tuple[str, ...]]:
-    blocked = _blocked_measures(snapshot)
     found = ledger.by_id()
     kept: dict[ClaimId, tuple[str, ...]] = {}
     for claim_id, rows in lines.items():
         claim = found.get(claim_id)
         measure = _measure_of(claim) if claim is not None else None
-        if measure is not None and measure in blocked:
+        if measure is not None and _measure_blocked(measure, snapshot):
             continue
         kept[claim_id] = rows
     return kept
@@ -1141,7 +1230,19 @@ def _us_signal(report: str, snapshot: IssuerSnapshot | None, ledger: SourceLedge
 
 
 def _sections(report: str) -> list[str]:
-    return re.split(r"(?m)^#{1,6}[ \t]+.*$", report)
+    parts = re.split(r"(?m)^(#{1,6}[ \t]+.*)$", report)
+    if len(parts) == 1:
+        return parts
+    sections = []
+    if parts[0].strip():
+        sections.append(parts[0])
+    index = 1
+    while index < len(parts):
+        heading = parts[index]
+        body = parts[index + 1] if index + 1 < len(parts) else ""
+        sections.append(heading + body)
+        index += 2
+    return sections or [report]
 
 
 def _rows_in(section: str, rows: tuple[str, ...]) -> bool:
@@ -1181,11 +1282,26 @@ def _anchor_failure(anchor: str, ledger: SourceLedger, snapshot: IssuerSnapshot)
     if isinstance(claim, (Derived, Dispute, Scored, Withheld)):
         return f"score anchor {anchor} cannot support a star"
     if isinstance(claim, Cited):
-        tier, _publisher = cited_binding(claim.url, snapshot)
-        if tier == Tier.LOW:
+        if _cited_tier(claim, ledger, snapshot) == Tier.LOW:
             return f"score anchor {anchor} is low"
         return None
     return None
+
+
+def _derived_row_failures(
+    report: str,
+    ledger: SourceLedger,
+    lines: Mapping[ClaimId, tuple[str, ...]],
+) -> list[str]:
+    failures = []
+    for claim in ledger.claims:
+        if not isinstance(claim, Derived) or claim.tool != DeriveTool.THREE_SCENARIO:
+            continue
+        rows = lines.get(claim.id, ())
+        shown = [row for row in rows if row and row in report]
+        if shown and len(shown) != len(rows):
+            failures.append(f"derived {claim.id} hides a scenario")
+    return failures
 
 
 def _score_failures(
@@ -1230,6 +1346,8 @@ def audit_report(
         return AuditResult("skip", ())
     if snapshot is None:
         return AuditResult("fail", ("missing snapshot",))
+    if ledger is not None and ledger.ticker != snapshot.ticker:
+        return AuditResult("fail", ("ledger ticker does not match the snapshot",))
     peers = {} if peers is None else peers
     failures: list[str] = []
     try:
@@ -1254,6 +1372,7 @@ def audit_report(
             failures.append(str(error))
         failures.extend(_bracket_failures(report, lines))
         failures.extend(_dispute_failures(report, ledger, lines))
+        failures.extend(_derived_row_failures(report, ledger, lines))
         failures.extend(_score_failures(report, ledger, snapshot, lines))
     analyze = render_analysis(snapshot)
     usable = _excusing_lines(snapshot, ledger, lines) if ledger is not None else None

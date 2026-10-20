@@ -165,9 +165,59 @@ class TestHostTiers(unittest.TestCase):
         bare = citation_lines(_mu(), SourceLedger("MU", (claim,)), {}, {})[claim.id][0]
         self.assertNotIn("company IR", bare)
         self.assertTrue(bare.endswith("low]"))
+        blurb = _mu(labels=(SourceLabel("blurb", "see https://memory-prices.invalid/spot", "hand"),))
+        buried = _cited("spot", "dram_spot_ddr5", "5.15", CitedUnit.USD_PER_GB, "https://memory-prices.invalid/spot")
+        buried_line = citation_lines(blurb, SourceLedger("MU", (buried,)), {}, {})[buried.id][0]
+        self.assertTrue(buried_line.endswith("low]"))
+
+    def test_query_at_sign_does_not_pick_the_host(self):
+        tier, publisher = tier_of_host("https://evil.example?x=@federalregister.gov/path")
+        self.assertEqual((tier, publisher), (Tier.LOW, "evil.example"))
 
 
 class TestAdmitAndAudit(unittest.TestCase):
+    def test_gaap_alias_is_blocked_even_when_the_fact_is_absent(self):
+        snap = _mu(annual=())
+        ledger = SourceLedger("MU", ())
+        for measure in ("revenue", "NetIncomeLoss", "share_count", "equity_value", "Net_Income"):
+            claim = _cited("alias", measure, "424242", CitedUnit.USD_ONES, "https://www.trendforce.com/alias")
+            with self.assertRaises(ValueError):
+                admit(ledger, claim, snap)
+
+    def test_low_input_keeps_an_estimate_from_anchoring_a_star(self):
+        snap = _mu()
+        low = _cited("spot", "dram_spot_ddr5", "4", CitedUnit.USD_PER_GB, "https://memory-prices.invalid/spot")
+        estimate = Cited(
+            ClaimId("est"),
+            Measure("dram_spot_ddr5"),
+            Decimal("5.15"),
+            CitedUnit.USD_PER_GB,
+            "https://www.trendforce.com/example/ddr5",
+            date(2026, 3, 18),
+            None,
+            (ClaimId("spot"),),
+            "",
+        )
+        ledger = admit(admit(SourceLedger("MU", ()), low, snap), estimate, snap)
+        ledger = admit(ledger, Scored(ClaimId("score-mu"), 4, ("est",), ("spot",)), snap)
+        lines = citation_lines(snap, ledger, {}, {})
+        self.assertIn("estimate", lines[estimate.id][0])
+        self.assertTrue(lines[estimate.id][0].endswith("low]"))
+        report = "\n".join([lines[estimate.id][0], lines[low.id][0], lines[ClaimId("score-mu")][0], "★★★★"])
+        result = audit_report(report, snap, ledger, {})
+        self.assertEqual(result.status, "fail")
+        self.assertTrue(any("est" in item and "low" in item for item in result.failures))
+
+    def test_backticks_do_not_hide_a_number(self):
+        result = audit_report("`424242`\n", _mu(), None, {})
+        self.assertEqual(result.status, "fail")
+        self.assertTrue(any("424242" in item for item in result.failures))
+
+    def test_ledger_ticker_must_match_the_snapshot(self):
+        result = audit_report("Shares 100 as of 2026-08-28.\n", _mu(), SourceLedger("AAPL", ()), {})
+        self.assertEqual(result.status, "fail")
+        self.assertIn("ledger ticker does not match the snapshot", result.failures)
+
     def test_sec_gov_cited_raises(self):
         snap = _mu()
         ledger = SourceLedger("MU", ())
@@ -223,6 +273,8 @@ class TestAdmitAndAudit(unittest.TestCase):
         dispute = Dispute(ClaimId("dram-ddr5"), Measure("dram_spot_ddr5"), (first.id, second.id))
         ledger = admit(ledger, dispute, snap)
         lines = citation_lines(snap, ledger, {}, {})
+        heading = "# " + lines[first.id][0] + "\nbody without the other\n"
+        self.assertEqual(audit_report(heading, snap, ledger, {}).status, "fail")
         hidden = "# Spot\n" + lines[first.id][0] + "\n"
         hidden_result = audit_report(hidden, snap, ledger, {})
         self.assertEqual(hidden_result.status, "fail")
@@ -361,6 +413,40 @@ class TestDerive(unittest.TestCase):
         self.assertIn("tier=secondary", text)
         self.assertIn("tool=three_scenario", text)
         self.assertEqual(scenario_target_price(Decimal("10"), Decimal("0.1"), Decimal("12"), 3), Decimal("159.72"))
+        self.assertIn("case=bull", text)
+        self.assertIn("case=base", text)
+        self.assertIn("case=bear", text)
+        partial = audit_report(citation_lines(snap, again, {}, {})[request.id][0] + "\n", snap, again, {})
+        self.assertEqual(partial.status, "fail")
+        self.assertTrue(any("hides a scenario" in item for item in partial.failures))
+
+    def test_derive_replaces_a_snap_ref_that_no_longer_resolves(self):
+        snap = _mu()
+        ledger = self._rates(snap)
+        request = ThreeScenario(
+            ClaimId("scenario-mu"),
+            (ClaimId("g-bull"), ClaimId("g-base"), ClaimId("g-bear")),
+            (ClaimId("pe-bull"), ClaimId("pe-base"), ClaimId("pe-bear")),
+        )
+        derived = derive(ledger, snap, request)
+        later = _mu(shares=ShareCount(Decimal("100"), date(2026, 9, 1), "EntityCommonStockSharesOutstanding"))
+        refreshed = derive(derived, later, request)
+        self.assertIn("snap:shares:2026-09-01", refreshed.by_id()[request.id].inputs)
+        kept = _mu(
+            annual=_mu().annual
+            + (
+                AnnualFact(
+                    2027,
+                    date(2027, 8, 28),
+                    "net_income",
+                    Decimal("5000"),
+                    date(2027, 10, 1),
+                    "NetIncomeLoss",
+                ),
+            )
+        )
+        again = derive(derived, kept, request)
+        self.assertIn("snap:gaap:net_income:2026", again.by_id()[request.id].inputs)
 
     def test_irr_recomputes_market_cap_from_the_snapshot(self):
         snap = _mu()
@@ -405,6 +491,21 @@ class TestDerive(unittest.TestCase):
         self.assertIn("SEC", line)
         self.assertIn("{5000}", line)
         self.assertIn("https://www.sec.gov/Archives/edgar/data/1045810/nvda.htm", line)
+        ambiguous = _mu(
+            ticker="NVDA",
+            annual=annual,
+            filings=peer.filings
+            + (
+                FilingRef(
+                    "8-K",
+                    date(2026, 2, 20),
+                    "0001045810-26-000002",
+                    "https://www.sec.gov/Archives/edgar/data/1045810/nvda-8k.htm",
+                ),
+            ),
+        )
+        with self.assertRaises(ValueError):
+            citation_lines(_mu(), ledger, {}, {path: ambiguous})
 
 
 class TestParserAndVisibleText(unittest.TestCase):
@@ -784,6 +885,13 @@ class TestReportAuditDelegation(unittest.TestCase):
         self.assertEqual(bare.returncode, 0, bare.stderr)
         self.assertIn("报告数据抽检清单", bare.stdout)
         self.assertNotIn("audit: pass", bare.stdout)
+        hijack = subprocess.run(
+            [sys.executable, tool, "extract", "--report", str(_ROOT / "reports" / "Micron" / "final-report.md"), "--snapshot", snap_path],
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotIn("audit: pass", hijack.stdout)
+        self.assertNotEqual(hijack.returncode, 0)
 
 
 if __name__ == "__main__":

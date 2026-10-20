@@ -432,9 +432,22 @@ def _force_utf8_stdio():
             pass  # 非 TextIOWrapper（如被重定向到管道对象）时忽略
 
 
+def _delegate_to_ledger(argv: list[str]) -> bool:
+    head = next((item for item in argv if not item.startswith("-")), "")
+    if head in {"extract", "verdict"}:
+        return False
+    return any(
+        item == "--snapshot"
+        or item.startswith("--snapshot=")
+        or item == "--ledger"
+        or item.startswith("--ledger=")
+        for item in argv
+    )
+
+
 def main():
     _force_utf8_stdio()
-    if "--snapshot" in sys.argv[1:] or "--ledger" in sys.argv[1:]:
+    if _delegate_to_ledger(sys.argv[1:]):
         from source_ledger import main as ledger_main
         sys.exit(ledger_main(["audit", *sys.argv[1:]]))
     parser = argparse.ArgumentParser(
