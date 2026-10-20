@@ -245,6 +245,7 @@ class IssuerSnapshot:
     failures: tuple[FetchFailure, ...]
     adr_ratio: Decimal | None = None
     cache: tuple[CacheHit, ...] = ()
+    listing: str = "domestic"
 
     def to_json(self) -> dict[str, Any]:
         return {
@@ -263,6 +264,7 @@ class IssuerSnapshot:
             "failures": [item.to_json() for item in self.failures],
             "adr_ratio": None if self.adr_ratio is None else _dec(self.adr_ratio),
             "cache": [item.to_json() for item in self.cache],
+            "listing": self.listing,
         }
 
 
@@ -270,10 +272,11 @@ def snapshot_from_json(data: dict[str, Any]) -> IssuerSnapshot:
     if data.get("type") != "issuer_snapshot":
         raise ValueError("not an issuer snapshot")
     shares = data.get("shares")
+    filings = tuple(_filing_from_json(item) for item in data["filings"])
     return IssuerSnapshot(
         ticker=data["ticker"],
         prints=tuple(_print_from_json(item) for item in data["prints"]),
-        filings=tuple(_filing_from_json(item) for item in data["filings"]),
+        filings=filings,
         annual=tuple(_annual_from_json(item) for item in data["annual"]),
         shares=None if shares is None else _shares_from_json(shares),
         yields=tuple(_yield_from_json(item) for item in data["yields"]),
@@ -283,9 +286,37 @@ def snapshot_from_json(data: dict[str, Any]) -> IssuerSnapshot:
         labels=tuple(_label_from_json(item) for item in data["labels"]),
         insiders=tuple(_insider_from_json(item) for item in data["insiders"]),
         failures=tuple(_failure_from_json(item) for item in data["failures"]),
-        adr_ratio=None if data.get("adr_ratio") in (None, "") else Decimal(str(data["adr_ratio"])),
+        adr_ratio=_ratio_from_json(data.get("adr_ratio")),
         cache=tuple(_cache_from_json(item) for item in data.get("cache") or []),
+        listing=_listing_from_json(data, filings),
     )
+
+
+def _ratio_from_json(raw: Any) -> Decimal | None:
+    if raw in (None, ""):
+        return None
+    try:
+        number = Decimal(str(raw))
+        if number.is_finite() and number > 0:
+            return number
+    except Exception:
+        return None
+    return None
+
+
+def _listing_from_json(data: dict[str, Any], filings: tuple[FilingRef, ...]) -> str:
+    raw = data.get("listing")
+    if raw in {"domestic", "depositary", "unknown"}:
+        return raw
+    annual = [
+        item.form for item in filings
+        if str(item.form).startswith(("10-K", "20-F", "40-F"))
+    ]
+    if annual and str(annual[0]).startswith(("20-F", "40-F")):
+        return "depositary"
+    if annual:
+        return "domestic"
+    return "unknown"
 
 
 def _print_from_json(item: dict[str, Any]) -> MarketPrint:

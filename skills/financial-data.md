@@ -18,7 +18,7 @@
 
 上一节的中概 ADR（PDD、腾讯 ADR、网易 ADR）继续用 macrotrends + stockanalysis，不要改走下面三条命令。同一三条命令也覆盖在美上市、向 SEC 提交 20-F 或 40-F 的非中国发行人，例如 TSM、ASML、NVO。它们不是中概 ADR，也不是韩国或台湾本地股。韩国、台湾本地发行人不是 EDGAR 10-K 申报主体，只可 `quote` 对照行情，不可把 snapshot 里的空 filings 写成已取得年报。报告默认中文。只有用户要求英文或传入 `lang=en` 时，才改走 `skills/investment-team-en.md`。
 
-20-F/40-F 封面股本是普通股，行情价格是 ADR。没有显式的「每份 ADR 对应多少普通股」时，市值、以及依赖市值的收益率检验，都写不可得，并保留失败原因。已知比率时才在 snapshot 上附加 `--adr-ratio`（例如 TSM 为 5）。不要把 ADR 价格乘普通股股数。companyfacts 只有 `us-gaap` 的美元事实会进入 annual。IFRS 或非美元申报写明 GAAP 行不可得，不要把那些单位换算成美元净利润。
+20-F/40-F 封面股本是普通股，行情价格是 ADR。没有显式的「每份 ADR 对应多少普通股」时，市值、以及依赖市值的收益率检验，都写不可得，并保留失败原因。已知比率时才在 snapshot 上附加 `--adr-ratio`（例如 TSM 为 5）。不要把 ADR 价格乘普通股股数。submissions 失败或年报类型无法判断时，同样不算市值，除非传入了这个比率；传入后按普通股数除以比率。companyfacts 只有 `us-gaap` 的美元事实会进入 annual。IFRS 或非美元申报写明 GAAP 行不可得，并视为外国发行人，不要把那些单位换算成美元净利润。
 
 运行 snapshot 之前设置环境变量 `SEC_USER_AGENT`，形状是名字加真实邮箱。文档里的 `Your Name you@example.com` 只说明形状，这个字面值以及 example.com、example.org、example.net 会被拒绝。noreply 地址会被拒绝。这个值只留在本机，不要写入仓库。
 

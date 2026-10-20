@@ -723,7 +723,7 @@ class TestSnapshotAndCli(unittest.TestCase):
                 sys.stderr = err
                 try:
                     code = us_market.main(
-                        ["snapshot", "MU", "--out", "/tmp/adr-ratio-rejected.json", "--adr-ratio", raw],
+                        ["snapshot", "MU", "--out", "/tmp/adr-ratio-rejected.json", f"--adr-ratio={raw}"],
                         get=lambda url: (_ for _ in ()).throw(AssertionError(url)),
                     )
                 except Exception as exc:

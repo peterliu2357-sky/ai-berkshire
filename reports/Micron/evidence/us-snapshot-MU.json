@@ -4655,6 +4655,78 @@
     },
     {
       "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "MEHROTRA SANJAY",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "82721.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "MEHROTRA SANJAY",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "82721.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "MEHROTRA SANJAY",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "70224.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "MEHROTRA SANJAY",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "89805.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "MEHROTRA SANJAY",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "89805.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "MEHROTRA SANJAY",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "99791.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
       "transaction_date": "2026-10-14",
       "filed": "2026-10-15",
       "owner": "RAY MICHAEL CHARLES",
@@ -5029,6 +5101,42 @@
       "type": "insider_trade",
       "transaction_date": "2026-10-13",
       "filed": "2026-10-15",
+      "owner": "RAY MICHAEL CHARLES",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "16345.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "RAY MICHAEL CHARLES",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "16345.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "RAY MICHAEL CHARLES",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "18162.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "Murphy Mark J.",
       "code": "A",
       "acquired_disposed": "A",
@@ -5149,6 +5257,78 @@
       "type": "insider_trade",
       "transaction_date": "2026-10-13",
       "filed": "2026-10-15",
+      "owner": "Murphy Mark J.",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "22774.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "Murphy Mark J.",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "22774.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "Murphy Mark J.",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "19332.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "Murphy Mark J.",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "24516.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "Murphy Mark J.",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "24516.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "Murphy Mark J.",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "27242.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
       "owner": "BHATIA MANISH H",
       "code": "A",
       "acquired_disposed": "A",
@@ -5264,6 +5444,78 @@
       "price": "989.04",
       "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
       "derivative": false
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "BHATIA MANISH H",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "24113.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "BHATIA MANISH H",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "24113.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "BHATIA MANISH H",
+      "code": "M",
+      "acquired_disposed": "D",
+      "shares": "20471.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "BHATIA MANISH H",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "25877.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "BHATIA MANISH H",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "25877.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": true
+    },
+    {
+      "type": "insider_trade",
+      "transaction_date": "2026-10-13",
+      "filed": "2026-10-15",
+      "owner": "BHATIA MANISH H",
+      "code": "A",
+      "acquired_disposed": "A",
+      "shares": "28755.00",
+      "price": "0.00",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "derivative": true
     }
   ],
   "failures": [
@@ -5276,5 +5528,67 @@
     }
   ],
   "adr_ratio": null,
-  "cache": []
+  "cache": [
+    {
+      "type": "cache_hit",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
+      "cached_at": "1792471269",
+      "age_seconds": "3155"
+    },
+    {
+      "type": "cache_hit",
+      "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
+      "cached_at": "1792471270",
+      "age_seconds": "3155"
+    },
+    {
+      "type": "cache_hit",
+      "url": "https://www.sec.gov/files/company_tickers.json",
+      "cached_at": "1792471270",
+      "age_seconds": "3155"
+    },
+    {
+      "type": "cache_hit",
+      "url": "https://data.sec.gov/submissions/CIK0000723125.json",
+      "cached_at": "1792471270",
+      "age_seconds": "3155"
+    },
+    {
+      "type": "cache_hit",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
+      "cached_at": "1792471270",
+      "age_seconds": "3155"
+    },
+    {
+      "type": "cache_hit",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
+      "cached_at": "1792472608",
+      "age_seconds": "1817"
+    },
+    {
+      "type": "cache_hit",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000005/primarydocument.xml",
+      "cached_at": "1792472608",
+      "age_seconds": "1817"
+    },
+    {
+      "type": "cache_hit",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
+      "cached_at": "1792472608",
+      "age_seconds": "1817"
+    },
+    {
+      "type": "cache_hit",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
+      "cached_at": "1792472608",
+      "age_seconds": "1817"
+    },
+    {
+      "type": "cache_hit",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
+      "cached_at": "1792472608",
+      "age_seconds": "1817"
+    }
+  ],
+  "listing": "domestic"
 }

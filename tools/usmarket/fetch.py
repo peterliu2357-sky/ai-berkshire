@@ -18,7 +18,7 @@ import urllib.request
 import zlib
 import xml.etree.ElementTree as ET
 from datetime import date, datetime, timezone
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from zoneinfo import ZoneInfo
 
 from usmarket.types import (
@@ -917,14 +917,32 @@ def companyfacts_issue(body: bytes) -> str:
     return "gaap rows unavailable: ifrs or non-usd"
 
 
-def depositary_listing(filings) -> bool:
+def positive_adr_ratio(value) -> Decimal | None:
+    if value is None or value == "":
+        return None
+    try:
+        number = value if isinstance(value, Decimal) else Decimal(str(value))
+        if number.is_finite() and number > 0:
+            return number
+    except InvalidOperation:
+        return None
+    return None
+
+
+def resolve_listing(filings, submissions_ok: bool, foreign_facts: bool) -> str:
+    if foreign_facts:
+        return "depositary"
+    if not submissions_ok:
+        return "unknown"
     annual = [
         item for item in filings
         if str(item.form).startswith(("10-K", "20-F", "40-F"))
     ]
     if not annual:
-        return False
-    return str(annual[0].form).startswith(("20-F", "40-F"))
+        return "unknown"
+    if str(annual[0].form).startswith(("20-F", "40-F")):
+        return "depositary"
+    return "domestic"
 
 
 def _failure(source: str, status: int, url: str, detail: str = "") -> FetchFailure:
@@ -1119,6 +1137,8 @@ def build_snapshot(ticker: str, get, adr_ratio: Decimal | None = None) -> Issuer
     else:
         failures.append(_failure("sec_company_tickers", status, tickers_url))
 
+    submissions_ok = False
+    foreign_facts = False
     if cik is not None:
         sub_url = sec_submissions_url(cik)
         status, body = get(sub_url)
@@ -1126,6 +1146,7 @@ def build_snapshot(ticker: str, get, adr_ratio: Decimal | None = None) -> Issuer
             pass
         elif status == 200:
             filings = parse_submissions(body, cik)
+            submissions_ok = True
         else:
             failures.append(_failure("sec_submissions", status, sub_url))
         facts_url = sec_facts_url(cik)
@@ -1136,6 +1157,7 @@ def build_snapshot(ticker: str, get, adr_ratio: Decimal | None = None) -> Issuer
             annual, shares = parse_companyfacts(body)
             issue = companyfacts_issue(body)
             if issue:
+                foreign_facts = True
                 failures.append(_failure("sec_companyfacts", status, facts_url, issue))
         else:
             failures.append(_failure("sec_companyfacts", status, facts_url))
@@ -1154,17 +1176,18 @@ def build_snapshot(ticker: str, get, adr_ratio: Decimal | None = None) -> Issuer
             elif not _has_derivative_node(body):
                 failures.append(_failure("sec_form4", status, filing.url, "no insider rows"))
 
-    stored_ratio = None
-    if depositary_listing(filings):
-        if adr_ratio is None or Decimal(adr_ratio) <= 0:
-            failures.append(_failure(
-                "adr_ratio",
-                0,
-                sub_url,
-                "market cap unavailable without an explicit ordinary-shares-per-adr ratio",
-            ))
-        else:
-            stored_ratio = Decimal(adr_ratio)
+    listing = resolve_listing(filings, submissions_ok, foreign_facts)
+    stored_ratio = positive_adr_ratio(adr_ratio)
+    if listing != "domestic":
+        if stored_ratio is None:
+            detail = (
+                "market cap unavailable: filing type unknown"
+                if listing == "unknown"
+                else "market cap unavailable without an explicit ordinary-shares-per-adr ratio"
+            )
+            failures.append(_failure("adr_ratio", 0, sub_url, detail))
+    else:
+        stored_ratio = None
 
     return IssuerSnapshot(
         ticker=ticker,
@@ -1181,4 +1204,5 @@ def build_snapshot(ticker: str, get, adr_ratio: Decimal | None = None) -> Issuer
         failures=tuple(failures),
         adr_ratio=stored_ratio,
         cache=tuple(cache_hits),
+        listing=listing,
     )

@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from decimal import Decimal, InvalidOperation
 import re
 import sys
 import tempfile
@@ -18,9 +17,9 @@ from usmarket.fetch import (
     SecConfigError,
     build_snapshot,
     default_cache_dir,
-    depositary_listing,
     fetch_quotes,
     http_get,
+    positive_adr_ratio,
     sec_user_agent,
 )
 from usmarket.types import AnnualFact, IssuerSnapshot, snapshot_from_json
@@ -146,12 +145,16 @@ def render_analysis(snap: IssuerSnapshot) -> str:
         )
     close = official_close(snap.prints)
     cap = None
-    foreign = depositary_listing(snap.filings)
-    if close is None or snap.shares is None or (foreign and snap.adr_ratio is None):
+    needs_ratio = snap.listing != "domestic"
+    if close is None or snap.shares is None or (needs_ratio and snap.adr_ratio is None):
         lines.append("market_cap: unavailable")
     else:
-        cap = market_cap(close.price, snap.shares.shares, snap.adr_ratio)
-        ratio = "" if snap.adr_ratio is None else f" adr_ratio={_dec(snap.adr_ratio)}"
+        cap = market_cap(
+            close.price,
+            snap.shares.shares,
+            snap.adr_ratio if needs_ratio else None,
+        )
+        ratio = "" if not needs_ratio or snap.adr_ratio is None else f" adr_ratio={_dec(snap.adr_ratio)}"
         lines.append(
             f"market_cap: usd={_dec(cap)} price={_dec(close.price)} "
             f"shares={_dec(snap.shares.shares)}{ratio} source={close.source}"
@@ -278,12 +281,8 @@ def main(argv: list[str] | None = None, get=None) -> int:
     if args.command == "snapshot":
         ratio = None
         if args.adr_ratio not in (None, ""):
-            try:
-                ratio = Decimal(str(args.adr_ratio))
-            except InvalidOperation:
-                print("adr ratio rejected", file=sys.stderr)
-                return 2
-            if ratio <= 0:
+            ratio = positive_adr_ratio(args.adr_ratio)
+            if ratio is None:
                 print("adr ratio rejected", file=sys.stderr)
                 return 2
         snap = build_snapshot(args.ticker, getter, adr_ratio=ratio)
