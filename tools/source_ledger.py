@@ -257,7 +257,15 @@ def _unique_span(text: str, needle: str) -> tuple[int, int]:
     return byte_start, byte_start + len(blob)
 
 
+def _canonical_excerpt(ledger_path: str, claim_id: str) -> str:
+    return os.path.join(_excerpt_dir(ledger_path), f"{claim_id}.txt")
+
+
 def _cmd_excerpt(args) -> int:
+    expected = os.path.abspath(_canonical_excerpt(args.ledger, args.id))
+    if os.path.abspath(args.out) != expected:
+        print("excerpt --out must be excerpts/<id>.txt beside the ledger", file=sys.stderr)
+        return 1
     try:
         agent = sec_user_agent()
     except SecConfigError as error:

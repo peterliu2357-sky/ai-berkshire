@@ -22,7 +22,7 @@ Market cap, the share count, and GAAP amounts stay in the snapshot. `audit` stil
 
 Company IR is primary only when `labels` already holds a website URL and the cited host is that host. The publisher is `company IR`. If the label is absent, do not invent it. Biographies and filing prose use `admit excerpt`.
 
-`admit cited` rejects `sec.gov` and its subdomains. Quote a filing with `admit excerpt` only when that accession is already a `FilingRef` on this snapshot. The command takes `--contains` and `--out`. It does not take `--url`.
+`admit cited` rejects `sec.gov` and its subdomains. Quote a filing with `admit excerpt` only when that accession is already a `FilingRef` on this snapshot. The command takes `--contains` and `--out`. It does not take `--url`. `--out` is `reports/<company>/evidence/excerpts/<id>.txt`, the file beside the ledger that `audit` reads.
 
 `admit peer` records a pointer to a concept and fiscal year on another snapshot. Do not copy the peer number into this file.
 

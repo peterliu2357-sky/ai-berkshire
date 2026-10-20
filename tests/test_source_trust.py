@@ -543,6 +543,39 @@ class TestSourceLedgerCli(unittest.TestCase):
             with open(ledger, encoding="utf-8") as handle:
                 self.assertEqual(len(load_ledger(handle.read()).claims), 1)
 
+    def test_excerpt_out_must_sit_beside_the_ledger(self):
+        snap = _mu()
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot_path = os.path.join(directory, "us-snapshot-MU.json")
+            ledger_path = os.path.join(directory, "source-ledger.json")
+            with open(snapshot_path, "w", encoding="utf-8") as handle:
+                json.dump(snap.to_json(), handle)
+            argv = [
+                "admit",
+                "excerpt",
+                "--ledger",
+                ledger_path,
+                "--snapshot",
+                snapshot_path,
+                "--id",
+                "proxy-ceo",
+                "--measure",
+                "biography",
+                "--accession",
+                snap.filings[0].accession,
+                "--contains",
+                _SENTENCE,
+                "--out",
+                os.path.join(directory, "other.txt"),
+            ]
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                code = source_ledger.main(argv)
+            self.assertEqual(code, 1)
+            self.assertIn("excerpts/<id>.txt", stderr.getvalue())
+            self.assertFalse(os.path.exists(ledger_path))
+            self.assertFalse(os.path.exists(os.path.join(directory, "other.txt")))
+
     def test_excerpt_fetch_hides_the_user_agent_and_deletes_the_download(self):
         snap = _mu()
         filing_url = snap.filings[0].url
