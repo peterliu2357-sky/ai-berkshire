@@ -38,6 +38,7 @@ from usmarket.types import (  # noqa: E402
     AnnualFact,
     IssuerSnapshot,
     MarketPrint,
+    snapshot_from_json,
     PrintKind,
     ShareCount,
     TreasuryYield,
@@ -175,6 +176,67 @@ class TestCompanyfacts(unittest.TestCase):
         self.assertEqual(shares.shares, Decimal("1122334455"))
         self.assertEqual(shares.tag, "EntityCommonStockSharesOutstanding")
 
+    def test_annual_frame_year_beats_the_filing_fy(self):
+        body = json.dumps({
+            "facts": {"us-gaap": {"NetIncomeLoss": {"units": {"USD": [
+                {
+                    "start": "2024-08-30",
+                    "end": "2025-08-28",
+                    "val": 8539000000,
+                    "fy": 2026,
+                    "fp": "FY",
+                    "form": "10-K",
+                    "filed": "2026-10-09",
+                    "frame": "CY2025",
+                },
+                {
+                    "start": "2025-08-29",
+                    "end": "2026-09-03",
+                    "val": 84969000000,
+                    "fy": 2026,
+                    "fp": "FY",
+                    "form": "10-K",
+                    "filed": "2026-10-09",
+                    "frame": "CY2026",
+                },
+            ]}}}}
+        }).encode()
+        annual, _shares = parse_companyfacts(body)
+        income = sorted(
+            (item for item in annual if item.concept == "net_income"),
+            key=lambda item: item.end,
+        )
+        self.assertEqual([item.fiscal_year for item in income], [2025, 2026])
+        self.assertEqual(income[0].ones, Decimal("8539000000"))
+        self.assertEqual(income[1].ones, Decimal("84969000000"))
+
+    def test_later_filing_keeps_the_value_and_the_first_fy(self):
+        body = json.dumps({
+            "facts": {"us-gaap": {"NetIncomeLoss": {"units": {"USD": [
+                {
+                    "start": "2010-09-03",
+                    "end": "2011-09-01",
+                    "val": 100,
+                    "fy": 2011,
+                    "form": "10-K",
+                    "filed": "2011-10-25",
+                },
+                {
+                    "start": "2010-09-03",
+                    "end": "2011-09-01",
+                    "val": 167000000,
+                    "fy": 2013,
+                    "form": "10-K",
+                    "filed": "2013-10-28",
+                },
+            ]}}}}
+        }).encode()
+        annual, _shares = parse_companyfacts(body)
+        income = [item for item in annual if item.concept == "net_income"]
+        self.assertEqual(len(income), 1)
+        self.assertEqual(income[0].fiscal_year, 2011)
+        self.assertEqual(income[0].ones, Decimal("167000000"))
+
     def test_submissions_keep_item_202_and_cap_form4(self):
         forms = ["10-K", "8-K", "8-K", "4", "4", "4", "4", "4", "4", "10-Q"]
         items = ["", "2.02", "5.02", "", "", "", "", "", "", ""]
@@ -272,15 +334,37 @@ class TestSnapshotAndCli(unittest.TestCase):
         encoded = snap.to_json()
         self.assertTrue(all("ones" not in item and "number" not in item for item in encoded["unscaled"]))
 
+    def test_snapshot_exits_before_fetch_when_agent_missing(self):
+        calls = []
+
+        def boom(url):
+            calls.append(url)
+            raise AssertionError(url)
+
+        os.environ.pop("SEC_USER_AGENT", None)
+        old_err = sys.stderr
+        sys.stderr = io.StringIO()
+        try:
+            code = us_market.main(
+                ["snapshot", "MU", "--out", "/tmp/does-not-write-us-snapshot.json"],
+                get=boom,
+            )
+        finally:
+            sys.stderr = old_err
+        self.assertEqual(code, 2)
+        self.assertEqual(calls, [])
+
     def test_snapshot_exit_zero_when_sec_blocked(self):
         with tempfile.TemporaryDirectory() as directory:
             path = os.path.join(directory, "snap.json")
             old = sys.stdout
             sys.stdout = io.StringIO()
+            os.environ["SEC_USER_AGENT"] = "Your Name you@example.com"
             try:
                 code = us_market.main(["snapshot", "MU", "--out", path], get=self._fixture_get)
             finally:
                 sys.stdout = old
+                os.environ.pop("SEC_USER_AGENT", None)
             self.assertEqual(code, 0)
             saved = json.loads(Path(path).read_text())
             self.assertEqual(saved["filings"], [])
@@ -331,10 +415,12 @@ class TestSnapshotAndCli(unittest.TestCase):
             path = os.path.join(directory, "snap.json")
             old = sys.stdout
             sys.stdout = io.StringIO()
+            os.environ["SEC_USER_AGENT"] = "Your Name you@example.com"
             try:
                 us_market.main(["snapshot", "MU", "--out", path], get=self._fixture_get)
             finally:
                 sys.stdout = old
+                os.environ.pop("SEC_USER_AGENT", None)
             proc = subprocess.run(
                 [sys.executable, str(_TOOLS / "us_market.py"), "analyze", "--snapshot", path],
                 capture_output=True,
@@ -404,7 +490,12 @@ class TestSnapshotAndCli(unittest.TestCase):
         original = urllib.request.urlopen
         urllib.request.urlopen = lambda *args, **kwargs: (_ for _ in ()).throw(Broken())
         try:
-            status, body = http_get("https://www.sec.gov/x", "tester")
+            status, body = http_get(
+                "https://www.sec.gov/x",
+                "tester",
+                sleep=lambda _delay: None,
+                attempts=3,
+            )
         finally:
             urllib.request.urlopen = original
         self.assertEqual(status, 403)
@@ -491,6 +582,71 @@ class TestSecClient(unittest.TestCase):
         self.assertEqual(body, payload)
         self.assertEqual(len(calls), 3)
 
+    def test_live_get_sends_declared_agent_to_sec_and_fred(self):
+        seen = []
+
+        def capture(url, agent, timeout=40, opener=None, sleep=None, cache_dir=None, attempts=3, now=None):
+            seen.append((url, agent, cache_dir))
+            return 200, b"{}"
+
+        os.environ["SEC_USER_AGENT"] = "Your Name you@example.com"
+        original = us_market.http_get
+        us_market.http_get = capture
+        try:
+            us_market.live_get("https://www.sec.gov/files/company_tickers.json")
+            us_market.live_get("https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10")
+            us_market.live_get("https://api.nasdaq.com/api/quote/MU/info?assetclass=stocks")
+            us_market.live_get("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/x")
+        finally:
+            us_market.http_get = original
+        declared = "Your Name you@example.com"
+        self.assertEqual(seen[0][1], declared)
+        self.assertEqual(seen[1][1], declared)
+        self.assertIn("Chrome", seen[2][1])
+        self.assertIn("Chrome", seen[3][1])
+        self.assertTrue(seen[0][2])
+        self.assertTrue(seen[1][2])
+        self.assertIsNone(seen[2][2])
+        self.assertTrue(seen[3][2])
+
+    def test_stale_cache_is_logged_when_retries_fail(self):
+        import base64
+
+        from usmarket.fetch import _cache_path, http_get
+
+        url = "https://www.sec.gov/files/company_tickers.json"
+        with tempfile.TemporaryDirectory() as directory:
+            path = _cache_path(directory, url)
+            payload = {
+                "status": 200,
+                "saved": 0,
+                "body": base64.b64encode(b"cached-body").decode("ascii"),
+            }
+            Path(path).write_text(json.dumps(payload), encoding="utf-8")
+
+            def opener(request, timeout):
+                raise urllib.error.HTTPError(
+                    request.full_url, 503, "no", {}, io.BytesIO(b"down")
+                )
+
+            err = io.StringIO()
+            old = sys.stderr
+            sys.stderr = err
+            try:
+                status, body = http_get(
+                    url,
+                    "Your Name you@example.com",
+                    opener=opener,
+                    sleep=lambda _delay: None,
+                    cache_dir=directory,
+                    attempts=3,
+                    now=lambda: 100000,
+                )
+            finally:
+                sys.stderr = old
+        self.assertEqual((status, body), (200, b"cached-body"))
+        self.assertIn(f"using cached response after fetch failed: {url}", err.getvalue())
+
 
 class TestMicronReport(unittest.TestCase):
     def test_every_number_is_in_the_snapshot(self):
@@ -512,6 +668,10 @@ class TestMicronReport(unittest.TestCase):
                 tokens.append(str(node))
 
         walk(payload)
+        snap = snapshot_from_json(payload)
+        walk_text = us_market.render_analysis(snap)
+        for match in re.finditer(r"-?\d+(?:,\d{3})*(?:\.\d+)?", walk_text):
+            tokens.append(match.group(0))
         lexemes = [item["lexeme"] for item in payload["unscaled"]]
         date_parts = set()
         for token in tokens:

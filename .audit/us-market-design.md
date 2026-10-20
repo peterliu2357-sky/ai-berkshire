@@ -14,7 +14,11 @@ python3 tools/us_market.py analyze --snapshot reports/Micron/evidence/us-snapsho
 
 `quote` prints kind and timestamp. Exit 0 when a print exists. Exit 2 otherwise. It writes nothing.
 
-`snapshot` always writes the JSON when the command runs to completion. Exit 0 when at least one print or yield was saved. Exit 2 when neither was. SEC 403 is a `FetchFailure` inside the file, not a missing file. A timeout returns status 0 and does not raise.
+`snapshot` calls `sec_user_agent()` before any request. A missing or malformed `SEC_USER_AGENT` exits 2 and writes nothing. The value is the environment variable, or one line in `local/sec_user_agent.txt`. It must be a name plus an email. A noreply address is rejected. The placeholder in docs is `Your Name you@example.com`. The value is not committed.
+
+When the agent is valid, `snapshot` writes the JSON if the command finishes. Exit 0 when at least one print or yield was saved. Exit 2 when neither was. A later SEC 403 is a `FetchFailure` inside the file, not a missing file. A timeout returns status 0 and does not raise.
+
+`http_get` sends `User-Agent`, `Accept`, `Accept-Encoding: gzip, deflate`, and `Host`. It decompresses gzip and deflate. It retries 403, 429, 500, 502, 503, 504, and status 0, with pauses of 0.5, 1, and so on. `sec.gov` waits at least 0.12 seconds between requests. A 200 body is cached under `local/http-cache` for 12 hours. After the retries fail, a stale cache is used and the URL is printed on stderr. `sec.gov` and `stlouisfed.org` use the declared agent. Yahoo, Nasdaq, and Treasury keep a browser agent. Treasury is cached. A declared agent on Nasdaq hangs, so it stays on the browser agent.
 
 `analyze` does not open a socket. Exit 0 for a snapshot, including empty GAAP. Exit 1 when the file is not a snapshot.
 
@@ -32,7 +36,7 @@ Package `tools/usmarket/` with `types.py`, `value.py`, `fetch.py`. CLI is `tools
 
 `Percent` holds scale-free ratios such as gross margin.
 
-`AnnualFact.ones` is already dollars from XBRL `val`. There is no second scale factor. Flow facts need a 300 to 380 day span and a form that starts with 10-K, 20-F, or 40-F. The later `filed` value wins. Segments are skipped. Instant inventory uses `InventoryNet` with no `start`. Share count is an instant `EntityCommonStockSharesOutstanding` or `CommonStockSharesOutstanding`. A row with `start` is not a share count. Weighted-average shares are not a share count.
+`AnnualFact.ones` is already dollars from XBRL `val`. There is no second scale factor. Flow facts need a 300 to 380 day span and a form that starts with 10-K, 20-F, or 40-F. The later `filed` value wins for the dollar amount. Segments are skipped. The fiscal year is an annual `CY` frame when any fact for that period end has one. Otherwise it is the `fy` on the earliest filing of that end. A later 10-K often stamps its own `fy` on comparative columns, and that stamp is not the period year. Instant inventory uses `InventoryNet` with no `start`. Share count is an instant `EntityCommonStockSharesOutstanding` or `CommonStockSharesOutstanding`. A row with `start` is not a share count. Weighted-average shares are not a share count.
 
 `TreasuryYield.rate` is a fraction quantized to 0.0001. Blank and `.` cells are skipped. `select_hurdle` takes the later date. The same date keeps `treasury_par`.
 
@@ -42,7 +46,7 @@ Decimal context matches `financial_rigor.py`. `inventory_days` is inventory divi
 
 ## Report
 
-English files under `reports/Micron/`. `CLAUDE.md` keeps Chinese as the default and names the English filenames for a domestic 10-K. A test fails if a number in those notes is not in `evidence/us-snapshot-MU.json`.
+English files under `reports/Micron/`. `CLAUDE.md` keeps Chinese as the default and names the English filenames for a domestic 10-K. A test fails if a number in those notes is not in `evidence/us-snapshot-MU.json` and not in the `analyze` text for that same file.
 
 ## Rejected
 

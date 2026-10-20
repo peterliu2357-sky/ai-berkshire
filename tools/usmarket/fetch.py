@@ -1,13 +1,20 @@
 from __future__ import annotations
 
+import base64
 import csv
+import gzip
+import hashlib
 import io
 import json
 import os
 import re
+import sys
+import tempfile
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
+import zlib
 import xml.etree.ElementTree as ET
 from datetime import date, datetime, timezone
 from decimal import Decimal
@@ -67,19 +74,117 @@ class SecConfigError(Exception):
     pass
 
 
+_RETRY_STATUS = {403, 429, 500, 502, 503, 504}
+_CACHE_TTL = 12 * 60 * 60
+_NEXT_SEC = 0.0
+
+
+def valid_sec_user_agent(value: str) -> bool:
+    text = value.strip()
+    if not text or "noreply" in text.lower():
+        return False
+    parts = text.split()
+    if len(parts) < 2:
+        return False
+    email = parts[-1]
+    if email.count("@") != 1:
+        return False
+    local, domain = email.split("@", 1)
+    labels = domain.split(".")
+    if not local or len(labels) < 2 or any(not label for label in labels):
+        return False
+    return True
+
+
 def sec_user_agent(path: str | None = None) -> str:
-    env = os.environ.get("SEC_USER_AGENT", "").strip()
-    if env:
-        return env
-    path = path or os.path.join(repo_root(), "local", "sec_user_agent.txt")
+    chosen = os.environ.get("SEC_USER_AGENT", "").strip()
+    if not chosen:
+        path = path or os.path.join(repo_root(), "local", "sec_user_agent.txt")
+        try:
+            with open(path, encoding="utf-8") as handle:
+                chosen = handle.readline().strip()
+        except OSError:
+            chosen = ""
+    if not valid_sec_user_agent(chosen):
+        raise SecConfigError(
+            "SEC_USER_AGENT must look like 'Your Name you@example.com'. "
+            "Set it in the environment or in local/sec_user_agent.txt. Do not commit it."
+        )
+    return chosen
+
+
+def default_cache_dir() -> str:
+    return os.path.join(repo_root(), "local", "http-cache")
+
+
+def _cache_path(cache_dir: str, url: str) -> str:
+    name = hashlib.sha256(url.encode("utf-8")).hexdigest()
+    return os.path.join(cache_dir, name + ".json")
+
+
+def _load_cache(cache_dir: str | None, url: str):
+    if not cache_dir:
+        return None
+    path = _cache_path(cache_dir, url)
     try:
         with open(path, encoding="utf-8") as handle:
-            line = handle.readline().strip()
-    except OSError:
-        line = ""
-    if line:
-        return line
-    return "AI Berkshire peterliu2357-sky@users.noreply.github.com"
+            data = json.load(handle)
+        body = base64.b64decode(data["body"])
+        return int(data["status"]), body, float(data["saved"])
+    except (OSError, json.JSONDecodeError, KeyError, ValueError):
+        return None
+
+
+def _store_cache(cache_dir: str | None, url: str, status: int, body: bytes, clock) -> None:
+    if not cache_dir or status != 200:
+        return
+    os.makedirs(cache_dir, exist_ok=True)
+    payload = {
+        "status": status,
+        "saved": clock(),
+        "body": base64.b64encode(body).decode("ascii"),
+    }
+    path = _cache_path(cache_dir, url)
+    fd, tmp = tempfile.mkstemp(prefix=".http-cache-", dir=cache_dir)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            json.dump(payload, handle)
+        os.replace(tmp, path)
+    except Exception:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
+def _decode_body(headers, body: bytes) -> bytes:
+    encoding = ""
+    if headers is not None:
+        getter = getattr(headers, "get", None)
+        encoding = str(getter("Content-Encoding") or "") if getter else ""
+    encoding = encoding.lower()
+    if "gzip" in encoding or body[:2] == b"\x1f\x8b":
+        try:
+            return gzip.decompress(body)
+        except OSError:
+            return body
+    if "deflate" in encoding:
+        try:
+            return zlib.decompress(body)
+        except zlib.error:
+            return body
+    return body
+
+
+def _pace(url: str, pause, clock) -> None:
+    global _NEXT_SEC
+    if "sec.gov" not in url:
+        return
+    wait = _NEXT_SEC - clock()
+    if wait > 0:
+        pause(wait)
+    _NEXT_SEC = clock() + 0.12
 
 
 def http_get(
@@ -89,31 +194,51 @@ def http_get(
     opener=None,
     sleep=None,
     cache_dir: str | None = None,
-    attempts: int = 2,
+    attempts: int = 3,
+    now=None,
 ) -> tuple[int, bytes]:
-    del cache_dir, attempts
     pause = time.sleep if sleep is None else sleep
+    clock = time.time if now is None else now
     open_url = urllib.request.urlopen if opener is None else opener
+    cached = _load_cache(cache_dir, url)
+    if cached is not None and clock() - cached[2] <= _CACHE_TTL:
+        return cached[0], cached[1]
+    host = urllib.parse.urlparse(url).hostname or ""
     last = (0, b"")
-    for _attempt in range(2):
-        if "sec.gov" in url:
-            pause(0.2)
+    for attempt in range(attempts):
+        _pace(url, pause, time.monotonic)
         request = urllib.request.Request(
             url,
             headers={
                 "User-Agent": user_agent,
                 "Accept": "application/json,text/csv,text/plain,*/*",
+                "Accept-Encoding": "gzip, deflate",
+                "Host": host,
             },
         )
         try:
             with open_url(request, timeout=timeout) as response:
-                return response.status, response.read()
+                status = int(getattr(response, "status", 200))
+                body = _decode_body(getattr(response, "headers", {}), response.read())
         except urllib.error.HTTPError as error:
-            body = error.read() if error.fp is not None else b""
-            return error.code, body
+            status = int(error.code)
+            raw = error.read() if error.fp is not None else b""
+            body = _decode_body(error.headers, raw)
         except (urllib.error.URLError, TimeoutError) as error:
             reason = getattr(error, "reason", error)
-            last = (0, str(reason).encode("utf-8", "replace"))
+            status, body = 0, str(reason).encode("utf-8", "replace")
+        last = (status, body)
+        if status == 200:
+            _store_cache(cache_dir, url, status, body, clock)
+            return status, body
+        if status not in _RETRY_STATUS and status != 0:
+            break
+        if attempt == attempts - 1:
+            break
+        pause(0.5 * (2 ** attempt))
+    if cached is not None:
+        print(f"using cached response after fetch failed: {url}", file=sys.stderr)
+        return cached[0], cached[1]
     return last
 
 
@@ -482,8 +607,17 @@ def _instant_rows(entries: list[dict]) -> list[dict]:
     return list(chosen.values())
 
 
+def _annual_frame(entry: dict) -> str:
+    frame = str(entry.get("frame") or "")
+    if frame.startswith("CY") and frame[2:].isdigit():
+        return frame
+    return ""
+
+
 def _annual_rows(entries: list[dict]) -> list[dict]:
     chosen: dict[str, dict] = {}
+    frames: dict[str, str] = {}
+    earliest: dict[str, tuple[str, int]] = {}
     for entry in entries:
         if not isinstance(entry, dict):
             continue
@@ -500,10 +634,29 @@ def _annual_rows(entries: list[dict]) -> list[dict]:
         if span < 300 or span > 380:
             continue
         key = end.isoformat()
+        filed = str(entry.get("filed") or "")
         previous = chosen.get(key)
-        if previous is None or str(entry.get("filed") or "") >= str(previous.get("filed") or ""):
+        if previous is None or filed >= str(previous.get("filed") or ""):
             chosen[key] = entry
-    return list(chosen.values())
+        frame = _annual_frame(entry)
+        if frame:
+            frames[key] = frame
+        raw = entry.get("fy")
+        if raw not in (None, ""):
+            prior = earliest.get(key)
+            if prior is None or filed < prior[0]:
+                earliest[key] = (filed, int(raw))
+    resolved: list[dict] = []
+    for key, entry in chosen.items():
+        item = dict(entry)
+        if key in frames:
+            item["frame"] = frames[key]
+        else:
+            item["frame"] = None
+            if key in earliest:
+                item["fy"] = earliest[key][1]
+        resolved.append(item)
+    return resolved
 
 
 def _best_tag_rows(gaap: dict, tags: tuple[str, ...], row_fn) -> tuple[str, list[dict]]:
@@ -525,6 +678,16 @@ def _best_tag_rows(gaap: dict, tags: tuple[str, ...], row_fn) -> tuple[str, list
     return best_tag, best_rows
 
 
+def _fiscal_year(row: dict, end: date) -> int:
+    frame = str(row.get("frame") or "")
+    if frame.startswith("CY") and frame[2:].isdigit():
+        return int(frame[2:])
+    raw = row.get("fy")
+    if raw not in (None, ""):
+        return int(raw)
+    return end.year
+
+
 def _facts_from_rows(concept: str, tag: str, rows: list[dict], keep_start: bool) -> list[AnnualFact]:
     found: list[AnnualFact] = []
     for row in rows:
@@ -534,7 +697,7 @@ def _facts_from_rows(concept: str, tag: str, rows: list[dict], keep_start: bool)
             continue
         found.append(
             AnnualFact(
-                fiscal_year=int(row.get("fy") or end.year),
+                fiscal_year=_fiscal_year(row, end),
                 end=end,
                 concept=concept,
                 ones=Decimal(str(row["val"])),

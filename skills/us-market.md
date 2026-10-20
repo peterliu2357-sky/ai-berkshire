@@ -4,7 +4,7 @@ Use this skill for a domestic SEC 10-K issuer such as MU or AAPL. China ADR name
 
 ## Data
 
-Run the three commands in the domestic 10-K section of `skills/financial-data.md`. Do not paste extra flags. `analyze` reads the snapshot file and does not open a socket.
+Run the three commands in the domestic 10-K section of `skills/financial-data.md`. Do not paste extra flags. Set `SEC_USER_AGENT` to a name and an email such as `Your Name you@example.com` before `snapshot`. Do not commit that value. A noreply address is rejected, and a missing value stops `snapshot` before any request. `analyze` reads the snapshot file and does not open a socket.
 
 Money is USD. GAAP net income already deducts stock-based compensation. Do not add that cost back, and do not subtract it a second time. A company non-GAAP figure that adds the cost back is not the hurdle earnings. This snapshot has no non-GAAP field unless a later parser stores one. Do not invent the bridge.
 

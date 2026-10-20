@@ -7,12 +7,20 @@ import os
 import re
 import sys
 import tempfile
+import urllib.parse
 
 _TOOLS = os.path.dirname(os.path.abspath(__file__))
 if _TOOLS not in sys.path:
     sys.path.insert(0, _TOOLS)
 
-from usmarket.fetch import build_snapshot, fetch_quotes, http_get, sec_user_agent
+from usmarket.fetch import (
+    SecConfigError,
+    build_snapshot,
+    default_cache_dir,
+    fetch_quotes,
+    http_get,
+    sec_user_agent,
+)
 from usmarket.types import AnnualFact, IssuerSnapshot, snapshot_from_json
 from usmarket.value import (
     capex_ratio,
@@ -36,8 +44,13 @@ _BROWSER_UA = (
 
 
 def live_get(url: str) -> tuple[int, bytes]:
-    agent = sec_user_agent() if "sec.gov" in url else _BROWSER_UA
-    return http_get(url, agent)
+    host = urllib.parse.urlparse(url).hostname or ""
+    declared = host.endswith("sec.gov") or host.endswith("stlouisfed.org")
+    agent = sec_user_agent() if declared else _BROWSER_UA
+    cache = None
+    if declared or host.endswith("treasury.gov"):
+        cache = default_cache_dir()
+    return http_get(url, agent, cache_dir=cache)
 
 
 def _dec(value) -> str:
@@ -240,6 +253,12 @@ def main(argv: list[str] | None = None, get=None) -> int:
     if args.command in {"quote", "snapshot"} and not _TICKER.fullmatch(args.ticker):
         print(f"ticker rejected: {args.ticker}", file=sys.stderr)
         return 2
+    if args.command == "snapshot":
+        try:
+            sec_user_agent()
+        except SecConfigError as error:
+            print(error, file=sys.stderr)
+            return 2
     if args.command == "quote":
         prints, failures = fetch_quotes(args.ticker, getter)
         text = render_quotes(prints)

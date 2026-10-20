@@ -31,7 +31,7 @@ This skill is generated from `skills/financial-data.md` so Claude Code and Codex
 
 ### 美国本土上市公司（10-K / 10-Q，如 MU、AAPL）
 
-上一节的中概 ADR（PDD、腾讯 ADR、网易 ADR）继续用 macrotrends + stockanalysis，不要改走下面三条命令。韩国、台湾发行人不是 EDGAR 10-K 申报主体，只可 `quote` 对照行情，不可把 snapshot 里的空 filings 写成已取得年报。
+上一节的中概 ADR（PDD、腾讯 ADR、网易 ADR）继续用 macrotrends + stockanalysis，不要改走下面三条命令。运行 snapshot 之前设置环境变量 `SEC_USER_AGENT`，形式是 `Your Name you@example.com`。这个值只留在本机，不要写入仓库。noreply 地址会被拒绝。韩国、台湾发行人不是 EDGAR 10-K 申报主体，只可 `quote` 对照行情，不可把 snapshot 里的空 filings 写成已取得年报。
 
 命令与 README 的 `US listings` 小节逐字相同：
 

@@ -216,7 +216,7 @@ Ask AI directly, and you have one context window. Four parallel Agents means 4×
 
 ## US listings
 
-Domestic SEC 10-K filers such as MU use three commands. China ADR names such as PDD, TCEHY, and NTES stay on the macrotrends plus stockanalysis path in `skills/financial-data.md`. The same three lines sit in that file under the domestic 10-K heading.
+Domestic SEC 10-K filers such as MU use three commands. Before `snapshot`, set `SEC_USER_AGENT` to a name and an email, for example `Your Name you@example.com`. Keep that value only in the environment, and do not commit it. A noreply address is rejected. China ADR names such as PDD, TCEHY, and NTES stay on the macrotrends plus stockanalysis path in `skills/financial-data.md`. The same three lines sit in that file under the domestic 10-K heading.
 
 ```bash
 python3 tools/us_market.py quote MU
