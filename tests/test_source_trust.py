@@ -1,0 +1,485 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import contextlib
+import io
+import json
+import sys
+import unittest
+from datetime import date, datetime, timezone
+from decimal import Decimal
+from pathlib import Path
+
+_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(_ROOT / "tools"))
+
+from financial_rigor import scenario_target_price  # noqa: E402
+from us_market import render_analysis  # noqa: E402
+from usmarket.claims import (  # noqa: E402
+    AuditResult,
+    Cited,
+    CitedUnit,
+    ClaimId,
+    DeriveTool,
+    Dispute,
+    IrrRequest,
+    Measure,
+    PeerSnapshot,
+    Scored,
+    SourceLedger,
+    ThreeScenario,
+    Tier,
+    admit,
+    audit_report,
+    build_parser,
+    citation_lines,
+    derive,
+    load_ledger,
+    snapshot_allow_list,
+    tier_of_host,
+    unexcused_numbers,
+    visible_text,
+)
+from usmarket.types import (  # noqa: E402
+    AnnualFact,
+    FilingRef,
+    IssuerSnapshot,
+    MarketPrint,
+    PrintKind,
+    ShareCount,
+    SourceLabel,
+    snapshot_from_json,
+)
+
+
+def _mu(**overrides) -> IssuerSnapshot:
+    base = dict(
+        ticker="MU",
+        prints=(
+            MarketPrint(
+                "MU",
+                Decimal("100"),
+                PrintKind.OFFICIAL_CLOSE,
+                datetime(2026, 10, 17, 20, 0, tzinfo=timezone.utc),
+                "nasdaq_quote",
+            ),
+        ),
+        filings=(
+            FilingRef(
+                "10-K",
+                date(2026, 10, 1),
+                "0000723125-26-000099",
+                "https://www.sec.gov/Archives/edgar/data/723125/mu.htm",
+            ),
+        ),
+        annual=(
+            AnnualFact(
+                2026,
+                date(2026, 8, 28),
+                "net_income",
+                Decimal("1000"),
+                date(2026, 10, 1),
+                "NetIncomeLoss",
+            ),
+        ),
+        shares=ShareCount(Decimal("100"), date(2026, 8, 28), "EntityCommonStockSharesOutstanding"),
+        yields=(),
+        unscaled=(),
+        percents=(),
+        ranges=(),
+        labels=(),
+        insiders=(),
+        failures=(),
+    )
+    base.update(overrides)
+    return IssuerSnapshot(**base)
+
+
+def _cited(claim_id: str, measure: str, value: str, unit: CitedUnit, url: str) -> Cited:
+    return Cited(
+        ClaimId(claim_id),
+        Measure(measure),
+        Decimal(value),
+        unit,
+        url,
+        date(2026, 3, 18),
+        None,
+        (),
+        "",
+    )
+
+
+def _option_strings(parser: argparse.ArgumentParser) -> set[str]:
+    found: set[str] = set()
+    for action in parser._actions:
+        found.update(action.option_strings)
+        if isinstance(action, argparse._SubParsersAction):
+            for child in action.choices.values():
+                found.update(_option_strings(child))
+    return found
+
+
+class TestHostTiers(unittest.TestCase):
+    def test_trendforce_host_is_secondary(self):
+        self.assertEqual(
+            tier_of_host("https://www.trendforce.com/example/ddr5"),
+            (Tier.SECONDARY, "TrendForce"),
+        )
+        self.assertEqual(tier_of_host("https://spot.trendforce.com/ddr5")[0], Tier.SECONDARY)
+        claim = _cited(
+            "dram-ddr5-tf",
+            "dram_spot_ddr5",
+            "5.15",
+            CitedUnit.USD_PER_GB,
+            "https://www.trendforce.com/example/ddr5",
+        )
+        line = citation_lines(_mu(), SourceLedger("MU", (claim,)), {}, {})[claim.id][0]
+        self.assertEqual(
+            line,
+            "{5.15}[c:dram-ddr5-tf https://www.trendforce.com/example/ddr5 "
+            "TrendForce published=2026-03-18 secondary]",
+        )
+
+    def test_gartner_and_idc_are_secondary(self):
+        self.assertEqual(tier_of_host("https://www.gartner.com/doc/1"), (Tier.SECONDARY, "Gartner"))
+        self.assertEqual(tier_of_host("https://www.idc.com/getdoc.jsp"), (Tier.SECONDARY, "IDC"))
+
+    def test_unknown_https_host_is_low(self):
+        self.assertEqual(
+            tier_of_host("https://www.goldmansachs.com/research/note"),
+            (Tier.LOW, "goldmansachs.com"),
+        )
+
+    def test_company_site_in_labels_is_primary(self):
+        labeled = _mu(labels=(SourceLabel("website", "https://www.micron.com", "nasdaq_info"),))
+        claim = _cited("ir-page", "press_release", "1.25", CitedUnit.COUNT, "https://micron.com/ir")
+        line = citation_lines(labeled, SourceLedger("MU", (claim,)), {}, {})[claim.id][0]
+        self.assertIn("company IR", line)
+        self.assertTrue(line.endswith("primary]"))
+        bare = citation_lines(_mu(), SourceLedger("MU", (claim,)), {}, {})[claim.id][0]
+        self.assertNotIn("company IR", bare)
+        self.assertTrue(bare.endswith("low]"))
+
+
+class TestAdmitAndAudit(unittest.TestCase):
+    def test_sec_gov_cited_raises(self):
+        snap = _mu()
+        ledger = SourceLedger("MU", ())
+        for url in ("https://www.sec.gov/Archives/x.htm", "https://data.sec.gov/api/x"):
+            claim = _cited("sec-fact", "export_count", "1", CitedUnit.COUNT, url)
+            with self.assertRaises(ValueError):
+                admit(ledger, claim, snap)
+
+    def test_low_only_score_fails_and_secondary_score_passes(self):
+        snap = _mu()
+        low = _cited("spot", "dram_spot_ddr5", "5.15", CitedUnit.USD_PER_GB, "https://memory-prices.invalid/spot")
+        low_ledger = admit(admit(SourceLedger("MU", ()), low, snap), Scored(ClaimId("score-mu"), 4, ("spot",)), snap)
+        low_lines = citation_lines(snap, low_ledger, {}, {})
+        low_report = "\n".join([low_lines[low.id][0], low_lines[ClaimId("score-mu")][0], "★★★★"])
+        low_result = audit_report(low_report, snap, low_ledger, {})
+        self.assertEqual(low_result.status, "fail")
+        self.assertTrue(any("spot" in item and "low" in item for item in low_result.failures))
+        self.assertFalse(any("not in the snapshot" in item for item in low_result.failures))
+
+        cited = _cited(
+            "spot",
+            "dram_spot_ddr5",
+            "5.15",
+            CitedUnit.USD_PER_GB,
+            "https://www.trendforce.com/example/ddr5",
+        )
+        ledger = admit(admit(SourceLedger("MU", ()), cited, snap), Scored(ClaimId("score-mu"), 4, ("spot",)), snap)
+        lines = citation_lines(snap, ledger, {}, {})
+        report = "\n".join([lines[cited.id][0], lines[ClaimId("score-mu")][0], "★★★★"])
+        result = audit_report(report, snap, ledger, {})
+        self.assertEqual(result.status, "pass")
+        self.assertIsInstance(result, AuditResult)
+
+    def test_hidden_dispute_member_fails(self):
+        snap = _mu()
+        first = _cited(
+            "dram-ddr5-tf",
+            "dram_spot_ddr5",
+            "5.15",
+            CitedUnit.USD_PER_GB,
+            "https://www.trendforce.com/example/ddr5",
+        )
+        second = _cited(
+            "dram-ddr5-r",
+            "dram_spot_ddr5",
+            "5.40",
+            CitedUnit.USD_PER_GB,
+            "https://www.reuters.com/markets/example",
+        )
+        ledger = SourceLedger("MU", ())
+        ledger = admit(ledger, first, snap)
+        ledger = admit(ledger, second, snap)
+        dispute = Dispute(ClaimId("dram-ddr5"), Measure("dram_spot_ddr5"), (first.id, second.id))
+        ledger = admit(ledger, dispute, snap)
+        lines = citation_lines(snap, ledger, {}, {})
+        hidden = "# Spot\n" + lines[first.id][0] + "\n"
+        hidden_result = audit_report(hidden, snap, ledger, {})
+        self.assertEqual(hidden_result.status, "fail")
+        self.assertTrue(any("dram-ddr5" in item for item in hidden_result.failures))
+        shown = "# Spot\n" + "\n".join(
+            [lines[first.id][0], lines[second.id][0], lines[dispute.id][0]]
+        )
+        self.assertEqual(audit_report(shown, snap, ledger, {}).status, "pass")
+
+    def test_braced_citation_excuses_its_digits_and_the_bracket(self):
+        snap = _mu()
+        claim = _cited(
+            "dram-ddr5-tf",
+            "dram_spot_ddr5",
+            "5.15",
+            CitedUnit.USD_PER_GB,
+            "https://www.trendforce.com/example/ddr5",
+        )
+        analyze = render_analysis(snap)
+        self.assertNotIn("5.15", snapshot_allow_list(snap, analyze))
+        line = citation_lines(snap, SourceLedger("MU", (claim,)), {}, {})[claim.id][0]
+        self.assertNotEqual(unexcused_numbers(line, snap, analyze, None), [])
+        self.assertEqual(unexcused_numbers(line, snap, analyze, {claim.id: (line,)}), [])
+
+    def test_gaap_number_on_a_cited_line_still_fails(self):
+        snap = _mu()
+        claim = _cited(
+            "dram-ddr5-tf",
+            "dram_spot_ddr5",
+            "5.15",
+            CitedUnit.USD_PER_GB,
+            "https://www.trendforce.com/example/ddr5",
+        )
+        ledger = SourceLedger("MU", (claim,))
+        line = citation_lines(snap, ledger, {}, {})[claim.id][0]
+        report = f"net income 424242 {line}\n"
+        analyze = render_analysis(snap)
+        self.assertIn("424242", unexcused_numbers(report, snap, analyze, {claim.id: (line,)}))
+        result = audit_report(report, snap, ledger, {})
+        self.assertEqual(result.status, "fail")
+        self.assertTrue(
+            any("424242" in item and "not in the snapshot" in item for item in result.failures)
+        )
+
+    def test_snapshot_class_citation_does_not_excuse_its_number(self):
+        snap = _mu()
+        claim = Cited(
+            ClaimId("ni-extra"),
+            Measure("net_income"),
+            Decimal("424242"),
+            CitedUnit.USD_ONES,
+            "https://www.trendforce.com/example/income",
+            date(2026, 3, 18),
+            None,
+            (),
+            "",
+        )
+        ledger = SourceLedger("MU", (claim,))
+        line = citation_lines(snap, ledger, {}, {})[claim.id][0]
+        result = audit_report(line + "\n", snap, ledger, {})
+        self.assertEqual(result.status, "fail")
+        self.assertTrue(any("424242" in item for item in result.failures))
+
+    def test_ledger_text_containing_at_is_rejected(self):
+        with self.assertRaises(ValueError):
+            load_ledger('{"claims": [], "ticker": "a@b"}\n')
+        with self.assertRaises(ValueError):
+            load_ledger('{"claims": [], "ticker": "mu--shares"}\n')
+        loaded = load_ledger('{"claims": [], "ticker": "MU"}\n')
+        self.assertEqual(loaded.ticker, "MU")
+        self.assertEqual(loaded.claims, ())
+
+    def test_note_without_a_us_signal_skips(self):
+        result = audit_report("收入约为100亿元。\n", None, None, {})
+        self.assertEqual(result.status, "skip")
+
+    def test_allow_listed_snapshot_note_passes_without_a_ledger(self):
+        snap = _mu()
+        result = audit_report("Shares 100 as of 2026-08-28.\n", snap, None, {})
+        self.assertEqual(result.failures, ())
+        self.assertEqual(result.status, "pass")
+
+    def test_existing_micron_notes_pass_without_a_ledger(self):
+        folder = _ROOT / "reports" / "Micron"
+        snap = snapshot_from_json(json.loads((folder / "evidence" / "us-snapshot-MU.json").read_text(encoding="utf-8")))
+        for path in sorted(folder.glob("*.md")):
+            result = audit_report(path.read_text(encoding="utf-8"), snap, None, {})
+            self.assertEqual(result.status, "pass", (path.name, result.failures))
+
+
+class TestDerive(unittest.TestCase):
+    def _rates(self, snap: IssuerSnapshot) -> SourceLedger:
+        claims = [
+            _cited("g-bull", "growth_bull", "0.20", CitedUnit.RATIO, "https://www.trendforce.com/g/bull"),
+            _cited("g-base", "growth_base", "0.10", CitedUnit.RATIO, "https://www.reuters.com/g/base"),
+            _cited("g-bear", "growth_bear", "0", CitedUnit.RATIO, "https://www.ft.com/g/bear"),
+            _cited("pe-bull", "pe_bull", "15", CitedUnit.MULTIPLE, "https://www.bloomberg.com/pe/bull"),
+            _cited("pe-base", "pe_base", "12", CitedUnit.MULTIPLE, "https://www.wsj.com/pe/base"),
+            _cited("pe-bear", "pe_bear", "8", CitedUnit.MULTIPLE, "https://www.ft.com/pe/bear"),
+            _cited("profit-2036", "profit_2036", "2000", CitedUnit.USD_ONES, "https://www.trendforce.com/profit"),
+        ]
+        ledger = SourceLedger(snap.ticker, ())
+        for claim in claims:
+            ledger = admit(ledger, claim, snap)
+        return ledger
+
+    def test_three_scenario_price_uses_snapshot_refs(self):
+        snap = _mu()
+        ledger = self._rates(snap)
+        request = ThreeScenario(
+            ClaimId("scenario-mu"),
+            (ClaimId("g-bull"), ClaimId("g-base"), ClaimId("g-bear")),
+            (ClaimId("pe-bull"), ClaimId("pe-base"), ClaimId("pe-bear")),
+        )
+        derived = derive(ledger, snap, request)
+        again = derive(derived, snap, request)
+        self.assertEqual(len(again.claims), len(derived.claims))
+        row = again.by_id()[request.id]
+        self.assertEqual(row.tool, DeriveTool.THREE_SCENARIO)
+        self.assertEqual(
+            row.inputs[-3:],
+            ("snap:gaap:net_income:2026", "snap:shares:2026-08-28", "snap:close:2026-10-17"),
+        )
+        self.assertNotIn("--shares", " ".join(row.inputs))
+        self.assertNotIn("--reported", " ".join(row.inputs))
+        eps = Decimal("1000") / Decimal("100")
+        expected = []
+        for growth, pe in (("0.20", "15"), ("0.10", "12"), ("0", "8")):
+            future = eps
+            for _ in range(3):
+                future = future * (Decimal("1") + Decimal(growth))
+            expected.append(format(future * Decimal(pe), "f"))
+        text = "\n".join(citation_lines(snap, again, {}, {})[request.id])
+        for canon in expected:
+            self.assertIn("{" + canon + "}", text)
+        self.assertIn("tier=secondary", text)
+        self.assertIn("tool=three_scenario", text)
+        self.assertEqual(scenario_target_price(Decimal("10"), Decimal("0.1"), Decimal("12"), 3), Decimal("159.72"))
+
+    def test_irr_recomputes_market_cap_from_the_snapshot(self):
+        snap = _mu()
+        ledger = self._rates(snap)
+        request = IrrRequest(ClaimId("irr-mu"), ClaimId("profit-2036"), ClaimId("pe-base"))
+        derived = derive(ledger, snap, request)
+        row = derived.by_id()[request.id]
+        self.assertEqual(row.inputs[0], "profit-2036")
+        self.assertEqual(row.inputs[1], "pe-base")
+        self.assertEqual(row.inputs[-2:], ("snap:close:2026-10-17", "snap:shares:2026-08-28"))
+        self.assertNotIn("--reported", " ".join(row.inputs))
+        rate = (2000 * 12 / 10000) ** (1.0 / 10) - 1.0
+        line = citation_lines(snap, derived, {}, {})[request.id][0]
+        self.assertIn("{" + format(Decimal(str(rate)), "f") + "}", line)
+        self.assertIn("tool=irr", line)
+        bare = _mu(shares=None)
+        with self.assertRaises(ValueError):
+            derive(ledger, bare, request)
+
+    def test_peer_snapshot_prints_primary(self):
+        peer = _mu(ticker="NVDA")
+        annual = (
+            AnnualFact(2026, date(2026, 1, 31), "revenue", Decimal("5000"), date(2026, 2, 20), "Revenue"),
+        )
+        peer = _mu(
+            ticker="NVDA",
+            annual=annual,
+            filings=(
+                FilingRef(
+                    "10-K",
+                    date(2026, 2, 20),
+                    "0001045810-26-000001",
+                    "https://www.sec.gov/Archives/edgar/data/1045810/nvda.htm",
+                ),
+            ),
+        )
+        path = "reports/NVIDIA/evidence/us-snapshot-NVDA.json"
+        claim = PeerSnapshot(ClaimId("nvda-revenue-fy2026"), Measure("peer_nvda_revenue"), path, "revenue", 2026)
+        ledger = admit(SourceLedger("MU", ()), claim, _mu())
+        line = citation_lines(_mu(), ledger, {}, {path: peer})[claim.id][0]
+        self.assertTrue(line.endswith("primary]"))
+        self.assertIn("SEC", line)
+        self.assertIn("{5000}", line)
+        self.assertIn("https://www.sec.gov/Archives/edgar/data/1045810/nvda.htm", line)
+
+
+class TestParserAndVisibleText(unittest.TestCase):
+    def test_derive_parser_has_no_shares_or_reported_flag(self):
+        parser = build_parser()
+        flags = _option_strings(parser)
+        self.assertTrue(flags.isdisjoint({"--shares", "--reported", "--tier", "--publisher"}))
+        three = parser.parse_args(
+            [
+                "derive",
+                "three-scenario",
+                "--ledger",
+                "L",
+                "--snapshot",
+                "S",
+                "--id",
+                "scenario-mu",
+                "--growth",
+                "a,b,c",
+                "--pe",
+                "d,e,f",
+            ]
+        )
+        self.assertEqual(three.years, 3)
+        irr = parser.parse_args(
+            ["derive", "irr", "--ledger", "L", "--snapshot", "S", "--id", "irr-mu", "--profit", "p", "--pe", "e"]
+        )
+        self.assertEqual(irr.years, 10)
+        self.assertIsNone(irr.payout)
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit):
+                parser.parse_args(
+                    [
+                        "derive",
+                        "three-scenario",
+                        "--ledger",
+                        "L",
+                        "--snapshot",
+                        "S",
+                        "--id",
+                        "scenario-mu",
+                        "--growth",
+                        "a,b,c",
+                        "--pe",
+                        "d,e,f",
+                        "--shares",
+                        "9",
+                    ]
+                )
+            with self.assertRaises(SystemExit):
+                parser.parse_args(
+                    [
+                        "derive",
+                        "irr",
+                        "--ledger",
+                        "L",
+                        "--snapshot",
+                        "S",
+                        "--id",
+                        "irr-mu",
+                        "--profit",
+                        "p",
+                        "--pe",
+                        "e",
+                        "--reported",
+                        "1",
+                    ]
+                )
+
+    def test_visible_text_drops_script_and_style(self):
+        body = (
+            b"<html><style>p{color:red}</style><script>var n=1</script>"
+            b"<p>The board elected Ada.</p></html>"
+        )
+        text = visible_text(body, "text/html")
+        self.assertIn("The board elected Ada.", text)
+        self.assertNotIn("var n", text)
+        self.assertNotIn("color", text)
+        self.assertEqual(visible_text(b"plain 7", "text/plain"), "plain 7")
+
+
+if __name__ == "__main__":
+    unittest.main()

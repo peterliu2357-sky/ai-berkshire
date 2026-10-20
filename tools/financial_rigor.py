@@ -330,6 +330,17 @@ def exact_calc(expr: str):
 # 6. Three-Scenario Valuation (三情景估值)
 # ---------------------------------------------------------------------------
 
+def scenario_target_price(current_eps, growth, pe, years):
+    eps = exact(current_eps)
+    rate = exact(growth)
+    multiple = exact(pe)
+    future = eps
+    step = _CTX.add(Decimal("1"), rate)
+    for _ in range(int(years)):
+        future = _CTX.multiply(future, step)
+    return _CTX.multiply(future, multiple)
+
+
 def three_scenario_valuation(current_price, current_eps, shares_billion,
                              growth_optimistic, growth_neutral, growth_pessimistic,
                              pe_optimistic, pe_neutral, pe_pessimistic,
@@ -359,11 +370,10 @@ def three_scenario_valuation(current_price, current_eps, shares_billion,
     for name, growth, pe in scenarios:
         g = exact(growth)
         target_pe = exact(pe)
-        # Future EPS = current EPS × (1 + growth)^years
         future_eps = eps
         for _ in range(years):
             future_eps = _CTX.multiply(future_eps, _CTX.add(Decimal("1"), g))
-        target_price = _CTX.multiply(future_eps, target_pe)
+        target_price = scenario_target_price(eps, g, target_pe, years)
         change = float(target_price - p) / float(p) * 100
 
         print(f"  {name:12} {float(g)*100:>7.0f}% {float(target_pe):>7.0f}x "
