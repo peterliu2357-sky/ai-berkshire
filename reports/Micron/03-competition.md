@@ -1,25 +1,29 @@
 ---
-title: Micron competition, Munger view, 2026-10-19
-date: 2026-10-19
+title: Micron competition, Munger view, 2026-10-20
+date: 2026-10-20
 type: 研究
 ---
 
-# Micron competition, Munger view, 2026-10-19
+# Micron competition, Munger view, 2026-10-20
 
-Data cutoff is 2026-10-19. Source file `evidence/us-snapshot-MU.json`. Not investment advice.
+Data cutoff is 2026-10-20. Source file `evidence/us-snapshot-MU.json`. Not investment advice.
 
 The snapshot's industry label is Semiconductors. It does not name a rival, a contract price, or a bit shipment. Samsung and SK hynix were not fetched. A quote for `005930.KS` would be a different snapshot, and a Korean listing is not an EDGAR 10-K. NVDA, AMD, and TSMC are not in this file.
 
-No DRAM price and no NAND price appear in the snapshot. `skills/memory-cycle.md` says to leave those lines unavailable. They are unavailable.
+No DRAM price and no NAND price appear in the snapshot.
 
-The competitive fact that is actually in the file is the Nasdaq margin path, one source. Gross margin moves from -9.11197 on 8/31/2023 to 22.35275 on 8/31/2024, to 39.79079 on 8/28/2025, to 80.71598 on 9/3/2026. Operating margin moves from -36.96911 to 5.19294, to 26.13837, to 74.5863. That path says the reported ratio swung hard across four period ends. It does not say whether the swing came from price, mix, cost, or a scale the vendor did not declare.
+What the file does show is Micron's own cycle in GAAP dollars. Revenue falls from 30758000000 at 2022-09-01 to 15540000000 at 2023-08-31, then rises to 37378000000 at 2025-08-28 and 133188000000 at 2026-09-03. Net income at those same kinds of turns is 8687000000 for fiscal year 2022, -5833000000 for fiscal year 2023, 8539000000 for fiscal year 2025, and 84969000000 for fiscal year 2026.
 
-Inventory days are unavailable. The capex ratio is unavailable. Hyperscaler demand and export controls are not fields in the file. There is no earnings-release filing URL, because the submissions request did not succeed.
+Inventory at 2026-09-03 is 10372000000. Cost of goods for the year ended that day is 25684000000, start 2025-08-29. `analyze` prints inventory days 149.4175362093131910917302601 over a period length of 370 days. That span is the fact's start and end.
 
-Judgment: cycle position is unavailable. The counterpoint is the margin path itself. A reader who treats 80.71598 as a mid-cycle margin is using the newest and highest of the four cells. The file also contains -9.11197. Both stay on the page. Neither becomes a run rate.
+Capex for fiscal year 2026 is 30712000000. Depreciation is 9503000000. The capex ratio is 3.231821530043144270230453541. Cash from operations is 89675000000. Those are one issuer's supply spend and cash, not an industry utilization rate.
 
-The Yahoo chart meta range, 192.4 to 1255.0, is a market fact. It is not a supply-discipline finding.
+Nasdaq gross margin still moves from -9.11197 on 8/31/2023 to 80.71598 on 9/3/2026. That path is one vendor. It does not say whether the swing came from price, mix, or cost.
+
+Hyperscaler demand and export controls are not fields in the file.
+
+Judgment: cycle position against peers is unavailable. The counterpoint is Micron's own series. The newest net income, 84969000000, is the peak of the through-cycle set, and the median is 2793000000. Treating the peak as mid-cycle would ignore the trough of -5833000000.
 
 No star score.
 
-> "Invert, always invert." Charlie Munger. Inversion here is the missing list. No peer snapshot, no spot price, no inventory days, no capex ratio, no filing.
+> "All I want to know is where I'm going to die, so I'll never go there." Charlie Munger. The line is a standard. The place this file cannot see is the peer and the price of a bit.

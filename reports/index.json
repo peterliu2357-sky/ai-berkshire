@@ -4,6 +4,61 @@
   "drafts": 190,
   "reports": [
     {
+      "title": "Micron team note, 2026-10-20",
+      "path": "reports/Micron/final-report.md",
+      "bucket": "公司",
+      "group": "Micron",
+      "series": "",
+      "type": "研究",
+      "date": "2026-10-20",
+      "date_source": "front-matter",
+      "ticker": ""
+    },
+    {
+      "title": "Micron risk and management, Li Lu view, 2026-10-20",
+      "path": "reports/Micron/04-risk-and-management.md",
+      "bucket": "公司",
+      "group": "Micron",
+      "series": "",
+      "type": "研究",
+      "date": "2026-10-20",
+      "date_source": "front-matter",
+      "ticker": ""
+    },
+    {
+      "title": "Micron competition, Munger view, 2026-10-20",
+      "path": "reports/Micron/03-competition.md",
+      "bucket": "公司",
+      "group": "Micron",
+      "series": "",
+      "type": "研究",
+      "date": "2026-10-20",
+      "date_source": "front-matter",
+      "ticker": ""
+    },
+    {
+      "title": "Micron valuation, Buffett view, 2026-10-20",
+      "path": "reports/Micron/02-valuation.md",
+      "bucket": "公司",
+      "group": "Micron",
+      "series": "",
+      "type": "研究",
+      "date": "2026-10-20",
+      "date_source": "front-matter",
+      "ticker": ""
+    },
+    {
+      "title": "Micron business model, Duan view, 2026-10-20",
+      "path": "reports/Micron/01-business-model.md",
+      "bucket": "公司",
+      "group": "Micron",
+      "series": "",
+      "type": "研究",
+      "date": "2026-10-20",
+      "date_source": "front-matter",
+      "ticker": ""
+    },
+    {
       "title": "苹果（AAPL）投资研究报告",
       "path": "reports/苹果/苹果投资研究报告-20261019.md",
       "bucket": "公司",
@@ -298,61 +353,6 @@
       "type": "底稿",
       "date": "2026-10-19",
       "date_source": "文件名",
-      "ticker": ""
-    },
-    {
-      "title": "Micron team note, 2026-10-19",
-      "path": "reports/Micron/final-report.md",
-      "bucket": "公司",
-      "group": "Micron",
-      "series": "",
-      "type": "研究",
-      "date": "2026-10-19",
-      "date_source": "front-matter",
-      "ticker": ""
-    },
-    {
-      "title": "Micron risk and management, Li Lu view, 2026-10-19",
-      "path": "reports/Micron/04-risk-and-management.md",
-      "bucket": "公司",
-      "group": "Micron",
-      "series": "",
-      "type": "研究",
-      "date": "2026-10-19",
-      "date_source": "front-matter",
-      "ticker": ""
-    },
-    {
-      "title": "Micron competition, Munger view, 2026-10-19",
-      "path": "reports/Micron/03-competition.md",
-      "bucket": "公司",
-      "group": "Micron",
-      "series": "",
-      "type": "研究",
-      "date": "2026-10-19",
-      "date_source": "front-matter",
-      "ticker": ""
-    },
-    {
-      "title": "Micron valuation, Buffett view, 2026-10-19",
-      "path": "reports/Micron/02-valuation.md",
-      "bucket": "公司",
-      "group": "Micron",
-      "series": "",
-      "type": "研究",
-      "date": "2026-10-19",
-      "date_source": "front-matter",
-      "ticker": ""
-    },
-    {
-      "title": "Micron business model, Duan view, 2026-10-19",
-      "path": "reports/Micron/01-business-model.md",
-      "bucket": "公司",
-      "group": "Micron",
-      "series": "",
-      "type": "研究",
-      "date": "2026-10-19",
-      "date_source": "front-matter",
       "ticker": ""
     },
     {

@@ -4,7 +4,7 @@
 > 新增报告先 `git add`，再运行 `python3 tools/reports_index.py`，将报告与索引一并提交。
 > 只收录成品报告；证据、审计、复算、底稿等中间产物不在此列，完整清单见 `index.json`。
 
-**2252 份报告** · **110 家公司** · **26 个专题** · 最近更新 2026-10-19
+**2252 份报告** · **110 家公司** · **26 个专题** · 最近更新 2026-10-20
 
 [最近更新](#最近更新) · [按公司](#按公司) · [专题研究](#专题研究) · [大师研究](#大师研究) · [筛选池](#筛选池)
 
@@ -14,6 +14,9 @@
 
 | 日期 | 报告 | 归属 | 类型 |
 |------|------|------|------|
+| 2026-10-20 | [Micron team note, 2026-10-20](Micron/final-report.md) | Micron | 研究 |
+| 2026-10-20 | [Micron risk and management, Li Lu view, 2026-10-20](Micron/04-risk-and-management.md) | Micron | 研究 |
+| 2026-10-20 | [Micron competition, Munger view, 2026-10-20](Micron/03-competition.md) | Micron | 研究 |
 | 2026-10-19 | [苹果（AAPL）投资研究报告](苹果/苹果投资研究报告-20261019.md) | 苹果 | 研究 |
 | 2026-10-19 | [特斯拉（TSLA）独立投资研究：特斯拉已有汽车、储能和有限无人运营业务，但当前市值主要依靠尚未完整证明的自动驾驶与新业务现金](美股七姐妹-investment-team-20261019/07-特斯拉-TSLA-研究报告.md) | 美股七姐妹-investment-team | 研究 |
 | 2026-10-19 | [英伟达（NVDA）独立投资研究：英伟达仍拥有最强的AI计算系统优势之一，但不能再按完全不承担客户资本风险的供应商估值](美股七姐妹-investment-team-20261019/06-英伟达-NVDA-研究报告.md) | 美股七姐妹-investment-team | 研究 |
@@ -29,9 +32,6 @@
 | 2026-10-19 | [泡泡玛特：情绪需求、爆款接力与十年持久性证据](泡泡玛特深度研究-20261019/需求与风险证据.md) | 泡泡玛特 | 深度系列 |
 | 2026-10-19 | [泡泡玛特经营证据底稿](泡泡玛特深度研究-20261019/经营证据.md) | 泡泡玛特 | 深度系列 |
 | 2026-10-19 | [泡泡玛特（09992.HK）研究报告](泡泡玛特深度研究-20261019/泡泡玛特研究报告-20261019.md) | 泡泡玛特 | 深度系列 |
-| 2026-10-19 | [Micron team note, 2026-10-19](Micron/final-report.md) | Micron | 研究 |
-| 2026-10-19 | [Micron risk and management, Li Lu view, 2026-10-19](Micron/04-risk-and-management.md) | Micron | 研究 |
-| 2026-10-19 | [Micron competition, Munger view, 2026-10-19](Micron/03-competition.md) | Micron | 研究 |
 | 2026-10-18 | [MiniMax 创始人访谈研究与结论复核](MINIMAX/MiniMax-创始人访谈研究与结论复核-20261018.md) | MiniMax | 研究 |
 | 2026-10-18 | [收入增 283%、毛利率 17.9%：MiniMax 卖的是便宜的智能](MINIMAX/MiniMax-公众号-20261018.md) | MiniMax | 公众号 |
 | 2026-10-17 | [快手与可灵：创始人、技术选型、赛道与十年推演](快手/可灵与快手十年推演-20261017/快手与可灵-创始人技术赛道与十年推演-20261017.md) | 快手 | 研究 |
@@ -1531,13 +1531,13 @@
 </details>
 
 <details>
-<summary><b>Micron</b> · 5 份 · 最近 2026-10-19</summary>
+<summary><b>Micron</b> · 5 份 · 最近 2026-10-20</summary>
 
-- `2026-10-19` [Micron valuation, Buffett view, 2026-10-19](Micron/02-valuation.md) — 研究
-- `2026-10-19` [Micron team note, 2026-10-19](Micron/final-report.md) — 研究
-- `2026-10-19` [Micron risk and management, Li Lu view, 2026-10-19](Micron/04-risk-and-management.md) — 研究
-- `2026-10-19` [Micron competition, Munger view, 2026-10-19](Micron/03-competition.md) — 研究
-- `2026-10-19` [Micron business model, Duan view, 2026-10-19](Micron/01-business-model.md) — 研究
+- `2026-10-20` [Micron valuation, Buffett view, 2026-10-20](Micron/02-valuation.md) — 研究
+- `2026-10-20` [Micron team note, 2026-10-20](Micron/final-report.md) — 研究
+- `2026-10-20` [Micron risk and management, Li Lu view, 2026-10-20](Micron/04-risk-and-management.md) — 研究
+- `2026-10-20` [Micron competition, Munger view, 2026-10-20](Micron/03-competition.md) — 研究
+- `2026-10-20` [Micron business model, Duan view, 2026-10-20](Micron/01-business-model.md) — 研究
 
 </details>
 

@@ -18,7 +18,7 @@
 
 > 📖 **想读报告，用 [阅读站](https://xbtlin.github.io/ai-berkshire/)**：成品报告按公司、专题、时间整理，电脑和手机都好读，可搜索、记住阅读进度。
 >
-> 📊 全部 2252 份报告（含底稿）· 110 家公司 · 26 个专题，GitHub 上的完整目录见 [研究报告索引](reports/README.md)，更新至 2026-10-19。
+> 📊 全部 2252 份报告（含底稿）· 110 家公司 · 26 个专题，GitHub 上的完整目录见 [研究报告索引](reports/README.md)，更新至 2026-10-20。
 
 <!-- REPORTS-BANNER:END -->
 
@@ -678,12 +678,14 @@ REM 可选：安装 Codex slash prompts
 
 <!-- REPORTS-INDEX:START 由 tools/reports_index.py 自动更新，勿手改 -->
 
-**📊 [全部研究索引 →](reports/README.md)** ｜ 2252 份报告 · 110 家公司 · 26 个专题 · 更新至 2026-10-19
+**📊 [全部研究索引 →](reports/README.md)** ｜ 2252 份报告 · 110 家公司 · 26 个专题 · 更新至 2026-10-20
 
 最近更新：
 
 | 日期 | 报告 | 归属 |
 |------|------|------|
+| 2026-10-20 | [Micron team note, 2026-10-20](reports/Micron/final-report.md) | Micron |
+| 2026-10-20 | [Micron risk and management, Li Lu view, 2026-10-20](reports/Micron/04-risk-and-management.md) | Micron |
 | 2026-10-19 | [苹果（AAPL）投资研究报告](reports/苹果/苹果投资研究报告-20261019.md) | 苹果 |
 | 2026-10-19 | [特斯拉（TSLA）独立投资研究：特斯拉已有汽车、储能和有限无人运营业务，但当前市值主要依靠尚未完整证明的自动驾驶与新业务现金](reports/美股七姐妹-investment-team-20261019/07-特斯拉-TSLA-研究报告.md) | 美股七姐妹-investment-team |
 | 2026-10-19 | [英伟达（NVDA）独立投资研究：英伟达仍拥有最强的AI计算系统优势之一，但不能再按完全不承担客户资本风险的供应商估值](reports/美股七姐妹-investment-team-20261019/06-英伟达-NVDA-研究报告.md) | 美股七姐妹-investment-team |

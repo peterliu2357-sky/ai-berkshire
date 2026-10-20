@@ -5,9 +5,9 @@
     {
       "type": "market_print",
       "ticker": "MU",
-      "price": "913.76",
-      "kind": "intraday_last",
-      "as_of": "2026-10-19T13:37:50+00:00",
+      "price": "904.9",
+      "kind": "official_close",
+      "as_of": "2026-10-19T20:00:00+00:00",
       "source": "yahoo_chart"
     },
     {
@@ -45,27 +45,2529 @@
     {
       "type": "market_print",
       "ticker": "MU",
-      "price": "914.085",
-      "kind": "intraday_last",
-      "as_of": "2026-10-19T09:37:00-04:00",
-      "source": "nasdaq_info"
+      "price": "904.90",
+      "kind": "official_close",
+      "as_of": "2026-10-19T13:30:00+00:00",
+      "source": "yahoo_daily_close"
     }
   ],
-  "filings": [],
-  "annual": [],
-  "shares": null,
+  "filings": [
+    {
+      "type": "filing_ref",
+      "form": "4",
+      "filed": "2026-10-15",
+      "accession": "0001242654-26-000016",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/xslF345X06/primarydocument.xml"
+    },
+    {
+      "type": "filing_ref",
+      "form": "4",
+      "filed": "2026-10-15",
+      "accession": "0001593199-26-000005",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000005/xslF345X06/primarydocument.xml"
+    },
+    {
+      "type": "filing_ref",
+      "form": "4",
+      "filed": "2026-10-15",
+      "accession": "0001593199-26-000004",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/xslF345X06/primarydocument.xml"
+    },
+    {
+      "type": "filing_ref",
+      "form": "4",
+      "filed": "2026-10-15",
+      "accession": "0001498287-26-000001",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/xslF345X06/primarydocument.xml"
+    },
+    {
+      "type": "filing_ref",
+      "form": "4",
+      "filed": "2026-10-15",
+      "accession": "0001689498-26-000002",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/xslF345X06/primarydocument.xml"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2026-10-09",
+      "accession": "0000723125-26-000023",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000023/mu-20260903.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2026-09-30",
+      "accession": "0000723125-26-000018",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000018/mu-20260930.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2026-06-25",
+      "accession": "0000723125-26-000015",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2026-06-24",
+      "accession": "0000723125-26-000013",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000013/mu-20260624.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2026-03-19",
+      "accession": "0000723125-26-000006",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000006/mu-20260226.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2026-03-18",
+      "accession": "0000723125-26-000004",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000004/mu-20260318.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2025-12-18",
+      "accession": "0000723125-25-000046",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000046/mu-20251127.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2025-12-17",
+      "accession": "0000723125-25-000044",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/mu-20251217.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2025-11-25",
+      "accession": "0000723125-25-000038",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000038/mu-20251125.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2025-10-03",
+      "accession": "0000723125-25-000028",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000028/mu-20250828.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2025-09-23",
+      "accession": "0000723125-25-000024",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000024/mu-20250923.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2025-06-26",
+      "accession": "0000723125-25-000021",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000021/mu-20250529.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2025-06-25",
+      "accession": "0000723125-25-000019",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000019/mu-20250625.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2025-03-21",
+      "accession": "0000723125-25-000009",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000009/mu-20250227.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2025-03-20",
+      "accession": "0000723125-25-000006",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000006/mu-20250320.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2024-12-19",
+      "accession": "0000723125-24-000047",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312524000047/mu-20241128.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2024-12-18",
+      "accession": "0000723125-24-000046",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312524000046/mu-20241218.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2024-11-26",
+      "accession": "0000723125-24-000039",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312524000039/mu-20241126.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2024-10-04",
+      "accession": "0000723125-24-000027",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312524000027/mu-20240829.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2024-09-25",
+      "accession": "0000723125-24-000023",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312524000023/mu-20240925.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2024-06-27",
+      "accession": "0000723125-24-000019",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312524000019/mu-20240530.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2024-06-26",
+      "accession": "0000723125-24-000016",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312524000016/mu-20240626.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2024-03-21",
+      "accession": "0000723125-24-000007",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312524000007/mu-20240229.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2024-03-20",
+      "accession": "0000723125-24-000004",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312524000004/mu-20240320.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2023-12-21",
+      "accession": "0000723125-23-000077",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312523000077/mu-20231130.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2023-12-20",
+      "accession": "0000723125-23-000071",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312523000071/mu-20231220.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2023-11-29",
+      "accession": "0000723125-23-000065",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312523000065/mu-20231129.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2023-10-06",
+      "accession": "0000723125-23-000054",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312523000054/mu-20230831.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2023-09-27",
+      "accession": "0000723125-23-000051",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312523000051/mu-20230927.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2023-06-29",
+      "accession": "0000723125-23-000041",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312523000041/mu-20230601.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2023-06-28",
+      "accession": "0000723125-23-000038",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312523000038/mu-20230628.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2023-03-29",
+      "accession": "0000723125-23-000022",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312523000022/mu-20230302.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2023-03-28",
+      "accession": "0000723125-23-000018",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312523000018/mu-20230328.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2022-12-22",
+      "accession": "0000723125-22-000072",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312522000072/mu-20221201.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2022-12-21",
+      "accession": "0000723125-22-000070",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312522000070/mu-20221221.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2022-12-02",
+      "accession": "0000723125-22-000063",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312522000063/a2022definitiveproxy.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2022-10-07",
+      "accession": "0000723125-22-000048",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312522000048/mu-20220901.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2022-09-29",
+      "accession": "0000723125-22-000044",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312522000044/mu-20220929.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2022-07-01",
+      "accession": "0000723125-22-000036",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312522000036/mu-20220602.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2022-06-30",
+      "accession": "0000723125-22-000034",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312522000034/mu-20220630.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2022-03-30",
+      "accession": "0000723125-22-000016",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312522000016/mu-20220303.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2022-03-29",
+      "accession": "0000723125-22-000012",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312522000012/mu-20220329.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2022-01-06",
+      "accession": "0000723125-22-000004",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312522000004/mu-20211202.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2021-12-20",
+      "accession": "0000723125-21-000086",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312521000086/mu-20211220.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2021-12-02",
+      "accession": "0000723125-21-000082",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312521000082/a2021definitiveproxy.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2021-10-08",
+      "accession": "0000723125-21-000065",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312521000065/mu-20210902.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2021-09-28",
+      "accession": "0000723125-21-000060",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312521000060/mu-20210928.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2021-07-01",
+      "accession": "0000723125-21-000052",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312521000052/mu-20210603.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2021-06-30",
+      "accession": "0000723125-21-000049",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312521000049/mu-20210630.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2021-04-01",
+      "accession": "0000723125-21-000032",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312521000032/mu-20210304.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2021-03-31",
+      "accession": "0000723125-21-000028",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312521000028/mu-20210331.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2021-01-08",
+      "accession": "0000723125-21-000012",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312521000012/mu-20201203.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2021-01-07",
+      "accession": "0000723125-21-000009",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312521000009/mu-20210107.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2020-12-01",
+      "accession": "0000723125-20-000091",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312520000091/a2020definitiveproxy.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2020-10-19",
+      "accession": "0000723125-20-000082",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312520000082/mu-20200903.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2020-09-29",
+      "accession": "0000723125-20-000079",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312520000079/mu-20200929.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2020-06-29",
+      "accession": "0000723125-20-000067",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312520000067/mu-20200528.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2020-06-29",
+      "accession": "0000723125-20-000063",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312520000063/mu-20200629.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2020-03-26",
+      "accession": "0000723125-20-000034",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312520000034/mu-20200227.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2020-03-25",
+      "accession": "0000723125-20-000030",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312520000030/mu-20200325.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2019-12-20",
+      "accession": "0000723125-19-000174",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312519000174/mu-20191128.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2019-12-18",
+      "accession": "0000723125-19-000172",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312519000172/a2020q18-kearningsrele.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2019-12-09",
+      "accession": "0001047469-19-006745",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000104746919006745/a2240268zdef14a.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2019-10-17",
+      "accession": "0000723125-19-000094",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312519000094/a2019q4.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2019-09-26",
+      "accession": "0000723125-19-000068",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312519000068/a2019q48-kearningsrelease.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2019-06-26",
+      "accession": "0000723125-19-000035",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312519000035/a2019q3.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2019-06-25",
+      "accession": "0000723125-19-000032",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312519000032/a2019q38-kearningsrelease.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2019-03-21",
+      "accession": "0000723125-19-000014",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312519000014/a2019q2.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2019-03-20",
+      "accession": "0000723125-19-000012",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312519000012/a2019q2-kearningsrelease.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2018-12-19",
+      "accession": "0000723125-18-000156",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312518000156/a2019q1.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2018-12-18",
+      "accession": "0000723125-18-000152",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312518000152/a2019q18-kearningsrelease.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2018-12-06",
+      "accession": "0000723125-18-000142",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312518000142/a2018definitiveproxy.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2018-10-15",
+      "accession": "0000723125-18-000092",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312518000092/a2018q4.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2018-09-20",
+      "accession": "0000723125-18-000085",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312518000085/a2018q48-kearningsrelease.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2018-06-22",
+      "accession": "0000723125-18-000065",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312518000065/a2018q3.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2018-06-20",
+      "accession": "0000723125-18-000061",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312518000061/a2018q38-kearningsrelease.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2018-03-23",
+      "accession": "0000723125-18-000036",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312518000036/a2018q2.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2018-03-22",
+      "accession": "0000723125-18-000031",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312518000031/a2018q28-kearningsrelease.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-Q",
+      "filed": "2017-12-20",
+      "accession": "0000723125-17-000166",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312517000166/a2018q1.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "8-K",
+      "filed": "2017-12-19",
+      "accession": "0000723125-17-000162",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312517000162/a2018q18-kearningsrelease.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "DEF 14A",
+      "filed": "2017-12-07",
+      "accession": "0000723125-17-000155",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312517000155/a2017definitiveproxy.htm"
+    },
+    {
+      "type": "filing_ref",
+      "form": "10-K",
+      "filed": "2017-10-26",
+      "accession": "0000723125-17-000131",
+      "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312517000131/a2017q4.htm"
+    }
+  ],
+  "annual": [
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-08-31",
+      "start": "2016-09-02",
+      "concept": "revenue",
+      "ones": "20322000000",
+      "filed": "2019-10-17",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-08-30",
+      "start": "2017-09-01",
+      "concept": "revenue",
+      "ones": "30391000000",
+      "filed": "2020-10-19",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-08-29",
+      "start": "2018-08-31",
+      "concept": "revenue",
+      "ones": "23406000000",
+      "filed": "2021-10-08",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-09-03",
+      "start": "2019-08-30",
+      "concept": "revenue",
+      "ones": "21435000000",
+      "filed": "2022-10-07",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-09-02",
+      "start": "2020-09-04",
+      "concept": "revenue",
+      "ones": "27705000000",
+      "filed": "2023-10-06",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-09-01",
+      "start": "2021-09-03",
+      "concept": "revenue",
+      "ones": "30758000000",
+      "filed": "2024-10-04",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-08-31",
+      "start": "2022-09-02",
+      "concept": "revenue",
+      "ones": "15540000000",
+      "filed": "2025-10-03",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-08-29",
+      "start": "2023-09-01",
+      "concept": "revenue",
+      "ones": "25111000000",
+      "filed": "2026-10-09",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-08-28",
+      "start": "2024-08-30",
+      "concept": "revenue",
+      "ones": "37378000000",
+      "filed": "2026-10-09",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2026-09-03",
+      "start": "2025-08-29",
+      "concept": "revenue",
+      "ones": "133188000000",
+      "filed": "2026-10-09",
+      "tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-09-03",
+      "start": "2008-08-29",
+      "concept": "cogs",
+      "ones": "5243000000",
+      "filed": "2011-10-25",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-09-02",
+      "start": "2009-09-04",
+      "concept": "cogs",
+      "ones": "5768000000",
+      "filed": "2012-10-29",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-09-01",
+      "start": "2010-09-03",
+      "concept": "cogs",
+      "ones": "7030000000",
+      "filed": "2013-10-28",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-08-30",
+      "start": "2011-09-02",
+      "concept": "cogs",
+      "ones": "7266000000",
+      "filed": "2014-10-27",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-08-29",
+      "start": "2012-08-31",
+      "concept": "cogs",
+      "ones": "7226000000",
+      "filed": "2015-10-27",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-08-28",
+      "start": "2013-08-30",
+      "concept": "cogs",
+      "ones": "10921000000",
+      "filed": "2016-10-28",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-09-03",
+      "start": "2014-08-29",
+      "concept": "cogs",
+      "ones": "10977000000",
+      "filed": "2017-10-26",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-09-01",
+      "start": "2015-09-04",
+      "concept": "cogs",
+      "ones": "9894000000",
+      "filed": "2018-10-15",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-08-31",
+      "start": "2016-09-02",
+      "concept": "cogs",
+      "ones": "11886000000",
+      "filed": "2019-10-17",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-08-30",
+      "start": "2017-09-01",
+      "concept": "cogs",
+      "ones": "12500000000",
+      "filed": "2020-10-19",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-08-29",
+      "start": "2018-08-31",
+      "concept": "cogs",
+      "ones": "12704000000",
+      "filed": "2021-10-08",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-09-03",
+      "start": "2019-08-30",
+      "concept": "cogs",
+      "ones": "14883000000",
+      "filed": "2022-10-07",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-09-02",
+      "start": "2020-09-04",
+      "concept": "cogs",
+      "ones": "17282000000",
+      "filed": "2023-10-06",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-09-01",
+      "start": "2021-09-03",
+      "concept": "cogs",
+      "ones": "16860000000",
+      "filed": "2024-10-04",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-08-31",
+      "start": "2022-09-02",
+      "concept": "cogs",
+      "ones": "16956000000",
+      "filed": "2025-10-03",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-08-29",
+      "start": "2023-09-01",
+      "concept": "cogs",
+      "ones": "19498000000",
+      "filed": "2026-10-09",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-08-28",
+      "start": "2024-08-30",
+      "concept": "cogs",
+      "ones": "22505000000",
+      "filed": "2026-10-09",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2026-09-03",
+      "start": "2025-08-29",
+      "concept": "cogs",
+      "ones": "25684000000",
+      "filed": "2026-10-09",
+      "tag": "CostOfGoodsAndServicesSold"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-09-03",
+      "start": "2008-08-29",
+      "concept": "gross_profit",
+      "ones": "-440000000",
+      "filed": "2011-10-25",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-09-02",
+      "start": "2009-09-04",
+      "concept": "gross_profit",
+      "ones": "2714000000",
+      "filed": "2012-10-29",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-09-01",
+      "start": "2010-09-03",
+      "concept": "gross_profit",
+      "ones": "1758000000",
+      "filed": "2013-10-28",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-08-30",
+      "start": "2011-09-02",
+      "concept": "gross_profit",
+      "ones": "968000000",
+      "filed": "2014-10-27",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-08-29",
+      "start": "2012-08-31",
+      "concept": "gross_profit",
+      "ones": "1847000000",
+      "filed": "2015-10-27",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-08-28",
+      "start": "2013-08-30",
+      "concept": "gross_profit",
+      "ones": "5437000000",
+      "filed": "2016-10-28",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-09-03",
+      "start": "2014-08-29",
+      "concept": "gross_profit",
+      "ones": "5215000000",
+      "filed": "2017-10-26",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-09-01",
+      "start": "2015-09-04",
+      "concept": "gross_profit",
+      "ones": "2505000000",
+      "filed": "2018-10-15",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-08-31",
+      "start": "2016-09-02",
+      "concept": "gross_profit",
+      "ones": "8436000000",
+      "filed": "2019-10-17",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-08-30",
+      "start": "2017-09-01",
+      "concept": "gross_profit",
+      "ones": "17891000000",
+      "filed": "2020-10-19",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-08-29",
+      "start": "2018-08-31",
+      "concept": "gross_profit",
+      "ones": "10702000000",
+      "filed": "2021-10-08",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-09-03",
+      "start": "2019-08-30",
+      "concept": "gross_profit",
+      "ones": "6552000000",
+      "filed": "2022-10-07",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-09-02",
+      "start": "2020-09-04",
+      "concept": "gross_profit",
+      "ones": "10423000000",
+      "filed": "2023-10-06",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-09-01",
+      "start": "2021-09-03",
+      "concept": "gross_profit",
+      "ones": "13898000000",
+      "filed": "2024-10-04",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-08-31",
+      "start": "2022-09-02",
+      "concept": "gross_profit",
+      "ones": "-1416000000",
+      "filed": "2025-10-03",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-08-29",
+      "start": "2023-09-01",
+      "concept": "gross_profit",
+      "ones": "5613000000",
+      "filed": "2026-10-09",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-08-28",
+      "start": "2024-08-30",
+      "concept": "gross_profit",
+      "ones": "14873000000",
+      "filed": "2026-10-09",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2026-09-03",
+      "start": "2025-08-29",
+      "concept": "gross_profit",
+      "ones": "107504000000",
+      "filed": "2026-10-09",
+      "tag": "GrossProfit"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-09-03",
+      "start": "2008-08-29",
+      "concept": "operating_income",
+      "ones": "-1676000000",
+      "filed": "2011-10-25",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-09-02",
+      "start": "2009-09-04",
+      "concept": "operating_income",
+      "ones": "1589000000",
+      "filed": "2012-10-29",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-09-01",
+      "start": "2010-09-03",
+      "concept": "operating_income",
+      "ones": "761000000",
+      "filed": "2013-10-28",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-08-30",
+      "start": "2011-09-02",
+      "concept": "operating_income",
+      "ones": "-612000000",
+      "filed": "2014-10-27",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-08-29",
+      "start": "2012-08-31",
+      "concept": "operating_income",
+      "ones": "236000000",
+      "filed": "2015-10-27",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-08-28",
+      "start": "2013-08-30",
+      "concept": "operating_income",
+      "ones": "3087000000",
+      "filed": "2016-10-28",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-09-03",
+      "start": "2014-08-29",
+      "concept": "operating_income",
+      "ones": "2998000000",
+      "filed": "2017-10-26",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-09-01",
+      "start": "2015-09-04",
+      "concept": "operating_income",
+      "ones": "168000000",
+      "filed": "2018-10-15",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-08-31",
+      "start": "2016-09-02",
+      "concept": "operating_income",
+      "ones": "5868000000",
+      "filed": "2019-10-17",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-08-30",
+      "start": "2017-09-01",
+      "concept": "operating_income",
+      "ones": "14994000000",
+      "filed": "2020-10-19",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-08-29",
+      "start": "2018-08-31",
+      "concept": "operating_income",
+      "ones": "7376000000",
+      "filed": "2021-10-08",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-09-03",
+      "start": "2019-08-30",
+      "concept": "operating_income",
+      "ones": "3003000000",
+      "filed": "2022-10-07",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-09-02",
+      "start": "2020-09-04",
+      "concept": "operating_income",
+      "ones": "6283000000",
+      "filed": "2023-10-06",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-09-01",
+      "start": "2021-09-03",
+      "concept": "operating_income",
+      "ones": "9702000000",
+      "filed": "2024-10-04",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-08-31",
+      "start": "2022-09-02",
+      "concept": "operating_income",
+      "ones": "-5745000000",
+      "filed": "2025-10-03",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-08-29",
+      "start": "2023-09-01",
+      "concept": "operating_income",
+      "ones": "1304000000",
+      "filed": "2026-10-09",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-08-28",
+      "start": "2024-08-30",
+      "concept": "operating_income",
+      "ones": "9770000000",
+      "filed": "2026-10-09",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2026-09-03",
+      "start": "2025-08-29",
+      "concept": "operating_income",
+      "ones": "99340000000",
+      "filed": "2026-10-09",
+      "tag": "OperatingIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-09-03",
+      "start": "2008-08-29",
+      "concept": "net_income",
+      "ones": "-1882000000",
+      "filed": "2011-10-25",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-09-02",
+      "start": "2009-09-04",
+      "concept": "net_income",
+      "ones": "1850000000",
+      "filed": "2012-10-29",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-09-01",
+      "start": "2010-09-03",
+      "concept": "net_income",
+      "ones": "167000000",
+      "filed": "2013-10-28",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-08-30",
+      "start": "2011-09-02",
+      "concept": "net_income",
+      "ones": "-1032000000",
+      "filed": "2014-10-27",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-08-29",
+      "start": "2012-08-31",
+      "concept": "net_income",
+      "ones": "1190000000",
+      "filed": "2015-10-27",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-08-28",
+      "start": "2013-08-30",
+      "concept": "net_income",
+      "ones": "3045000000",
+      "filed": "2016-10-28",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-09-03",
+      "start": "2014-08-29",
+      "concept": "net_income",
+      "ones": "2899000000",
+      "filed": "2017-10-26",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-09-01",
+      "start": "2015-09-04",
+      "concept": "net_income",
+      "ones": "-276000000",
+      "filed": "2018-10-15",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-08-31",
+      "start": "2016-09-02",
+      "concept": "net_income",
+      "ones": "5089000000",
+      "filed": "2019-10-17",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-08-30",
+      "start": "2017-09-01",
+      "concept": "net_income",
+      "ones": "14135000000",
+      "filed": "2020-10-19",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-08-29",
+      "start": "2018-08-31",
+      "concept": "net_income",
+      "ones": "6313000000",
+      "filed": "2021-10-08",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-09-03",
+      "start": "2019-08-30",
+      "concept": "net_income",
+      "ones": "2687000000",
+      "filed": "2022-10-07",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-09-02",
+      "start": "2020-09-04",
+      "concept": "net_income",
+      "ones": "5861000000",
+      "filed": "2023-10-06",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-09-01",
+      "start": "2021-09-03",
+      "concept": "net_income",
+      "ones": "8687000000",
+      "filed": "2024-10-04",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-08-31",
+      "start": "2022-09-02",
+      "concept": "net_income",
+      "ones": "-5833000000",
+      "filed": "2025-10-03",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-08-29",
+      "start": "2023-09-01",
+      "concept": "net_income",
+      "ones": "778000000",
+      "filed": "2026-10-09",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-08-28",
+      "start": "2024-08-30",
+      "concept": "net_income",
+      "ones": "8539000000",
+      "filed": "2026-10-09",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2026-09-03",
+      "start": "2025-08-29",
+      "concept": "net_income",
+      "ones": "84969000000",
+      "filed": "2026-10-09",
+      "tag": "NetIncomeLoss"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-09-03",
+      "start": "2008-08-29",
+      "concept": "sbc",
+      "ones": "44000000",
+      "filed": "2011-10-25",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-09-02",
+      "start": "2009-09-04",
+      "concept": "sbc",
+      "ones": "93000000",
+      "filed": "2012-10-29",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-09-01",
+      "start": "2010-09-03",
+      "concept": "sbc",
+      "ones": "76000000",
+      "filed": "2013-10-28",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-08-30",
+      "start": "2011-09-02",
+      "concept": "sbc",
+      "ones": "87000000",
+      "filed": "2014-10-27",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-08-29",
+      "start": "2012-08-31",
+      "concept": "sbc",
+      "ones": "91000000",
+      "filed": "2015-10-27",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-08-28",
+      "start": "2013-08-30",
+      "concept": "sbc",
+      "ones": "115000000",
+      "filed": "2016-10-28",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-09-03",
+      "start": "2014-08-29",
+      "concept": "sbc",
+      "ones": "168000000",
+      "filed": "2017-10-26",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-09-01",
+      "start": "2015-09-04",
+      "concept": "sbc",
+      "ones": "191000000",
+      "filed": "2018-10-15",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-08-31",
+      "start": "2016-09-02",
+      "concept": "sbc",
+      "ones": "215000000",
+      "filed": "2019-10-17",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-08-30",
+      "start": "2017-09-01",
+      "concept": "sbc",
+      "ones": "198000000",
+      "filed": "2020-10-19",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-08-29",
+      "start": "2018-08-31",
+      "concept": "sbc",
+      "ones": "243000000",
+      "filed": "2021-10-08",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-09-03",
+      "start": "2019-08-30",
+      "concept": "sbc",
+      "ones": "328000000",
+      "filed": "2022-10-07",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-09-02",
+      "start": "2020-09-04",
+      "concept": "sbc",
+      "ones": "378000000",
+      "filed": "2023-10-06",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-09-01",
+      "start": "2021-09-03",
+      "concept": "sbc",
+      "ones": "514000000",
+      "filed": "2024-10-04",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-08-31",
+      "start": "2022-09-02",
+      "concept": "sbc",
+      "ones": "596000000",
+      "filed": "2025-10-03",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-08-29",
+      "start": "2023-09-01",
+      "concept": "sbc",
+      "ones": "833000000",
+      "filed": "2026-10-09",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-08-28",
+      "start": "2024-08-30",
+      "concept": "sbc",
+      "ones": "972000000",
+      "filed": "2026-10-09",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2026-09-03",
+      "start": "2025-08-29",
+      "concept": "sbc",
+      "ones": "1333000000",
+      "filed": "2026-10-09",
+      "tag": "ShareBasedCompensation"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-09-03",
+      "start": "2008-08-29",
+      "concept": "depreciation",
+      "ones": "2114000000",
+      "filed": "2011-10-25",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-09-02",
+      "start": "2009-09-04",
+      "concept": "depreciation",
+      "ones": "1922000000",
+      "filed": "2012-10-29",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-09-01",
+      "start": "2010-09-03",
+      "concept": "depreciation",
+      "ones": "2162000000",
+      "filed": "2013-10-28",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-08-30",
+      "start": "2011-09-02",
+      "concept": "depreciation",
+      "ones": "2222000000",
+      "filed": "2014-10-27",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-08-29",
+      "start": "2012-08-31",
+      "concept": "depreciation",
+      "ones": "1926000000",
+      "filed": "2015-10-27",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-08-28",
+      "start": "2013-08-30",
+      "concept": "depreciation",
+      "ones": "2270000000",
+      "filed": "2015-10-27",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-09-03",
+      "start": "2014-08-29",
+      "concept": "depreciation",
+      "ones": "2805000000",
+      "filed": "2015-10-27",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-09-01",
+      "start": "2015-09-04",
+      "concept": "depreciation",
+      "ones": "2980000000",
+      "filed": "2018-10-15",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-08-31",
+      "start": "2016-09-02",
+      "concept": "depreciation",
+      "ones": "3861000000",
+      "filed": "2019-10-17",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-08-30",
+      "start": "2017-09-01",
+      "concept": "depreciation",
+      "ones": "4759000000",
+      "filed": "2020-10-19",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-08-29",
+      "start": "2018-08-31",
+      "concept": "depreciation",
+      "ones": "5424000000",
+      "filed": "2021-10-08",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-09-03",
+      "start": "2019-08-30",
+      "concept": "depreciation",
+      "ones": "5650000000",
+      "filed": "2022-10-07",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-09-02",
+      "start": "2020-09-04",
+      "concept": "depreciation",
+      "ones": "6214000000",
+      "filed": "2023-10-06",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-09-01",
+      "start": "2021-09-03",
+      "concept": "depreciation",
+      "ones": "7116000000",
+      "filed": "2024-10-04",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-08-31",
+      "start": "2022-09-02",
+      "concept": "depreciation",
+      "ones": "7756000000",
+      "filed": "2025-10-03",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-08-29",
+      "start": "2023-09-01",
+      "concept": "depreciation",
+      "ones": "7780000000",
+      "filed": "2026-10-09",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-08-28",
+      "start": "2024-08-30",
+      "concept": "depreciation",
+      "ones": "8352000000",
+      "filed": "2026-10-09",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2026-09-03",
+      "start": "2025-08-29",
+      "concept": "depreciation",
+      "ones": "9503000000",
+      "filed": "2026-10-09",
+      "tag": "DepreciationDepletionAndAmortization"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-09-03",
+      "start": "2008-08-29",
+      "concept": "capex",
+      "ones": "488000000",
+      "filed": "2011-10-25",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-09-02",
+      "start": "2009-09-04",
+      "concept": "capex",
+      "ones": "616000000",
+      "filed": "2012-10-29",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-09-01",
+      "start": "2010-09-03",
+      "concept": "capex",
+      "ones": "2550000000",
+      "filed": "2013-10-28",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-08-30",
+      "start": "2011-09-02",
+      "concept": "capex",
+      "ones": "1699000000",
+      "filed": "2014-10-27",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-08-29",
+      "start": "2012-08-31",
+      "concept": "capex",
+      "ones": "1442000000",
+      "filed": "2015-10-27",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-08-28",
+      "start": "2013-08-30",
+      "concept": "capex",
+      "ones": "3107000000",
+      "filed": "2016-10-28",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-09-03",
+      "start": "2014-08-29",
+      "concept": "capex",
+      "ones": "4021000000",
+      "filed": "2017-10-26",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-09-01",
+      "start": "2015-09-04",
+      "concept": "capex",
+      "ones": "5817000000",
+      "filed": "2018-10-15",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-08-31",
+      "start": "2016-09-02",
+      "concept": "capex",
+      "ones": "4734000000",
+      "filed": "2019-10-17",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-08-30",
+      "start": "2017-09-01",
+      "concept": "capex",
+      "ones": "8879000000",
+      "filed": "2020-10-19",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-08-29",
+      "start": "2018-08-31",
+      "concept": "capex",
+      "ones": "9780000000",
+      "filed": "2021-10-08",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-09-03",
+      "start": "2019-08-30",
+      "concept": "capex",
+      "ones": "8223000000",
+      "filed": "2022-10-07",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-09-02",
+      "start": "2020-09-04",
+      "concept": "capex",
+      "ones": "10030000000",
+      "filed": "2023-10-06",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-09-01",
+      "start": "2021-09-03",
+      "concept": "capex",
+      "ones": "12067000000",
+      "filed": "2024-10-04",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-08-31",
+      "start": "2022-09-02",
+      "concept": "capex",
+      "ones": "7676000000",
+      "filed": "2025-10-03",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-08-29",
+      "start": "2023-09-01",
+      "concept": "capex",
+      "ones": "8386000000",
+      "filed": "2026-10-09",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-08-28",
+      "start": "2024-08-30",
+      "concept": "capex",
+      "ones": "15857000000",
+      "filed": "2026-10-09",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2026-09-03",
+      "start": "2025-08-29",
+      "concept": "capex",
+      "ones": "30712000000",
+      "filed": "2026-10-09",
+      "tag": "PaymentsToAcquirePropertyPlantAndEquipment"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-09-03",
+      "start": "2008-08-29",
+      "concept": "cfo",
+      "ones": "1206000000",
+      "filed": "2011-10-25",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-09-02",
+      "start": "2009-09-04",
+      "concept": "cfo",
+      "ones": "3096000000",
+      "filed": "2012-10-29",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-09-01",
+      "start": "2010-09-03",
+      "concept": "cfo",
+      "ones": "2484000000",
+      "filed": "2012-10-29",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-08-30",
+      "start": "2011-09-02",
+      "concept": "cfo",
+      "ones": "2114000000",
+      "filed": "2012-10-29",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-09-03",
+      "start": "2014-08-29",
+      "concept": "cfo",
+      "ones": "5208000000",
+      "filed": "2017-10-26",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-09-01",
+      "start": "2015-09-04",
+      "concept": "cfo",
+      "ones": "3168000000",
+      "filed": "2018-10-15",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-08-31",
+      "start": "2016-09-02",
+      "concept": "cfo",
+      "ones": "8153000000",
+      "filed": "2019-10-17",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-08-30",
+      "start": "2017-09-01",
+      "concept": "cfo",
+      "ones": "17400000000",
+      "filed": "2020-10-19",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-08-29",
+      "start": "2018-08-31",
+      "concept": "cfo",
+      "ones": "13189000000",
+      "filed": "2021-10-08",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-09-03",
+      "start": "2019-08-30",
+      "concept": "cfo",
+      "ones": "8306000000",
+      "filed": "2022-10-07",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-09-02",
+      "start": "2020-09-04",
+      "concept": "cfo",
+      "ones": "12468000000",
+      "filed": "2023-10-06",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-09-01",
+      "start": "2021-09-03",
+      "concept": "cfo",
+      "ones": "15181000000",
+      "filed": "2024-10-04",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-08-31",
+      "start": "2022-09-02",
+      "concept": "cfo",
+      "ones": "1559000000",
+      "filed": "2025-10-03",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-08-29",
+      "start": "2023-09-01",
+      "concept": "cfo",
+      "ones": "8507000000",
+      "filed": "2026-10-09",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-08-28",
+      "start": "2024-08-30",
+      "concept": "cfo",
+      "ones": "17525000000",
+      "filed": "2026-10-09",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2026-09-03",
+      "start": "2025-08-29",
+      "concept": "cfo",
+      "ones": "89675000000",
+      "filed": "2026-10-09",
+      "tag": "NetCashProvidedByUsedInOperatingActivities"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2009,
+      "end": "2009-09-03",
+      "start": "2008-08-29",
+      "concept": "buybacks",
+      "ones": "2000000",
+      "filed": "2011-10-25",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2010,
+      "end": "2010-09-02",
+      "start": "2009-09-04",
+      "concept": "buybacks",
+      "ones": "21000000",
+      "filed": "2012-10-29",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2011-09-01",
+      "start": "2010-09-03",
+      "concept": "buybacks",
+      "ones": "163000000",
+      "filed": "2013-10-28",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2012-08-30",
+      "start": "2011-09-02",
+      "concept": "buybacks",
+      "ones": "6000000",
+      "filed": "2014-10-27",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2013-08-29",
+      "start": "2012-08-31",
+      "concept": "buybacks",
+      "ones": "5000000",
+      "filed": "2015-10-27",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2014-08-28",
+      "start": "2013-08-30",
+      "concept": "buybacks",
+      "ones": "76000000",
+      "filed": "2016-10-28",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2015-09-03",
+      "start": "2014-08-29",
+      "concept": "buybacks",
+      "ones": "884000000",
+      "filed": "2017-10-26",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2016-09-01",
+      "start": "2015-09-04",
+      "concept": "buybacks",
+      "ones": "148000000",
+      "filed": "2017-10-26",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2017-08-31",
+      "start": "2016-09-02",
+      "concept": "buybacks",
+      "ones": "36000000",
+      "filed": "2019-10-17",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2018-08-30",
+      "start": "2017-09-01",
+      "concept": "buybacks",
+      "ones": "71000000",
+      "filed": "2020-10-19",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2019-08-29",
+      "start": "2018-08-31",
+      "concept": "buybacks",
+      "ones": "2729000000",
+      "filed": "2021-10-08",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2020-09-03",
+      "start": "2019-08-30",
+      "concept": "buybacks",
+      "ones": "176000000",
+      "filed": "2022-10-07",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2021-09-02",
+      "start": "2020-09-04",
+      "concept": "buybacks",
+      "ones": "1200000000",
+      "filed": "2023-10-06",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2022-09-01",
+      "start": "2021-09-03",
+      "concept": "buybacks",
+      "ones": "2432000000",
+      "filed": "2024-10-04",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2023-08-31",
+      "start": "2022-09-02",
+      "concept": "buybacks",
+      "ones": "425000000",
+      "filed": "2025-10-03",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2024-08-29",
+      "start": "2023-09-01",
+      "concept": "buybacks",
+      "ones": "300000000",
+      "filed": "2026-10-09",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2025-08-28",
+      "start": "2024-08-30",
+      "concept": "buybacks",
+      "ones": "0",
+      "filed": "2026-10-09",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2026-09-03",
+      "start": "2025-08-29",
+      "concept": "buybacks",
+      "ones": "650000000",
+      "filed": "2026-10-09",
+      "tag": "PaymentsForRepurchaseOfCommonStock"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2011,
+      "end": "2010-09-02",
+      "start": null,
+      "concept": "inventory",
+      "ones": "1770000000",
+      "filed": "2011-10-25",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2012,
+      "end": "2011-09-01",
+      "start": null,
+      "concept": "inventory",
+      "ones": "2080000000",
+      "filed": "2012-10-29",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2013,
+      "end": "2012-08-30",
+      "start": null,
+      "concept": "inventory",
+      "ones": "1812000000",
+      "filed": "2013-10-28",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2014,
+      "end": "2013-08-29",
+      "start": null,
+      "concept": "inventory",
+      "ones": "2649000000",
+      "filed": "2014-10-27",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2015,
+      "end": "2014-08-28",
+      "start": null,
+      "concept": "inventory",
+      "ones": "2455000000",
+      "filed": "2015-10-27",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2016,
+      "end": "2015-09-03",
+      "start": null,
+      "concept": "inventory",
+      "ones": "2340000000",
+      "filed": "2016-10-28",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2017,
+      "end": "2016-09-01",
+      "start": null,
+      "concept": "inventory",
+      "ones": "2889000000",
+      "filed": "2017-10-26",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2018,
+      "end": "2017-08-31",
+      "start": null,
+      "concept": "inventory",
+      "ones": "3123000000",
+      "filed": "2018-10-15",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2018-08-30",
+      "start": null,
+      "concept": "inventory",
+      "ones": "3595000000",
+      "filed": "2019-10-17",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2019,
+      "end": "2018-08-31",
+      "start": null,
+      "concept": "inventory",
+      "ones": "3590000000",
+      "filed": "2019-10-17",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2020,
+      "end": "2019-08-29",
+      "start": null,
+      "concept": "inventory",
+      "ones": "5118000000",
+      "filed": "2020-10-19",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2021,
+      "end": "2020-09-03",
+      "start": null,
+      "concept": "inventory",
+      "ones": "5373000000",
+      "filed": "2021-10-08",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2022,
+      "end": "2021-09-02",
+      "start": null,
+      "concept": "inventory",
+      "ones": "4487000000",
+      "filed": "2022-10-07",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2023,
+      "end": "2022-09-01",
+      "start": null,
+      "concept": "inventory",
+      "ones": "6663000000",
+      "filed": "2023-10-06",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2024,
+      "end": "2023-08-31",
+      "start": null,
+      "concept": "inventory",
+      "ones": "8387000000",
+      "filed": "2024-10-04",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2025,
+      "end": "2024-08-29",
+      "start": null,
+      "concept": "inventory",
+      "ones": "8875000000",
+      "filed": "2025-10-03",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2025-08-28",
+      "start": null,
+      "concept": "inventory",
+      "ones": "8355000000",
+      "filed": "2026-10-09",
+      "tag": "InventoryNet"
+    },
+    {
+      "type": "annual_fact",
+      "fiscal_year": 2026,
+      "end": "2026-09-03",
+      "start": null,
+      "concept": "inventory",
+      "ones": "10372000000",
+      "filed": "2026-10-09",
+      "tag": "InventoryNet"
+    }
+  ],
+  "shares": {
+    "type": "share_count",
+    "shares": "1131423212",
+    "as_of": "2026-10-02",
+    "tag": "EntityCommonStockSharesOutstanding"
+  },
   "yields": [
     {
       "type": "treasury_yield",
       "as_of": "2026-10-16",
       "rate": "0.0509",
+      "source": "fred_dgs10"
+    },
+    {
+      "type": "treasury_yield",
+      "as_of": "2026-10-19",
+      "rate": "0.0515",
       "source": "treasury_par"
     }
   ],
   "unscaled": [
     {
       "type": "unscaled_amount",
-      "lexeme": "1,033,849,274,197",
+      "lexeme": "1,023,824,864,539",
       "label": "Market Cap",
       "period_end": "",
       "source": "nasdaq_summary"
@@ -2031,20 +4533,5 @@
     }
   ],
   "insiders": [],
-  "failures": [
-    {
-      "type": "fetch_failure",
-      "source": "fred_dgs10",
-      "status": 0,
-      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
-      "detail": ""
-    },
-    {
-      "type": "fetch_failure",
-      "source": "sec_company_tickers",
-      "status": 403,
-      "url": "https://www.sec.gov/files/company_tickers.json",
-      "detail": ""
-    }
-  ]
+  "failures": []
 }
