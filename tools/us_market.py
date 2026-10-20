@@ -96,6 +96,16 @@ def _latest_by_year(facts: list[AnnualFact]) -> dict[int, AnnualFact]:
     return chosen
 
 
+ANALYZE_PREFIXES = (
+    "market_cap:",
+    "through_cycle:",
+    "hurdle_check:",
+    "sbc:",
+    "inventory_days:",
+    "capex_ratio:",
+)
+
+
 def render_analysis(snap: IssuerSnapshot) -> str:
     lines = [f"ticker: {snap.ticker}"]
     ordered = sorted(snap.prints, key=lambda item: (item.as_of, item.source, item.kind.value))

@@ -34,6 +34,7 @@ from usmarket.fetch import (  # noqa: E402
     parse_treasury_par,
     parse_yahoo_chart,
 )
+from usmarket.claims import snapshot_allow_list, unexcused_numbers  # noqa: E402
 from usmarket.types import (  # noqa: E402
     AnnualFact,
     IssuerSnapshot,
@@ -1223,89 +1224,15 @@ class TestMicronReport(unittest.TestCase):
         snapshot_path = _ROOT / "reports" / "Micron" / "evidence" / "us-snapshot-MU.json"
         self.assertTrue(snapshot_path.exists(), snapshot_path)
         payload = json.loads(snapshot_path.read_text(encoding="utf-8"))
-        tokens = []
-
-        def walk(node):
-            if isinstance(node, dict):
-                for value in node.values():
-                    walk(value)
-            elif isinstance(node, list):
-                for value in node:
-                    walk(value)
-            elif isinstance(node, str):
-                tokens.append(node)
-            elif isinstance(node, (int, float)):
-                tokens.append(str(node))
-
-        walk(payload)
         snap = snapshot_from_json(payload)
-        derived_lines = [
-            line for line in us_market.render_analysis(snap).splitlines()
-            if line.startswith((
-                "market_cap:",
-                "through_cycle:",
-                "hurdle_check:",
-                "sbc:",
-                "inventory_days:",
-                "capex_ratio:",
-            ))
-        ]
-        for line in derived_lines:
-            tokens.extend(re.findall(r"-?\d+(?:,\d{3})*(?:\.\d+)?", line))
-
-        def whole_numbers(token: str) -> set[str]:
-            cleaned = token.strip().replace("$", "").replace("%", "")
-            if not re.fullmatch(r"-?\d+(?:,\d{3})*(?:\.\d+)?", cleaned):
-                return set()
-            value = cleaned.replace(",", "")
-            found = {value}
-            try:
-                found.add(format(Decimal(value), "f"))
-            except Exception:
-                return found
-            return found
-
-        allowed = set()
-        dates = set()
-        for token in tokens:
-            allowed.update(whole_numbers(token))
-            dates.update(re.findall(
-                r"\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\+\d{2}:\d{2}|Z))?",
-                token,
-            ))
-            dates.update(re.findall(r"\d{1,2}/\d{1,2}/\d{4}", token))
-
-        number_re = re.compile(r"(?<![\d.])-?\d+(?:,\d{3})*(?:\.\d+)?")
+        analyze = us_market.render_analysis(snap)
+        allowed = snapshot_allow_list(snap, analyze)
         self.assertNotIn("723125", allowed)
         for path in sorted((_ROOT / "reports" / "Micron").glob("*.md")):
             text = path.read_text(encoding="utf-8")
             self.assertNotIn("—", text, path)
-            file_dates = set(dates)
-            cutoff = re.search(r"(?m)^date:\s*(\d{4}-\d{2}-\d{2})\s*$", text)
-            if cutoff:
-                file_dates.add(cutoff.group(1))
-            for line in text.splitlines():
-                visible = re.sub(r"`[^`]+`", " ", line)
-                visible = re.sub(r"[\w./-]+\.md", " ", visible)
-                present = set()
-                for stamp in file_dates:
-                    if stamp in line:
-                        for part in re.split(r"[-/T:+]", stamp):
-                            if part.isdigit():
-                                present.add(part)
-                                present.add(str(int(part)))
-                for match in number_re.finditer(visible):
-                    raw = match.group(0)
-                    cleaned = raw.replace(",", "")
-                    if "." not in cleaned and cleaned in present:
-                        continue
-                    try:
-                        as_dec = format(Decimal(cleaned), "f")
-                    except Exception:
-                        self.fail(f"{path}:{raw}")
-                    if cleaned in allowed or as_dec in allowed:
-                        continue
-                    self.fail(f"{path.name} cites {raw} which is not in the snapshot: {line}")
+            missed = unexcused_numbers(text, snap, analyze, None)
+            self.assertEqual(missed, [], path.name)
 
 
 class TestCommandDocs(unittest.TestCase):
