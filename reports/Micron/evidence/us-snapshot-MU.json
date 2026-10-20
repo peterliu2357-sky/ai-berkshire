@@ -5,18 +5,10 @@
     {
       "type": "market_print",
       "ticker": "MU",
-      "price": "904.9",
-      "kind": "official_close",
-      "as_of": "2026-10-19T20:00:00+00:00",
+      "price": "915.766",
+      "kind": "intraday_last",
+      "as_of": "2026-10-20T14:52:03+00:00",
       "source": "yahoo_chart"
-    },
-    {
-      "type": "market_print",
-      "ticker": "MU",
-      "price": "953.19",
-      "kind": "official_close",
-      "as_of": "2026-10-13T13:30:00+00:00",
-      "source": "yahoo_daily_close"
     },
     {
       "type": "market_print",
@@ -49,6 +41,14 @@
       "kind": "official_close",
       "as_of": "2026-10-19T13:30:00+00:00",
       "source": "yahoo_daily_close"
+    },
+    {
+      "type": "market_print",
+      "ticker": "MU",
+      "price": "915.7657",
+      "kind": "intraday_last",
+      "as_of": "2026-10-20T10:52:00-04:00",
+      "source": "nasdaq_info"
     }
   ],
   "filings": [
@@ -2567,7 +2567,7 @@
   "unscaled": [
     {
       "type": "unscaled_amount",
-      "lexeme": "1,023,824,864,539",
+      "lexeme": "1,036,180,006,014",
       "label": "Market Cap",
       "period_end": "",
       "source": "nasdaq_summary"
@@ -5518,77 +5518,8 @@
       "derivative": true
     }
   ],
-  "failures": [
-    {
-      "type": "fetch_failure",
-      "source": "nasdaq_info",
-      "status": 200,
-      "url": "https://api.nasdaq.com/api/quote/MU/info?assetclass=stocks",
-      "detail": "undated last sale"
-    }
-  ],
+  "failures": [],
   "adr_ratio": null,
-  "cache": [
-    {
-      "type": "cache_hit",
-      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
-      "cached_at": "1792471269",
-      "age_seconds": "3155"
-    },
-    {
-      "type": "cache_hit",
-      "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
-      "cached_at": "1792471270",
-      "age_seconds": "3155"
-    },
-    {
-      "type": "cache_hit",
-      "url": "https://www.sec.gov/files/company_tickers.json",
-      "cached_at": "1792471270",
-      "age_seconds": "3155"
-    },
-    {
-      "type": "cache_hit",
-      "url": "https://data.sec.gov/submissions/CIK0000723125.json",
-      "cached_at": "1792471270",
-      "age_seconds": "3155"
-    },
-    {
-      "type": "cache_hit",
-      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json",
-      "cached_at": "1792471270",
-      "age_seconds": "3155"
-    },
-    {
-      "type": "cache_hit",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000016/primarydocument.xml",
-      "cached_at": "1792472608",
-      "age_seconds": "1817"
-    },
-    {
-      "type": "cache_hit",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000005/primarydocument.xml",
-      "cached_at": "1792472608",
-      "age_seconds": "1817"
-    },
-    {
-      "type": "cache_hit",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000159319926000004/primarydocument.xml",
-      "cached_at": "1792472608",
-      "age_seconds": "1817"
-    },
-    {
-      "type": "cache_hit",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000149828726000001/primarydocument.xml",
-      "cached_at": "1792472608",
-      "age_seconds": "1817"
-    },
-    {
-      "type": "cache_hit",
-      "url": "https://www.sec.gov/Archives/edgar/data/723125/000168949826000002/primarydocument.xml",
-      "cached_at": "1792472608",
-      "age_seconds": "1817"
-    }
-  ],
+  "cache": [],
   "listing": "domestic"
 }
