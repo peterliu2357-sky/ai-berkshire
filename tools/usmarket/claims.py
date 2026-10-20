@@ -211,6 +211,26 @@ def _measure_tokens(measure: str) -> list[str]:
     return re.findall(r"[a-z]+|\d+", measure.casefold())
 
 
+_CAPITAL_TOKENS = frozenset({
+    "share",
+    "shares",
+    "cap",
+    "capitalization",
+    "mktcap",
+    "marketcap",
+    "equity",
+    "mcap",
+})
+_CAPITAL_JOINED = ("marketcap", "enterprisevalue", "sharesoutstanding", "equityvalue", "sharecount")
+_SYNONYM_TOKENS = frozenset({"turnover", "topline"})
+_SYNONYM_JOINED = ("bottomline",)
+_PROFIT_COMPANIONS = frozenset({"net", "gross", "operating", "total", "gaap", "pretax"})
+
+
+def _joined_measure(measure: str) -> str:
+    return "".join(re.findall(r"[a-z0-9]+", measure.casefold()))
+
+
 def _has_qualifier(measure: str) -> bool:
     tokens = _measure_tokens(measure)
     joined = "".join(tokens)
@@ -219,23 +239,56 @@ def _has_qualifier(measure: str) -> bool:
     return any(token in _QUALIFIER_TOKENS for token in tokens)
 
 
-def _profit_blocks(tokens: list[str]) -> bool:
+def _year_stamps(measure: str) -> tuple[int, ...]:
+    found = []
+    for token in _measure_tokens(measure):
+        if len(token) == 4 and token.isdigit() and 1900 <= int(token) <= 2100:
+            found.append(int(token))
+    return tuple(found)
+
+
+def _latest_fiscal_year(snapshot: IssuerSnapshot | None) -> int | None:
+    if snapshot is None or not snapshot.annual:
+        return None
+    return max(fact.fiscal_year for fact in snapshot.annual)
+
+
+def _future_forecast(measure: str, snapshot: IssuerSnapshot | None) -> bool:
+    stamps = _year_stamps(measure)
+    latest = _latest_fiscal_year(snapshot)
+    if not stamps or latest is None:
+        return False
+    return all(year > latest for year in stamps)
+
+
+def _unqualifiable(measure: str) -> bool:
+    tokens = _measure_tokens(measure)
+    joined = _joined_measure(measure)
+    if any(token in _CAPITAL_TOKENS for token in tokens):
+        return True
+    return any(stem in joined for stem in _CAPITAL_JOINED)
+
+
+def _profit_is_core(measure: str, snapshot: IssuerSnapshot | None) -> bool:
+    tokens = _measure_tokens(measure)
     words = [token for token in tokens if not token.isdigit()]
     if "profit" not in words:
         return False
-    companions = [token for token in words if token != "profit"]
-    if any(token in {"net", "gross", "operating", "total", "gaap", "pretax"} for token in companions):
-        return True
-    return not companions and not any(token.isdigit() for token in tokens)
-
-
-def _core_stem(measure: str) -> bool:
-    if _has_qualifier(measure):
+    if _future_forecast(measure, snapshot):
         return False
-    tokens = _measure_tokens(measure)
-    if _profit_blocks(tokens):
+    companions = [token for token in words if token != "profit"]
+    if not companions:
         return True
-    joined = "".join(re.findall(r"[a-z0-9]+", measure.casefold()))
+    return any(token in _PROFIT_COMPANIONS for token in companions)
+
+
+def _core_stem(measure: str, snapshot: IssuerSnapshot | None = None) -> bool:
+    tokens = _measure_tokens(measure)
+    joined = _joined_measure(measure)
+    if any(token in _SYNONYM_TOKENS for token in tokens) or any(stem in joined for stem in _SYNONYM_JOINED):
+        return True
+    if _profit_is_core(measure, snapshot):
+        return True
     if any(token in _CORE_TOKENS and token != "profit" for token in tokens):
         return True
     return any(stem in joined for stem in _CORE_JOINED)
@@ -250,7 +303,13 @@ def _measure_blocked(measure: str, snapshot: IssuerSnapshot | None) -> bool:
 
 
 def _cited_measure_blocked(measure: str, snapshot: IssuerSnapshot | None) -> bool:
-    return _measure_blocked(measure, snapshot) or _core_stem(measure)
+    if _measure_blocked(measure, snapshot) or _unqualifiable(measure):
+        return True
+    if _future_forecast(measure, snapshot):
+        return False
+    if _has_qualifier(measure):
+        return False
+    return _core_stem(measure, snapshot)
 
 
 def _website_hosts(snapshot: IssuerSnapshot) -> set[str]:
@@ -882,7 +941,7 @@ def _growth_rate(claim: Cited) -> Decimal:
         rate = _CTX.divide(claim.value, Decimal("100"))
     else:
         raise ValueError(f"{claim.id} growth must be ratio or percent")
-    if rate < Decimal("-1"):
+    if rate <= Decimal("-1"):
         raise ValueError(f"{claim.id} growth must be greater than -1")
     return rate
 
@@ -932,6 +991,8 @@ def _irr_rate(ledger: SourceLedger, snapshot: IssuerSnapshot, inputs: tuple[str,
     profit = _as_cited(found, ClaimId(inputs[0]))
     if profit.unit != CitedUnit.USD_ONES:
         raise ValueError("irr profit must use usd_ones")
+    if profit.value <= 0:
+        raise ValueError("irr profit must be positive")
     pe = _multiple(_as_cited(found, ClaimId(inputs[1])))
     if len(inputs) == 5:
         payout = _ratio_value(_as_cited(found, ClaimId(inputs[2])))
@@ -1084,7 +1145,7 @@ def _cited_line(claim: Cited, ledger: SourceLedger, snapshot: IssuerSnapshot | N
     _tier, publisher = cited_binding(claim.url, snapshot)
     when = "published" if claim.published is not None else "accessed"
     day = claim.published if claim.published is not None else claim.accessed
-    pieces = [f"[c:{claim.id}", claim.url, publisher, f"{when}={day.isoformat()}"]
+    pieces = [f"[c:{claim.id}", claim.url, publisher, f"{when}={day.isoformat()}", f"measure={claim.measure}"]
     if claim.is_estimate:
         pieces.append("estimate")
         pieces.append("inputs=" + ",".join(str(item) for item in claim.inputs))
@@ -1243,20 +1304,60 @@ def _mask_exact(report: str, rows: tuple[str, ...]) -> str:
 _FORM_SPAN = re.compile(r"(?i)^(?:form\s+)?(?:10-k/?a?|10-q|8-k|20-f|40-f|6-k|def\s*14a|s-1|4)$")
 _TICKER_SPAN = re.compile(r"(?i)^[a-z]{1,6}(?:\.[a-z]{1,4})?$|^\d{1,6}\.[a-z]{1,4}$")
 _IDENT_SPAN = re.compile(r"^[A-Za-z_][\w./:-]*$")
-_CN_DIGITS = {"零": 0, "〇": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
-_CN_UNITS = {"十": 10, "百": 100, "千": 1000}
-_CN_BIG = {"万": 10000, "亿": 100000000}
-_CN_CHARS = frozenset(_CN_DIGITS) | frozenset(_CN_UNITS) | frozenset(_CN_BIG)
-_CN_RUN = re.compile(r"[零〇一二两三四五六七八九十百千万亿]+")
+_PATH_EXT = (".md", ".py", ".json", ".txt", ".html", ".xml", ".csv")
+_CONCEPT_WORD = re.compile(r"(?i)(?:usd|us\$|eur|gbp|cny|hkd|share|revenue|income|profit|eps|gaap|sales|earnings|cap)")
+_CN_DIGITS = {
+    "零": 0,
+    "〇": 0,
+    "一": 1,
+    "壹": 1,
+    "二": 2,
+    "两": 2,
+    "贰": 2,
+    "貳": 2,
+    "三": 3,
+    "叁": 3,
+    "參": 3,
+    "四": 4,
+    "肆": 4,
+    "五": 5,
+    "伍": 5,
+    "六": 6,
+    "陆": 6,
+    "陸": 6,
+    "七": 7,
+    "柒": 7,
+    "八": 8,
+    "捌": 8,
+    "九": 9,
+    "玖": 9,
+}
+_CN_UNITS = {"十": 10, "拾": 10, "百": 100, "佰": 100, "千": 1000, "仟": 1000}
+_CN_BIG = {"万": 10000, "萬": 10000, "亿": 100000000, "億": 100000000}
+_CN_EXTRA = frozenset("点點成倍分之约約")
+_CN_CHARS = frozenset(_CN_DIGITS) | frozenset(_CN_UNITS) | frozenset(_CN_BIG) | _CN_EXTRA
+_CN_CLASS = re.escape("".join(_CN_DIGITS) + "".join(_CN_UNITS) + "".join(_CN_BIG))
+_CN_SMALL = re.escape("".join(_CN_DIGITS))
+_CN_RUN = re.compile(f"[{_CN_CLASS}]+")
+_CN_POINT = re.compile(f"[{_CN_SMALL}]+[点點][{_CN_SMALL}]+")
+_CN_TENTH = re.compile(f"(?:约|約|大约|大約)?([{_CN_SMALL}])成")
+_CN_TIMES = re.compile(f"([{_CN_SMALL}])倍")
+_CN_FRACTION = re.compile(f"([{_CN_SMALL}])分之([{_CN_SMALL}])")
+
+
+def _is_path(text: str) -> bool:
+    if any(char.isspace() for char in text):
+        return False
+    return text.lower().endswith(_PATH_EXT)
 
 
 def _span_exempt(inner: str) -> bool:
     text = inner.strip()
-    if _FORM_SPAN.fullmatch(text) or _TICKER_SPAN.fullmatch(text):
+    if _is_path(text) or _FORM_SPAN.fullmatch(text) or _TICKER_SPAN.fullmatch(text):
         return True
-    if "/" in text or "\\" in text or text.lower().endswith((".md", ".py", ".json", ".txt", ".html", ".xml")):
-        return True
-    return " " not in text and _IDENT_SPAN.fullmatch(text) is not None
+    if " " not in text and _IDENT_SPAN.fullmatch(text) is not None:
+        return _CONCEPT_WORD.search(text) is None
+    return False
 
 
 def _mask_inline(line: str) -> str:
@@ -1371,20 +1472,71 @@ def _listed(cleaned: str, allowed: set[str]) -> bool:
     return any(_same_quantity(cleaned, token) for token in allowed)
 
 
+_INSIDER_LINE = frozenset({"insider", "owner", "transaction", "acquired", "derivative"})
+
+
+def _year_label(line: str) -> bool:
+    folded = line.casefold()
+    if "fiscal" in folded:
+        return True
+    return re.search(r"(?<![a-z])fy(?=\d)", folded) is not None
+
+
+def _cn_plain(text: str) -> int | None:
+    if not text:
+        return None
+    value = 0
+    for char in text:
+        digit = _CN_DIGITS.get(char)
+        if digit is None:
+            return None
+        value = value * 10 + digit
+    return value
+
+
+def _chinese_values(visible: str) -> list[tuple[str, int, int]]:
+    found: list[tuple[str, int, int]] = []
+    for match in _CN_POINT.finditer(visible):
+        raw = match.group(0)
+        left, right = re.split(r"[点點]", raw, maxsplit=1)
+        whole = _cn_plain(left)
+        frac = _cn_plain(right)
+        if whole is None or frac is None:
+            continue
+        parsed = Decimal(whole) + Decimal(frac) / (Decimal(10) ** len(right))
+        found.append((format(parsed, "f"), match.start(), match.end()))
+    for match in _CN_TENTH.finditer(visible):
+        digit = _CN_DIGITS.get(match.group(1))
+        if digit is None:
+            continue
+        found.append((format(Decimal(digit) / Decimal(10), "f"), match.start(), match.end()))
+    for match in _CN_TIMES.finditer(visible):
+        digit = _CN_DIGITS.get(match.group(1))
+        if digit is None:
+            continue
+        found.append((str(digit), match.start(), match.end()))
+    for match in _CN_FRACTION.finditer(visible):
+        den = _CN_DIGITS.get(match.group(1))
+        num = _CN_DIGITS.get(match.group(2))
+        if not den or num is None:
+            continue
+        found.append((format(_CTX.divide(Decimal(num), Decimal(den)), "f"), match.start(), match.end()))
+    return found
+
+
 def _contextual_hit(line: str, cleaned: str, snapshot: IssuerSnapshot) -> bool:
     try:
         want = Decimal(cleaned)
     except Exception:
         return False
-    for trade in snapshot.insiders:
-        if want == trade.shares and _word_has(line, frozenset({"shares"})):
-            return True
-        if trade.price is not None and want == trade.price and _word_has(line, frozenset({"price"})):
-            return True
+    if _word_has(line, _INSIDER_LINE):
+        for trade in snapshot.insiders:
+            if want == trade.shares or (trade.price is not None and want == trade.price):
+                return True
     if want == want.to_integral_value():
         year = abs(int(want))
         years = {fact.fiscal_year for fact in snapshot.annual}
-        if year in years and _word_has(line, frozenset({"fiscal"})):
+        if year in years and _year_label(line):
             return True
     for failure in snapshot.failures:
         if want == Decimal(failure.status) and _word_has(line, frozenset({"status", "http"})):
@@ -1483,6 +1635,11 @@ def _classified_numbers(
             if _listed(rendered, free) or _contextual_hit(original, rendered, snapshot):
                 continue
             kind = "broken" if _overlap(offset + match.start(), offset + match.end(), broken) else "outside"
+            missed.append((rendered, kind))
+        for rendered, start, end in _chinese_values(visible):
+            if _listed(rendered, free) or _contextual_hit(original, rendered, snapshot):
+                continue
+            kind = "broken" if _overlap(offset + start, offset + end, broken) else "outside"
             missed.append((rendered, kind))
         offset += len(part)
     return missed
@@ -1598,6 +1755,108 @@ def _derived_row_failures(
     return failures
 
 
+_SCORE_MARK = "star or score marks have no scored citation"
+_GAAP_PHRASES = (
+    "gaap net income",
+    "gaap revenue",
+    "total revenue",
+    "net income",
+    "operating income",
+    "gross profit",
+)
+_QUALIFIER_WORDS = ("nongaap", "non-gaap", "non gaap", "adjusted", "segment", "nonifrs", "non-ifrs")
+
+
+def _score_runs(report: str) -> list[int]:
+    runs = [len(match) for match in re.findall(r"[★☆⭐]+", report)]
+    digits = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5}
+    for match in re.finditer(r"([一二三四五])星", report):
+        runs.append(digits[match.group(1)])
+    return runs
+
+
+def _score_signal(report: str) -> bool:
+    return bool(_score_runs(report) or "评级" in report)
+
+
+def _underlying_concept(measure: str) -> str | None:
+    tokens = set(_measure_tokens(measure))
+    joined = _joined_measure(measure)
+    if "eps" in tokens or "dilutedeps" in joined:
+        return None
+    if "operating" in tokens and ("income" in tokens or "profit" in tokens):
+        return "operating_income"
+    if "gross" in tokens and "profit" in tokens:
+        return "gross_profit"
+    if tokens & {"revenue", "sales", "turnover", "topline"}:
+        return "revenue"
+    if tokens & {"income", "profit", "earnings", "ni"} or "bottomline" in joined:
+        return "net_income"
+    return None
+
+
+def _latest_concept(snapshot: IssuerSnapshot, concept: str):
+    rows = [fact for fact in snapshot.annual if fact.concept == concept]
+    if not rows:
+        return None
+    return max(rows, key=lambda fact: (fact.fiscal_year, fact.filed))
+
+
+def _grouped(token: str) -> str:
+    sign = ""
+    body = token
+    if body.startswith("-"):
+        sign = "-"
+        body = body[1:]
+    whole, dot, frac = body.partition(".")
+    grouped = f"{int(whole):,}"
+    if dot:
+        grouped += dot + frac
+    return sign + grouped
+
+
+def _strip_brackets(line: str) -> str:
+    return re.sub(r"\{[^{}\n]*\}\[[^\]\n]*\]", " ", line)
+
+
+def _qualified_failures(
+    report: str,
+    snapshot: IssuerSnapshot,
+    ledger: SourceLedger,
+    lines: Mapping[ClaimId, tuple[str, ...]],
+) -> list[str]:
+    failures = []
+    for claim in ledger.claims:
+        if not isinstance(claim, Cited) or not _has_qualifier(str(claim.measure)):
+            continue
+        measure = str(claim.measure)
+        if _unqualifiable(measure):
+            continue
+        for row in lines.get(claim.id, ()):
+            if not row or row not in report:
+                continue
+            for line in report.splitlines():
+                if row not in line:
+                    continue
+                prose = _strip_brackets(line).casefold()
+                if any(word in prose for word in _QUALIFIER_WORDS):
+                    continue
+                for phrase in _GAAP_PHRASES:
+                    if phrase in prose:
+                        failures.append(f"qualified {measure} is worded as {phrase}")
+                        break
+        concept = _underlying_concept(measure)
+        if concept is None or _future_forecast(measure, snapshot):
+            continue
+        fact = _latest_concept(snapshot, concept)
+        if fact is None:
+            continue
+        token = canonical_decimal(fact.ones)
+        if token not in report and _grouped(token) not in report:
+            failures.append(f"qualified {measure} hides snapshot {concept} {token}")
+    return failures
+
+
 def _score_failures(
     report: str,
     ledger: SourceLedger,
@@ -1618,11 +1877,11 @@ def _score_failures(
             failures.append(problem)
         if not thesis:
             failures.append(f"score {claim.id} needs a thesis anchor")
-    runs = [len(match) for match in re.findall(r"★+", report)]
+    runs = _score_runs(report)
     printed = [claim for claim in scored if _rows_in(report, lines.get(claim.id, ()))]
-    if runs and not printed:
-        failures.append("star glyphs have no scored citation")
-    if printed and sorted(runs) != sorted(claim.stars for claim in printed):
+    if _score_signal(report) and not printed:
+        failures.append(_SCORE_MARK)
+    if printed and runs and sorted(runs) != sorted(claim.stars for claim in printed):
         failures.append("star glyph count disagrees with stars")
     return failures
 
@@ -1651,8 +1910,8 @@ def audit_report(
         return AuditResult("fail", ("ledger ticker does not match the snapshot",))
     peers = {} if peers is None else peers
     failures: list[str] = []
-    if ledger is None and "★" in report:
-        failures.append("star glyphs have no scored citation")
+    if ledger is None and _score_signal(report):
+        failures.append(_SCORE_MARK)
     try:
         if agent and agent in report:
             raise ValueError("artifact contains the SEC user agent")
@@ -1677,6 +1936,7 @@ def audit_report(
         failures.extend(_dispute_failures(report, ledger, lines))
         failures.extend(_derived_row_failures(report, ledger, lines))
         failures.extend(_score_failures(report, ledger, snapshot, lines))
+        failures.extend(_qualified_failures(report, snapshot, ledger, lines))
     analyze = render_analysis(snapshot)
     usable = _excusing_lines(snapshot, ledger, lines) if ledger is not None else None
     name = snapshot.ticker

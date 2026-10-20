@@ -18,13 +18,13 @@ The hurdle is the later 10-year Treasury yield in the snapshot. The same date ke
 
 ## Citations
 
-Market cap, the share count, and GAAP amounts stay in the snapshot. `audit` still rejects a GAAP amount that is not in the snapshot, including on a line that also has a citation. Every other number needs a bracket from `python3 tools/source_ledger.py`. Paste that stdout line. Do not pass `--tier` or `--publisher`. `PRIMARY_HOSTS` and `SECONDARY_HOSTS` in `tools/usmarket/claims.py` assign the tier and the publisher. Leave the host names in those tuples. A registry edit changes the tier, and the old bracket fails until you print it again.
+Market cap, the share count, and GAAP amounts stay in the snapshot. `audit` still rejects a GAAP amount that is not in the snapshot, including on a line that also has a citation. Every other number needs a bracket from `python3 tools/source_ledger.py`. Paste that stdout line. The line includes `measure=` and the tier. A qualifier cannot rename shares, market cap, or enterprise value. A year on the measure is a forecast only when it is later than the snapshot's latest fiscal year. A qualified figure for a period the snapshot already has must show that snapshot number in the note. Calling that figure GAAP net income or total revenue fails the audit. Do not pass `--tier` or `--publisher`. `PRIMARY_HOSTS` and `SECONDARY_HOSTS` in `tools/usmarket/claims.py` assign the tier and the publisher. Leave the host names in those tuples. A registry edit changes the tier, and the old bracket fails until you print it again.
 
 Company IR is primary when the cited host is the issuer site. A submissions `website` or `investorWebsite` is stored as a `website` label. `MU` also maps to `micron.com` when that label is absent. `ir`, `investors`, `investor`, `news`, and `newsroom` prefixes of that host count. Any other subdomain stays low. The publisher is `company IR`. Biographies and filing prose use `admit excerpt`.
 
-`admit cited` rejects `sec.gov` and its subdomains. Quote a filing with `admit excerpt` only when that accession is already a `FilingRef` on this snapshot. The command takes `--contains` and `--out`. It does not take `--url`. `--out` is `reports/<company>/evidence/excerpts/<id>.txt`, the file beside the ledger that `audit` reads. If the sentence is not in the cover document, the command reads `EX-99` exhibits from the filing index and cites that exhibit URL.
+`admit cited` rejects `sec.gov` and its subdomains. Quote a filing with `admit excerpt` only when that accession is already a `FilingRef` on this snapshot. The command takes `--contains` and `--out`. It does not take `--url`. `--out` is `reports/<company>/evidence/excerpts/<id>.txt`, the file beside the ledger that `audit` reads. If the sentence is not in the cover document, the command reads `EX-99` exhibits from the filing index and cites that exhibit URL. An index row counts when its type or filename is `EX-99`, `EXHIBIT-99`, or `exhibit99-1.htm`.
 
-`admit peer` records a pointer to a concept and fiscal year on another snapshot. The stored path is relative to the repo root. Do not copy the peer number into this file. `python3 tools/source_ledger.py remove --ledger PATH --id ID` deletes one row.
+`admit peer` records a pointer to a concept and fiscal year on another snapshot. The stored path is relative to the repo root. A peer snapshot whose ticker or CIK is this issuer is rejected. Do not copy the peer number into this file. `python3 tools/source_ledger.py remove --ledger PATH --id ID` deletes one row.
 
 `admit dispute` groups two or more cited or peer rows that share one measure and differ in value. A section that shows one member and hides another fails `audit`.
 
@@ -47,7 +47,7 @@ python3 tools/source_ledger.py admit cited \
   --published 2026-03-18
 ```
 
-Check the note with `python3 tools/source_ledger.py audit --report PATH --snapshot PATH --ledger PATH`. Exit 0 on a pass. A note with no US signal prints `audit: skipped`. A snapshot note with no ledger and only snapshot numbers passes. A star glyph with no ledger fails. `anchor=snap:market_cap` alone does not anchor a score. At least one anchor must be a cited row, an excerpt, or a peer row.
+Check the note with `python3 tools/source_ledger.py audit --report PATH --snapshot PATH --ledger PATH`. Exit 0 on a pass. A note with no US signal prints `audit: skipped`. A snapshot note with no ledger and only snapshot numbers passes. A star glyph, an outlined star, or a rating mark such as 评级四星 with no ledger fails. `anchor=snap:market_cap` alone does not anchor a score. At least one anchor must be a cited row, an excerpt, or a peer row.
 
 ## Report rule
 

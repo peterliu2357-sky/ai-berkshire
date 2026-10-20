@@ -180,10 +180,54 @@ def _cmd_cited(args, agent: str) -> int:
     return _save_and_print(args.ledger, snapshot, updated, claim.id, {}, {}, agent)
 
 
+_CIK_IN_URL = re.compile(r"/data/(\d+)(?:/|$)")
+
+
+def _snapshot_ciks(snapshot: IssuerSnapshot) -> set[str]:
+    found: set[str] = set()
+    for filing in snapshot.filings:
+        for match in _CIK_IN_URL.finditer(filing.url):
+            found.add(str(int(match.group(1))))
+    return found
+
+
+def _subjects_beside(ledger_path: str, ticker: str) -> list[IssuerSnapshot]:
+    directory = os.path.dirname(os.path.abspath(ledger_path)) or "."
+    found: list[IssuerSnapshot] = []
+    try:
+        names = os.listdir(directory)
+    except OSError:
+        return found
+    for name in names:
+        if not (name.startswith("us-snapshot") and name.endswith(".json")):
+            continue
+        path = os.path.join(directory, name)
+        try:
+            with open(path, encoding="utf-8") as handle:
+                snap = snapshot_from_json(json.load(handle))
+        except (OSError, ValueError, json.JSONDecodeError, KeyError, TypeError):
+            continue
+        if snap.ticker.upper() == ticker.upper():
+            found.append(snap)
+    return found
+
+
+def _reject_subject_peer(peer: IssuerSnapshot, ledger: SourceLedger, ledger_path: str) -> None:
+    if peer.ticker.upper() == ledger.ticker.upper():
+        raise ValueError("peer snapshot is the subject")
+    peer_ciks = _snapshot_ciks(peer)
+    if not peer_ciks:
+        return
+    for subject in _subjects_beside(ledger_path, ledger.ticker):
+        if peer_ciks & _snapshot_ciks(subject):
+            raise ValueError("peer snapshot is the subject")
+
+
 def _cmd_peer(args, agent: str) -> int:
     peer = _read_snapshot(args.snapshot)
     stored = _repo_relative(args.snapshot)
     ledger = _load_ledger(args.ledger, None)
+    _reject_subject_peer(peer, ledger, args.ledger)
     claim = PeerSnapshot(
         ClaimId(args.id),
         Measure(args.measure),
@@ -280,8 +324,8 @@ def _exhibit_urls(index_url: str, body: bytes) -> list[str]:
         if not isinstance(item, dict):
             continue
         name = str(item.get("name") or "")
-        kind = str(item.get("type") or "")
-        if kind.upper().startswith("EX-99") or re.search(r"(?i)ex-?99", name):
+        kind = str(item.get("type") or item.get("exhibitType") or "")
+        if re.search(r"(?i)(?:ex|exhibit)[-_ ]?99", f"{kind} {name}"):
             found.append(prefix + "/" + name)
     return found
 

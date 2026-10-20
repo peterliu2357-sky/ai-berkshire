@@ -146,7 +146,7 @@ class TestHostTiers(unittest.TestCase):
         self.assertEqual(
             line,
             "{5.15}[c:dram-ddr5-tf https://www.trendforce.com/example/ddr5 "
-            "TrendForce published=2026-03-18 secondary]",
+            "TrendForce published=2026-03-18 measure=dram_spot_ddr5 secondary]",
         )
 
     def test_gartner_and_idc_are_secondary(self):
@@ -341,7 +341,10 @@ class TestAdmitAndAudit(unittest.TestCase):
             ),
             failures=(FetchFailure("nasdaq_info", 200, "https://www.example.invalid/info", "undated"),),
         )
-        self.assertEqual(audit_report("shares 40.00 and price 947.29\n", snap, None, {}).status, "pass")
+        self.assertEqual(
+            audit_report("owner transaction shares 40.00 and price 947.29\n", snap, None, {}).status,
+            "pass",
+        )
         self.assertEqual(audit_report("Fiscal year 2026 ends 2026-08-28.\n", _mu(), None, {}).status, "pass")
         self.assertEqual(audit_report("Nasdaq info, status 200\n", snap, None, {}).status, "pass")
         self.assertEqual(audit_report("`10-K` and `005930.KS`\n", _mu(), None, {}).status, "pass")
@@ -849,7 +852,7 @@ class TestSourceLedgerCli(unittest.TestCase):
             self.assertEqual(
                 stdout.getvalue().strip(),
                 "{5.15}[c:dram-ddr5-tf https://www.trendforce.com/example/ddr5 "
-                "TrendForce published=2026-03-18 secondary]",
+                "TrendForce published=2026-03-18 measure=dram_spot_ddr5 secondary]",
             )
             with open(ledger, encoding="utf-8") as handle:
                 stored = handle.read()
@@ -1126,31 +1129,65 @@ class TestSourceLedgerCli(unittest.TestCase):
             self.assertNotIn(_AGENT, stdout.getvalue())
 
     def test_peer_path_is_stored_repo_relative(self):
-        snapshot_path = str(_ROOT / "reports" / "Micron" / "evidence" / "us-snapshot-MU.json")
-        with tempfile.TemporaryDirectory() as directory:
-            ledger_path = os.path.join(directory, "source-ledger.json")
-            write_ledger(ledger_path, SourceLedger("MU", ()), "")
-            argv = [
-                "admit",
-                "peer",
-                "--ledger",
-                ledger_path,
-                "--id",
-                "mu-revenue",
-                "--measure",
-                "peer_mu_revenue",
-                "--snapshot",
-                snapshot_path,
-                "--concept",
-                "revenue",
-                "--fiscal-year",
-                "2026",
-            ]
-            with contextlib.redirect_stdout(io.StringIO()):
-                code = source_ledger.main(argv)
-            self.assertEqual(code, 0)
-            stored = load_ledger(Path(ledger_path).read_text(encoding="utf-8"))
-            self.assertEqual(stored.claims[0].snapshot_path, "reports/Micron/evidence/us-snapshot-MU.json")
+        path = _ROOT / "tests" / "fixtures" / "us" / "peer-nvda.json"
+        peer = _mu(
+            ticker="NVDA",
+            prints=(
+                MarketPrint(
+                    "NVDA",
+                    Decimal("100"),
+                    PrintKind.OFFICIAL_CLOSE,
+                    datetime(2026, 10, 17, 20, 0, tzinfo=timezone.utc),
+                    "nasdaq_quote",
+                ),
+            ),
+            filings=(
+                FilingRef(
+                    "10-K",
+                    date(2026, 10, 1),
+                    "0001045810-26-000001",
+                    "https://www.sec.gov/Archives/edgar/data/1045810/nvda.htm",
+                ),
+            ),
+            annual=(
+                AnnualFact(
+                    2026,
+                    date(2026, 8, 28),
+                    "revenue",
+                    Decimal("1000"),
+                    date(2026, 10, 1),
+                    "Revenues",
+                ),
+            ),
+        )
+        path.write_text(json.dumps(peer.to_json()), encoding="utf-8")
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                ledger_path = os.path.join(directory, "source-ledger.json")
+                write_ledger(ledger_path, SourceLedger("MU", ()), "")
+                argv = [
+                    "admit",
+                    "peer",
+                    "--ledger",
+                    ledger_path,
+                    "--id",
+                    "nvda-revenue",
+                    "--measure",
+                    "peer_nvda_revenue",
+                    "--snapshot",
+                    str(path),
+                    "--concept",
+                    "revenue",
+                    "--fiscal-year",
+                    "2026",
+                ]
+                with contextlib.redirect_stdout(io.StringIO()):
+                    code = source_ledger.main(argv)
+                self.assertEqual(code, 0)
+                stored = load_ledger(Path(ledger_path).read_text(encoding="utf-8"))
+                self.assertEqual(stored.claims[0].snapshot_path, "tests/fixtures/us/peer-nvda.json")
+        finally:
+            path.unlink(missing_ok=True)
 
     def test_remove_drops_one_ledger_row(self):
         snap = _mu()
@@ -1351,7 +1388,18 @@ class TestRoundThreeBypasses(unittest.TestCase):
         self.assertEqual(named.status, "pass", named.failures)
 
     def test_chinese_ratios_are_scanned(self):
-        snap = _mu()
+        snap = _mu(
+            annual=(
+                AnnualFact(
+                    2026,
+                    date(2026, 8, 28),
+                    "net_income",
+                    Decimal("1001"),
+                    date(2026, 10, 1),
+                    "NetIncomeLoss",
+                ),
+            )
+        )
         for text in ("增速约三成。\n", "估值三倍。\n", "仓位三分之一。\n", "利率零点五。\n", "规模壹仟。\n"):
             result = audit_report(text, snap, None, {})
             self.assertEqual(result.status, "fail", text)
@@ -1419,6 +1467,42 @@ class TestRoundThreeBypasses(unittest.TestCase):
                 code = source_ledger.main(argv)
             self.assertEqual(code, 1, stderr.getvalue())
             self.assertIn("subject", stderr.getvalue().lower())
+        cik_path = _ROOT / "tests" / "fixtures" / "us" / "peer-same-cik.json"
+        twin = _mu(
+            ticker="NVDA",
+            filings=(
+                FilingRef(
+                    "10-K",
+                    date(2026, 10, 1),
+                    "0000723125-26-000099",
+                    "https://www.sec.gov/Archives/edgar/data/723125/nvda.htm",
+                ),
+            ),
+        )
+        cik_path.write_text(json.dumps(twin.to_json()), encoding="utf-8")
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                ledger_path = os.path.join(directory, "source-ledger.json")
+                subject_path = os.path.join(directory, "us-snapshot-MU.json")
+                write_ledger(ledger_path, SourceLedger("MU", ()), "")
+                subject_path_obj = Path(subject_path)
+                subject_path_obj.write_text(json.dumps(_mu().to_json()), encoding="utf-8")
+                argv = [
+                    "admit", "peer",
+                    "--ledger", ledger_path,
+                    "--id", "same-cik",
+                    "--measure", "peer_same_cik",
+                    "--snapshot", str(cik_path),
+                    "--concept", "revenue",
+                    "--fiscal-year", "2026",
+                ]
+                stderr = io.StringIO()
+                with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(stderr):
+                    code = source_ledger.main(argv)
+                self.assertEqual(code, 1, stderr.getvalue())
+                self.assertIn("subject", stderr.getvalue().lower())
+        finally:
+            cik_path.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":
