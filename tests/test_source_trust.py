@@ -45,10 +45,13 @@ from usmarket.claims import (  # noqa: E402
     tier_of_host,
     unexcused_numbers,
     visible_text,
+    write_ledger,
 )
 from usmarket.types import (  # noqa: E402
     AnnualFact,
+    FetchFailure,
     FilingRef,
+    InsiderTrade,
     IssuerSnapshot,
     MarketPrint,
     PrintKind,
@@ -174,6 +177,29 @@ class TestHostTiers(unittest.TestCase):
         tier, publisher = tier_of_host("https://evil.example?x=@federalregister.gov/path")
         self.assertEqual((tier, publisher), (Tier.LOW, "evil.example"))
 
+    def test_untrusted_subdomain_does_not_inherit_a_tier(self):
+        self.assertEqual(tier_of_host("https://community.samsung.com/forum")[0], Tier.LOW)
+        self.assertEqual(tier_of_host("https://spot.trendforce.com/ddr5")[0], Tier.LOW)
+        self.assertEqual(
+            tier_of_host("https://newsroom.samsung.com/story"),
+            (Tier.SECONDARY, "Samsung"),
+        )
+        self.assertEqual(
+            tier_of_host("https://www.trendforce.com/example/ddr5"),
+            (Tier.SECONDARY, "TrendForce"),
+        )
+
+    def test_micron_ir_hosts_are_primary_without_a_website_label(self):
+        snap = _mu()
+        for url in ("https://investors.micron.com/news", "https://ir.micron.com/releases"):
+            claim = _cited("ir-page", "press_release", "1.25", CitedUnit.COUNT, url)
+            line = citation_lines(snap, SourceLedger("MU", (claim,)), {}, {})[claim.id][0]
+            self.assertIn("company IR", line)
+            self.assertTrue(line.endswith("primary]"), line)
+        forum = _cited("forum", "press_release", "1.25", CitedUnit.COUNT, "https://community.micron.com/thread")
+        forum_line = citation_lines(snap, SourceLedger("MU", (forum,)), {}, {})[forum.id][0]
+        self.assertTrue(forum_line.endswith("low]"), forum_line)
+
 
 class TestAdmitAndAudit(unittest.TestCase):
     def test_gaap_alias_is_blocked_even_when_the_fact_is_absent(self):
@@ -212,6 +238,94 @@ class TestAdmitAndAudit(unittest.TestCase):
         result = audit_report("`424242`\n", _mu(), None, {})
         self.assertEqual(result.status, "fail")
         self.assertTrue(any("424242" in item for item in result.failures))
+
+    def test_backtick_prose_does_not_hide_a_quantity(self):
+        snap = _mu()
+        samples = (
+            ("`7.77 USD per GB`\n", "7.77"),
+            ("`$412`\n", "412"),
+            ("`EPS 75 x 15 = 1125`\n", "1125"),
+        )
+        for line, needle in samples:
+            result = audit_report(line, snap, None, {})
+            self.assertEqual(result.status, "fail", line)
+            self.assertTrue(any(needle in item for item in result.failures), result.failures)
+
+    def test_core_synonym_cannot_stand_in_for_a_snapshot_figure(self):
+        snap = _mu()
+        empty = SourceLedger("MU", ())
+        for measure in (
+            "mkt_cap",
+            "market_capitalization",
+            "enterprise_value",
+            "net_profit",
+            "total_revenue",
+            "fy2026_revenue",
+            "eps",
+            "diluted_eps",
+            "shares_out",
+            "share_count_diluted",
+            "peer_nvda_revenue",
+        ):
+            claim = _cited("alias", measure, "99999999999", CitedUnit.USD_ONES, "https://www.reuters.com/markets/example")
+            with self.assertRaises(ValueError, msg=measure):
+                admit(empty, claim, snap)
+        planted = _cited(
+            "net-profit",
+            "net_profit",
+            "99999999999",
+            CitedUnit.USD_ONES,
+            "https://www.reuters.com/markets/example",
+        )
+        ledger = SourceLedger("MU", (planted,))
+        line = citation_lines(snap, ledger, {}, {})[planted.id][0]
+        result = audit_report(line + "\n", snap, ledger, {})
+        self.assertEqual(result.status, "fail")
+        self.assertTrue(any("99999999999" in item for item in result.failures))
+
+    def test_star_glyphs_fail_without_a_ledger(self):
+        result = audit_report("Verdict ★★★★★\nShares 100 as of 2026-08-28.\n", _mu(), None, {})
+        self.assertEqual(result.status, "fail")
+        self.assertTrue(any("star" in item for item in result.failures))
+
+    def test_insider_shares_do_not_excuse_an_unrelated_price(self):
+        snap = _mu(
+            insiders=(
+                InsiderTrade(
+                    date(2026, 10, 14),
+                    date(2026, 10, 15),
+                    "RAY",
+                    "S",
+                    "D",
+                    Decimal("40.00"),
+                    Decimal("947.29"),
+                    "https://www.sec.gov/Archives/example.xml",
+                ),
+            ),
+            failures=(FetchFailure("nasdaq_info", 200, "https://www.example.invalid/info", "undated"),),
+        )
+        spot = audit_report("DRAM spot price 40.00\n", snap, None, {})
+        self.assertEqual(spot.status, "fail")
+        self.assertTrue(any("40.00" in item for item in spot.failures))
+        stray = audit_report("The year 2026 was the trough.\n", snap, None, {})
+        self.assertEqual(stray.status, "fail")
+        self.assertTrue(any("2026" in item for item in stray.failures))
+        status = audit_report("DRAM spot 200\n", snap, None, {})
+        self.assertEqual(status.status, "fail")
+        self.assertTrue(any("200" in item for item in status.failures))
+
+    def test_chinese_numerals_in_a_us_note_are_scanned(self):
+        result = audit_report("净利润二千四百亿元\n", _mu(), None, {})
+        self.assertEqual(result.status, "fail")
+        self.assertTrue(any("240000000000" in item or "二千四百" in item for item in result.failures))
+
+    def test_snapshot_anchor_alone_cannot_support_a_star(self):
+        snap = _mu()
+        ledger = admit(SourceLedger("MU", ()), Scored(ClaimId("score-mu"), 4, ("snap:market_cap",)), snap)
+        line = citation_lines(snap, ledger, {}, {})[ClaimId("score-mu")][0]
+        result = audit_report(line + "\n★★★★\n", snap, ledger, {})
+        self.assertEqual(result.status, "fail")
+        self.assertTrue(any("anchor" in item for item in result.failures))
 
     def test_ledger_ticker_must_match_the_snapshot(self):
         result = audit_report("Shares 100 as of 2026-08-28.\n", _mu(), SourceLedger("AAPL", ()), {})
@@ -506,6 +620,74 @@ class TestDerive(unittest.TestCase):
         )
         with self.assertRaises(ValueError):
             citation_lines(_mu(), ledger, {}, {path: ambiguous})
+
+    def test_three_scenario_rejects_a_collapse_and_a_loss_year(self):
+        snap = _mu()
+        ledger = self._rates(snap)
+        deep = _cited("g-deep", "growth_deep", "-1.5", CitedUnit.RATIO, "https://www.ft.com/g/deep")
+        ledger = admit(ledger, deep, snap)
+        collapsed = ThreeScenario(
+            ClaimId("scenario-bad"),
+            (ClaimId("g-deep"), ClaimId("g-base"), ClaimId("g-bear")),
+            (ClaimId("pe-bull"), ClaimId("pe-base"), ClaimId("pe-bear")),
+        )
+        with self.assertRaises(ValueError) as caught:
+            derive(ledger, snap, collapsed)
+        self.assertNotIn("ConversionSyntax", str(caught.exception))
+        zero = _cited("pe-zero", "pe_zero", "0", CitedUnit.MULTIPLE, "https://www.ft.com/pe/zero")
+        ledger = admit(ledger, zero, snap)
+        free = ThreeScenario(
+            ClaimId("scenario-zero"),
+            (ClaimId("g-bull"), ClaimId("g-base"), ClaimId("g-bear")),
+            (ClaimId("pe-zero"), ClaimId("pe-base"), ClaimId("pe-bear")),
+        )
+        with self.assertRaises(ValueError):
+            derive(ledger, snap, free)
+        loss = _mu(
+            annual=(
+                AnnualFact(
+                    2026,
+                    date(2026, 8, 28),
+                    "net_income",
+                    Decimal("-100"),
+                    date(2026, 10, 1),
+                    "NetIncomeLoss",
+                ),
+            )
+        )
+        with self.assertRaises(ValueError) as loss_caught:
+            derive(self._rates(loss), loss, ThreeScenario(
+                ClaimId("scenario-loss"),
+                (ClaimId("g-bull"), ClaimId("g-base"), ClaimId("g-bear")),
+                (ClaimId("pe-bull"), ClaimId("pe-base"), ClaimId("pe-bear")),
+            ))
+        self.assertIn("loss", str(loss_caught.exception).lower())
+
+    def test_irr_rejects_zero_years_without_a_division_error(self):
+        snap = _mu()
+        ledger = self._rates(snap)
+        request = IrrRequest(ClaimId("irr-zero"), ClaimId("profit-2036"), ClaimId("pe-base"), years=0)
+        with self.assertRaises(ValueError) as caught:
+            derive(ledger, snap, request)
+        self.assertNotIn("ZeroDivisionError", type(caught.exception).__name__)
+
+    def test_derived_lines_round_prices_to_cents_and_irr_to_four_places(self):
+        snap = _mu()
+        ledger = self._rates(snap)
+        request = ThreeScenario(
+            ClaimId("scenario-mu"),
+            (ClaimId("g-bull"), ClaimId("g-base"), ClaimId("g-bear")),
+            (ClaimId("pe-bull"), ClaimId("pe-base"), ClaimId("pe-bear")),
+        )
+        derived = derive(ledger, snap, request)
+        text = "\n".join(citation_lines(snap, derived, {}, {})[request.id])
+        self.assertIn("{259.20}", text)
+        self.assertIn("{159.72}", text)
+        self.assertIn("{80.00}", text)
+        irr = derive(ledger, snap, IrrRequest(ClaimId("irr-mu"), ClaimId("profit-2036"), ClaimId("pe-base")))
+        line = citation_lines(snap, irr, {}, {})[ClaimId("irr-mu")][0]
+        self.assertIn("{0.0915}", line)
+        self.assertNotIn("{0.09149342561789697}", line)
 
 
 class TestParserAndVisibleText(unittest.TestCase):
@@ -845,6 +1027,106 @@ class TestSourceLedgerCli(unittest.TestCase):
             with open(out_path, "rb") as handle:
                 self.assertEqual(handle.read(), b"other sentence")
             self.assertFalse(os.path.exists(ledger_path))
+
+    def test_excerpt_reads_an_8k_exhibit(self):
+        accession = "0000723125-26-000099"
+        cover = "https://www.sec.gov/Archives/edgar/data/723125/000072312526000099/mu-8k.htm"
+        exhibit = "https://www.sec.gov/Archives/edgar/data/723125/000072312526000099/ex99-1.htm"
+        index = "https://www.sec.gov/Archives/edgar/data/723125/000072312526000099/index.json"
+        sentence = "Revenue was strong."
+        snap = _mu(filings=(FilingRef("8-K", date(2026, 10, 1), accession, cover),))
+        index_body = json.dumps({
+            "directory": {"item": [
+                {"name": "mu-8k.htm", "type": "8-K"},
+                {"name": "ex99-1.htm", "type": "EX-99.1"},
+            ]}
+        }).encode()
+        pages = {
+            cover: b"<html><p>Cover only.</p></html>",
+            index: index_body,
+            exhibit: f"<html><p>{sentence}</p></html>".encode(),
+        }
+
+        def fake_get(url, user_agent, **kwargs):
+            body = pages.get(url)
+            if body is None:
+                return 404, b""
+            return 200, body
+
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot_path = os.path.join(directory, "us-snapshot-MU.json")
+            ledger_path = os.path.join(directory, "source-ledger.json")
+            out_path = os.path.join(directory, "excerpts", "earnings-release.txt")
+            with open(snapshot_path, "w", encoding="utf-8") as handle:
+                json.dump(snap.to_json(), handle)
+            argv = [
+                "admit",
+                "excerpt",
+                "--ledger",
+                ledger_path,
+                "--snapshot",
+                snapshot_path,
+                "--id",
+                "earnings-release",
+                "--measure",
+                "earnings_release",
+                "--accession",
+                accession,
+                "--contains",
+                sentence,
+                "--out",
+                out_path,
+            ]
+            stdout = io.StringIO()
+            with patch.object(source_ledger, "http_get", fake_get), patch.object(
+                source_ledger, "sec_user_agent", return_value=_AGENT
+            ), contextlib.redirect_stdout(stdout):
+                code = source_ledger.main(argv)
+            self.assertEqual(code, 0, stdout.getvalue())
+            stored = load_ledger(Path(ledger_path).read_text(encoding="utf-8"))
+            self.assertEqual(stored.claims[0].document_url, exhibit)
+            bracket = citation_lines(snap, stored, {stored.claims[0].id: sentence.encode()}, {})[stored.claims[0].id][0]
+            self.assertIn(exhibit, bracket)
+            self.assertNotIn(_AGENT, stdout.getvalue())
+
+    def test_peer_path_is_stored_repo_relative(self):
+        snapshot_path = str(_ROOT / "reports" / "Micron" / "evidence" / "us-snapshot-MU.json")
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = os.path.join(directory, "source-ledger.json")
+            write_ledger(ledger_path, SourceLedger("MU", ()), "")
+            argv = [
+                "admit",
+                "peer",
+                "--ledger",
+                ledger_path,
+                "--id",
+                "mu-revenue",
+                "--measure",
+                "peer_mu_revenue",
+                "--snapshot",
+                snapshot_path,
+                "--concept",
+                "revenue",
+                "--fiscal-year",
+                "2026",
+            ]
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = source_ledger.main(argv)
+            self.assertEqual(code, 0)
+            stored = load_ledger(Path(ledger_path).read_text(encoding="utf-8"))
+            self.assertEqual(stored.claims[0].snapshot_path, "reports/Micron/evidence/us-snapshot-MU.json")
+
+    def test_remove_drops_one_ledger_row(self):
+        snap = _mu()
+        claim = _cited("dram-ddr5-tf", "dram_spot_ddr5", "5.15", CitedUnit.USD_PER_GB, "https://www.trendforce.com/example/ddr5")
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = os.path.join(directory, "source-ledger.json")
+            write_ledger(ledger_path, admit(SourceLedger("MU", ()), claim, snap), "")
+            stdout = io.StringIO()
+            with contextlib.redirect_stdout(stdout):
+                code = source_ledger.main(["remove", "--ledger", ledger_path, "--id", "dram-ddr5-tf"])
+            self.assertEqual(code, 0, stdout.getvalue())
+            self.assertEqual(load_ledger(Path(ledger_path).read_text(encoding="utf-8")).claims, ())
 
 
 class TestReportAuditDelegation(unittest.TestCase):

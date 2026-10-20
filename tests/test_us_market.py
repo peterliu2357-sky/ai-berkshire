@@ -42,6 +42,7 @@ from usmarket.types import (  # noqa: E402
     snapshot_from_json,
     PrintKind,
     ShareCount,
+    SourceLabel,
     TreasuryYield,
 )
 from usmarket.value import (  # noqa: E402
@@ -420,6 +421,29 @@ class TestCompanyfacts(unittest.TestCase):
         self.assertEqual(len(snap.insiders), 1)
         self.assertTrue(snap.insiders[0].derivative)
         self.assertFalse(any(item.detail == "no insider rows" for item in snap.failures))
+
+    def test_submissions_website_is_a_snapshot_label(self):
+        def get(url):
+            if "company_tickers.json" in url:
+                return 200, json.dumps({"0": {"cik_str": 723125, "ticker": "MU", "title": "Micron"}}).encode()
+            if "submissions" in url:
+                body = {
+                    "website": "https://www.micron.com",
+                    "investorWebsite": "https://investors.micron.com",
+                    "filings": {"recent": {
+                        "form": [],
+                        "filingDate": [],
+                        "accessionNumber": [],
+                        "primaryDocument": [],
+                        "items": [],
+                    }},
+                }
+                return 200, json.dumps(body).encode()
+            return 404, b""
+
+        snap = build_snapshot("MU", get)
+        websites = [item for item in snap.labels if item.label == "website"]
+        self.assertEqual(websites, [SourceLabel("website", "https://investors.micron.com", "sec_submissions")])
 
 
 class TestValuation(unittest.TestCase):
