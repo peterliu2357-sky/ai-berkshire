@@ -1505,5 +1505,152 @@ class TestRoundThreeBypasses(unittest.TestCase):
             cik_path.unlink(missing_ok=True)
 
 
+def _profit_snapshot() -> IssuerSnapshot:
+    return _mu(
+        annual=(
+            AnnualFact(
+                2026,
+                date(2026, 8, 28),
+                "net_income",
+                Decimal("84969000000"),
+                date(2026, 10, 1),
+                "NetIncomeLoss",
+            ),
+            AnnualFact(
+                2026,
+                date(2026, 8, 28),
+                "revenue",
+                Decimal("133188000000"),
+                date(2026, 10, 1),
+                "Revenues",
+            ),
+        )
+    )
+
+
+class TestRoundFourBypasses(unittest.TestCase):
+    def test_current_period_profit_aliases_cannot_replace_gaap(self):
+        snap = _profit_snapshot()
+        empty = SourceLedger("MU", ())
+        for measure in (
+            "profit_reported",
+            "profit_actual",
+            "reported_profit",
+            "profit_fy2026",
+            "profit_fy2025",
+            "profit_fy26",
+            "profit_ttm",
+            "profit_last_year",
+            "annual_profit",
+            "profit_latest",
+        ):
+            claim = _cited(
+                "alias",
+                measure,
+                "99000000000",
+                CitedUnit.USD_ONES,
+                "https://www.reuters.com/markets/example",
+            )
+            try:
+                ledger = admit(empty, claim, snap)
+            except ValueError as error:
+                self.assertIn("net_income", str(error))
+                continue
+            line = citation_lines(snap, ledger, {}, {})[claim.id][0]
+            for prose in (
+                f"Fiscal 2026 GAAP net income {line}\n",
+                f"净利润 {line}\n",
+            ):
+                result = audit_report(prose, snap, ledger, {})
+                self.assertEqual(result.status, "fail", (measure, prose, result.failures))
+        future = _cited(
+            "forward",
+            "profit_2036",
+            "99000000000",
+            CitedUnit.USD_ONES,
+            "https://www.reuters.com/markets/example",
+        )
+        ledger = admit(empty, future, snap)
+        line = citation_lines(snap, ledger, {}, {})[future.id][0]
+        worded = audit_report(f"Fiscal 2026 GAAP net income {line}\n", snap, ledger, {})
+        self.assertEqual(worded.status, "fail", worded.failures)
+        chinese = audit_report(f"净利润 {line}\n", snap, ledger, {})
+        self.assertEqual(chinese.status, "fail", chinese.failures)
+
+    def test_a_named_concept_must_own_the_snapshot_number(self):
+        snap = _profit_snapshot()
+        stolen = audit_report("Net income 133,188,000,000\n", snap, None, {})
+        self.assertEqual(stolen.status, "fail", stolen.failures)
+        owned = audit_report("Revenue 133,188,000,000\n", snap, None, {})
+        self.assertEqual(owned.status, "pass", owned.failures)
+        same = audit_report("Fiscal 2026 net income 84,969,000,000\n", snap, None, {})
+        self.assertEqual(same.status, "pass", same.failures)
+
+    def test_english_magnitudes_are_scanned(self):
+        snap = _mu()
+        for text in (
+            "The figure is one trillion.\n",
+            "Guidance is ninety-nine billion.\n",
+            "The bid is a hundred billion.\n",
+            "It costs 12 billion dollars.\n",
+        ):
+            result = audit_report(text, snap, None, {})
+            self.assertEqual(result.status, "fail", text)
+
+    def test_memory_labels_and_operating_measures_stay_citeable(self):
+        snap = _mu()
+        note = (
+            "HBM3E 12-Hi on 1-gamma and 1γ, 232-layer, Q4 FY2026, FY26, Q1, Top 3, 2x, DDR5 and LPDDR5X.\n"
+            "Shares 100 as of 2026-08-28.\n"
+        )
+        result = audit_report(note, snap, None, {})
+        self.assertEqual(result.status, "pass", result.failures)
+        for measure in (
+            "hbm_share",
+            "market_share",
+            "dram_bit_share",
+            "inventory_days",
+            "dram_cash_cost",
+            "eps_growth_bull",
+        ):
+            claim = _cited("metric", measure, "0.12", CitedUnit.RATIO, "https://www.trendforce.com/example/ddr5")
+            admit(SourceLedger("MU", ()), claim, snap)
+        with self.assertRaises(ValueError) as caught:
+            admit(
+                SourceLedger("MU", ()),
+                _cited("alias", "net_profit", "1", CitedUnit.USD_ONES, "https://www.reuters.com/markets/example"),
+                snap,
+            )
+        self.assertIn("net_income", str(caught.exception))
+
+    def test_more_score_marks_need_a_ledger(self):
+        snap = _mu()
+        for text in (
+            "✪✪✪\nShares 100 as of 2026-08-28.\n",
+            "✭✭✭✭\nShares 100 as of 2026-08-28.\n",
+            "🌟🌟\nShares 100 as of 2026-08-28.\n",
+            "****\nShares 100 as of 2026-08-28.\n",
+            "●●●●○\nShares 100 as of 2026-08-28.\n",
+            "■■■□□\nShares 100 as of 2026-08-28.\n",
+            "four stars\nShares 100 as of 2026-08-28.\n",
+        ):
+            result = audit_report(text, snap, None, {})
+            self.assertEqual(result.status, "fail", text)
+            self.assertTrue(any("star" in item or "score" in item for item in result.failures), result.failures)
+
+    def test_huge_scenario_years_fail_cleanly(self):
+        snap = _mu()
+        ledger = TestDerive()._rates(snap)
+        request = ThreeScenario(
+            ClaimId("scenario-huge"),
+            (ClaimId("g-bull"), ClaimId("g-base"), ClaimId("g-bear")),
+            (ClaimId("pe-bull"), ClaimId("pe-base"), ClaimId("pe-bear")),
+            years=10000,
+        )
+        with self.assertRaises(ValueError) as caught:
+            derive(ledger, snap, request)
+        self.assertNotIn("Overflow", str(caught.exception))
+
+
 if __name__ == "__main__":
     unittest.main()
