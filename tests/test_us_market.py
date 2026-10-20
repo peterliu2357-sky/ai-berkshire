@@ -98,6 +98,20 @@ class TestSessionPrints(unittest.TestCase):
         self.assertNotIn(Decimal("1029"), [item.price for item in prints])
         self.assertNotIn(Decimal("1029.0"), [item.price for item in prints])
 
+    def test_nasdaq_date_only_stamp_is_not_a_print(self):
+        body = json.dumps({
+            "data": {
+                "marketStatus": "Closed",
+                "primaryData": {
+                    "lastSalePrice": "$904.90",
+                    "lastTradeTimestamp": "Oct 19, 2026",
+                },
+            }
+        }).encode()
+        prints, detail = parse_nasdaq_info(body, "MU")
+        self.assertEqual(prints, [])
+        self.assertEqual(detail, "undated last sale")
+
     def test_nasdaq_splits_premarket_from_official_close(self):
         prints, detail = parse_nasdaq_info(_read("nasdaq_info_mu.json"), "MU")
         self.assertEqual(detail, "")
@@ -237,6 +251,76 @@ class TestCompanyfacts(unittest.TestCase):
         self.assertEqual(income[0].fiscal_year, 2011)
         self.assertEqual(income[0].ones, Decimal("167000000"))
 
+    def test_instant_fact_keeps_the_earliest_fy(self):
+        body = json.dumps({
+            "facts": {"us-gaap": {"InventoryNet": {"units": {"USD": [
+                {
+                    "end": "2025-08-28",
+                    "val": 100,
+                    "fy": 2025,
+                    "form": "10-K",
+                    "filed": "2025-10-03",
+                },
+                {
+                    "end": "2025-08-28",
+                    "val": 8355000000,
+                    "fy": 2026,
+                    "form": "10-K",
+                    "filed": "2026-10-09",
+                    "frame": "CY2025Q3I",
+                },
+            ]}}}}
+        }).encode()
+        annual, _shares = parse_companyfacts(body)
+        inventory = [item for item in annual if item.concept == "inventory"]
+        self.assertEqual(len(inventory), 1)
+        self.assertEqual(inventory[0].fiscal_year, 2025)
+        self.assertEqual(inventory[0].ones, Decimal("8355000000"))
+
+    def test_latest_period_end_beats_a_longer_old_tag(self):
+        def row(start, end, val, filed, frame):
+            return {
+                "start": start,
+                "end": end,
+                "val": val,
+                "fy": int(end[:4]),
+                "form": "10-K",
+                "filed": filed,
+                "frame": frame,
+            }
+
+        gaap = {
+            "SalesRevenueNet": {"units": {"USD": [
+                row("2021-09-03", "2022-09-01", 1, "2022-10-07", "CY2022"),
+                row("2022-09-02", "2023-08-31", 2, "2023-10-06", "CY2023"),
+                row("2023-09-01", "2024-08-29", 3, "2024-10-04", "CY2024"),
+            ]}},
+            "Revenues": {"units": {"USD": [
+                row("2025-08-29", "2026-09-03", 9, "2026-10-09", "CY2026"),
+            ]}},
+        }
+        body = json.dumps({"facts": {"us-gaap": gaap}}).encode()
+        annual, _shares = parse_companyfacts(body)
+        revenue = [item for item in annual if item.concept == "revenue"]
+        self.assertEqual(len(revenue), 1)
+        self.assertEqual(revenue[0].tag, "Revenues")
+        self.assertEqual(revenue[0].ones, Decimal(9))
+
+    def test_form4_url_strips_the_xsl_directory(self):
+        body = json.dumps({
+            "filings": {"recent": {
+                "form": ["4"],
+                "filingDate": ["2026-10-15"],
+                "accessionNumber": ["0001242654-26-000016"],
+                "primaryDocument": ["xslF345X06/primarydocument.xml"],
+                "items": [""],
+            }}
+        }).encode()
+        found = parse_submissions(body, "0000723125")
+        self.assertEqual(len(found), 1)
+        self.assertNotIn("xsl", found[0].url.lower())
+        self.assertTrue(found[0].url.endswith("/primarydocument.xml"))
+
     def test_submissions_keep_item_202_and_cap_form4(self):
         forms = ["10-K", "8-K", "8-K", "4", "4", "4", "4", "4", "4", "10-Q"]
         items = ["", "2.02", "5.02", "", "", "", "", "", "", ""]
@@ -284,6 +368,15 @@ class TestValuation(unittest.TestCase):
 
     def test_capex_ratio_uses_absolute_values(self):
         self.assertEqual(capex_ratio(Decimal("-15"), Decimal("5")), Decimal("3"))
+
+    def test_through_cycle_keeps_the_latest_ten_years(self):
+        rows = [(2000 + year, Decimal(year)) for year in range(1, 13)]
+        cycle = through_cycle(rows)
+        self.assertIsNotNone(cycle)
+        self.assertEqual(cycle.fiscal_years[0], 2003)
+        self.assertEqual(cycle.fiscal_years[-1], 2012)
+        self.assertEqual(cycle.trough, Decimal(3))
+        self.assertEqual(cycle.peak, Decimal(12))
 
     def test_through_cycle_median_is_not_the_peak(self):
         self.assertIsNone(through_cycle([(2020, Decimal("1"))] * 4))
@@ -334,6 +427,46 @@ class TestSnapshotAndCli(unittest.TestCase):
         encoded = snap.to_json()
         self.assertTrue(all("ones" not in item and "number" not in item for item in encoded["unscaled"]))
 
+    def test_empty_form4_and_missing_nasdaq_print_are_failures(self):
+        def get(url):
+            if "company_tickers.json" in url:
+                return 200, json.dumps({"0": {"cik_str": 723125, "ticker": "MU", "title": "Micron"}}).encode()
+            if "submissions" in url:
+                body = {
+                    "filings": {"recent": {
+                        "form": ["4"],
+                        "filingDate": ["2026-10-15"],
+                        "accessionNumber": ["0001242654-26-000016"],
+                        "primaryDocument": ["xslF345X06/primarydocument.xml"],
+                        "items": [""],
+                    }}
+                }
+                return 200, json.dumps(body).encode()
+            if url.endswith("/primarydocument.xml"):
+                return 200, b"<html><title>rendered</title></html>"
+            if "/quote/MU/info" in url:
+                return 200, json.dumps({"data": {"marketStatus": "Closed", "primaryData": {}}}).encode()
+            return 404, b""
+
+        snap = build_snapshot("MU", get)
+        self.assertEqual(snap.insiders, ())
+        self.assertTrue(all("xsl" not in item.url.lower() for item in snap.filings))
+        self.assertTrue(any(item.source == "sec_form4" and item.detail == "no insider rows" for item in snap.failures))
+        self.assertTrue(any(item.source == "nasdaq_info" and item.detail == "no print" for item in snap.failures))
+
+    def test_stale_get_is_recorded(self):
+        class Result(tuple):
+            def __new__(cls):
+                obj = tuple.__new__(cls, (404, b""))
+                obj.stale_age = 100
+                return obj
+
+        snap = build_snapshot("MU", lambda url: Result())
+        self.assertTrue(any(
+            item.source == "stale_cache" and item.detail == "age_seconds=100"
+            for item in snap.failures
+        ))
+
     def test_snapshot_exits_before_fetch_when_agent_missing(self):
         calls = []
 
@@ -342,6 +475,11 @@ class TestSnapshotAndCli(unittest.TestCase):
             raise AssertionError(url)
 
         os.environ.pop("SEC_USER_AGENT", None)
+        os.environ["SEC_USER_AGENT_FILE"] = "/tmp/does-not-exist-sec-ua.txt"
+        local_dir = _ROOT / "local"
+        local_dir.mkdir(exist_ok=True)
+        agent_file = local_dir / "sec_user_agent.txt"
+        agent_file.write_text("Your Name you@example.com\n", encoding="utf-8")
         old_err = sys.stderr
         sys.stderr = io.StringIO()
         try:
@@ -351,6 +489,7 @@ class TestSnapshotAndCli(unittest.TestCase):
             )
         finally:
             sys.stderr = old_err
+            os.environ.pop("SEC_USER_AGENT_FILE", None)
         self.assertEqual(code, 2)
         self.assertEqual(calls, [])
 
@@ -512,9 +651,7 @@ class TestSecClient(unittest.TestCase):
         os.environ.pop("SEC_USER_AGENT", None)
         with self.assertRaises(SecConfigError):
             sec_user_agent(path="/tmp/does-not-exist-sec-ua.txt")
-        os.environ["SEC_USER_AGENT"] = (
-            "AI Berkshire peterliu2357-sky@users.noreply.github.com"
-        )
+        os.environ["SEC_USER_AGENT"] = "AI Berkshire someone@users.noreply.github.com"
         with self.assertRaises(SecConfigError):
             sec_user_agent(path="/tmp/does-not-exist-sec-ua.txt")
         os.environ["SEC_USER_AGENT"] = "not-an-email"
@@ -647,6 +784,149 @@ class TestSecClient(unittest.TestCase):
         self.assertEqual((status, body), (200, b"cached-body"))
         self.assertIn(f"using cached response after fetch failed: {url}", err.getvalue())
 
+    def test_html_error_page_is_not_cached(self):
+        from usmarket.fetch import http_get
+
+        calls = []
+
+        class Response:
+            status = 200
+            headers = {}
+
+            def read(self):
+                return b"<html><title>SEC.gov | Request Rate Threshold Exceeded</title></html>"
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+        def opener(request, timeout):
+            calls.append(request.full_url)
+            return Response()
+
+        with tempfile.TemporaryDirectory() as directory:
+            http_get(
+                "https://www.sec.gov/files/company_tickers.json",
+                "Your Name you@example.com",
+                opener=opener,
+                sleep=lambda _delay: None,
+                cache_dir=directory,
+                attempts=1,
+            )
+            http_get(
+                "https://www.sec.gov/files/company_tickers.json",
+                "Your Name you@example.com",
+                opener=opener,
+                sleep=lambda _delay: None,
+                cache_dir=directory,
+                attempts=1,
+            )
+        self.assertEqual(len(calls), 2)
+
+    def test_stale_cache_older_than_a_week_is_dropped(self):
+        import base64
+
+        from usmarket.fetch import _cache_path, http_get
+
+        url = "https://www.sec.gov/files/company_tickers.json"
+        with tempfile.TemporaryDirectory() as directory:
+            path = _cache_path(directory, url)
+            payload = {
+                "status": 200,
+                "saved": 0,
+                "body": base64.b64encode(b"cached-body").decode("ascii"),
+            }
+            Path(path).write_text(json.dumps(payload), encoding="utf-8")
+
+            def opener(request, timeout):
+                raise urllib.error.HTTPError(
+                    request.full_url, 503, "no", {}, io.BytesIO(b"down")
+                )
+
+            status, body = http_get(
+                url,
+                "Your Name you@example.com",
+                opener=opener,
+                sleep=lambda _delay: None,
+                cache_dir=directory,
+                attempts=1,
+                now=lambda: 8 * 24 * 60 * 60,
+            )
+        self.assertEqual(status, 503)
+        self.assertNotEqual(body, b"cached-body")
+
+    def test_recent_stale_cache_is_flagged(self):
+        import base64
+
+        from usmarket.fetch import _cache_path, http_get
+
+        url = "https://www.sec.gov/files/company_tickers.json"
+        with tempfile.TemporaryDirectory() as directory:
+            path = _cache_path(directory, url)
+            payload = {
+                "status": 200,
+                "saved": 0,
+                "body": base64.b64encode(b"cached-body").decode("ascii"),
+            }
+            Path(path).write_text(json.dumps(payload), encoding="utf-8")
+
+            def opener(request, timeout):
+                raise urllib.error.HTTPError(
+                    request.full_url, 503, "no", {}, io.BytesIO(b"down")
+                )
+
+            result = http_get(
+                url,
+                "Your Name you@example.com",
+                opener=opener,
+                sleep=lambda _delay: None,
+                cache_dir=directory,
+                attempts=1,
+                now=lambda: 2 * 24 * 60 * 60,
+            )
+        self.assertEqual(result[0], 200)
+        self.assertEqual(result[1], b"cached-body")
+        self.assertGreater(result.stale_age, 0)
+
+    def test_incomplete_read_is_retried(self):
+        import http.client
+
+        from usmarket.fetch import http_get
+
+        calls = []
+
+        class Response:
+            status = 200
+            headers = {}
+
+            def read(self):
+                return b"{}"
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+        def opener(request, timeout):
+            calls.append(request.full_url)
+            if len(calls) == 1:
+                raise http.client.IncompleteRead(b"partial")
+            return Response()
+
+        status, body = http_get(
+            "https://data.sec.gov/example.json",
+            "Your Name you@example.com",
+            opener=opener,
+            sleep=lambda _delay: None,
+            attempts=3,
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(body, b"{}")
+        self.assertEqual(len(calls), 2)
+
 
 class TestMicronReport(unittest.TestCase):
     def test_every_number_is_in_the_snapshot(self):
@@ -669,44 +949,71 @@ class TestMicronReport(unittest.TestCase):
 
         walk(payload)
         snap = snapshot_from_json(payload)
-        walk_text = us_market.render_analysis(snap)
-        for match in re.finditer(r"-?\d+(?:,\d{3})*(?:\.\d+)?", walk_text):
-            tokens.append(match.group(0))
-        lexemes = [item["lexeme"] for item in payload["unscaled"]]
-        date_parts = set()
-        for token in tokens:
-            for part in token.replace("T", "-").replace(":", "-").replace("+", "-").replace("/", "-").split("-"):
-                if part.isdigit():
-                    date_parts.add(part)
-                    date_parts.add(str(int(part)))
-        allowed = set()
-        for token in tokens:
-            cleaned = token.replace(",", "").replace("%", "").replace("$", "")
-            allowed.add(cleaned)
+        derived_lines = [
+            line for line in us_market.render_analysis(snap).splitlines()
+            if line.startswith((
+                "market_cap:",
+                "through_cycle:",
+                "hurdle_check:",
+                "sbc:",
+                "inventory_days:",
+                "capex_ratio:",
+            ))
+        ]
+        for line in derived_lines:
+            tokens.extend(re.findall(r"-?\d+(?:,\d{3})*(?:\.\d+)?", line))
+
+        def whole_numbers(token: str) -> set[str]:
+            cleaned = token.strip().replace("$", "").replace("%", "")
+            if not re.fullmatch(r"-?\d+(?:,\d{3})*(?:\.\d+)?", cleaned):
+                return set()
+            value = cleaned.replace(",", "")
+            found = {value}
             try:
-                allowed.add(format(Decimal(cleaned), "f"))
+                found.add(format(Decimal(value), "f"))
             except Exception:
-                continue
+                return found
+            return found
+
+        allowed = set()
+        dates = set()
+        for token in tokens:
+            allowed.update(whole_numbers(token))
+            dates.update(re.findall(
+                r"\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\+\d{2}:\d{2}|Z))?",
+                token,
+            ))
+            dates.update(re.findall(r"\d{1,2}/\d{1,2}/\d{4}", token))
 
         number_re = re.compile(r"(?<![\d.])-?\d+(?:,\d{3})*(?:\.\d+)?")
+        self.assertNotIn("723125", allowed)
         for path in sorted((_ROOT / "reports" / "Micron").glob("*.md")):
             text = path.read_text(encoding="utf-8")
             self.assertNotIn("—", text, path)
+            file_dates = set(dates)
+            cutoff = re.search(r"(?m)^date:\s*(\d{4}-\d{2}-\d{2})\s*$", text)
+            if cutoff:
+                file_dates.add(cutoff.group(1))
             for line in text.splitlines():
                 visible = re.sub(r"`[^`]+`", " ", line)
                 visible = re.sub(r"[\w./-]+\.md", " ", visible)
+                present = set()
+                for stamp in file_dates:
+                    if stamp in line:
+                        for part in re.split(r"[-/T:+]", stamp):
+                            if part.isdigit():
+                                present.add(part)
+                                present.add(str(int(part)))
                 for match in number_re.finditer(visible):
                     raw = match.group(0)
                     cleaned = raw.replace(",", "")
-                    if cleaned in date_parts or str(int(cleaned.split(".")[0])) in date_parts and "." not in cleaned:
+                    if "." not in cleaned and cleaned in present:
                         continue
                     try:
                         as_dec = format(Decimal(cleaned), "f")
                     except Exception:
                         self.fail(f"{path}:{raw}")
                     if cleaned in allowed or as_dec in allowed:
-                        continue
-                    if any(raw in lex or cleaned in lex.replace(",", "") for lex in lexemes if lex in line or lex.replace(",", "") in line.replace(",", "")):
                         continue
                     self.fail(f"{path.name} cites {raw} which is not in the snapshot: {line}")
 
@@ -731,6 +1038,16 @@ class TestCommandDocs(unittest.TestCase):
                 continue
             text = path.read_text(encoding="utf-8")
             self.assertNotIn("python3 tools/us_market.py", text, path)
+
+    def test_english_is_opt_in_and_20f_is_covered(self):
+        team = (_ROOT / "skills" / "investment-team.md").read_text(encoding="utf-8")
+        checklist = (_ROOT / "skills" / "investment-checklist.md").read_text(encoding="utf-8")
+        data = (_ROOT / "skills" / "financial-data.md").read_text(encoding="utf-8")
+        for text in (team, checklist):
+            self.assertIn("lang=en", text)
+            self.assertNotIn("改用 `skills/investment-team-en.md`", text)
+        self.assertIn("20-F", data)
+        self.assertIn("40-F", data)
 
 
 if __name__ == "__main__":
