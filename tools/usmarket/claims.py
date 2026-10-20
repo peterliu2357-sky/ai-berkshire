@@ -1476,6 +1476,8 @@ def _mask_inline(line: str) -> str:
 def _parse_chinese(text: str) -> int | None:
     if not any(char in _CN_UNITS or char in _CN_BIG for char in text):
         return None
+    if not any(char in _CN_DIGITS or char in _CN_UNITS for char in text):
+        return None
     total = 0
     section = 0
     number = 0
@@ -1722,37 +1724,70 @@ _MAGNITUDE = re.compile(
     r"(million|billion|trillion)\b(?:\s+dollars)?"
 )
 _LABEL_NUMBER = (
-    re.compile(r"(?i)\bHBM\d+E?\b"),
-    re.compile(r"(?i)\b\d+-?Hi\b"),
-    re.compile(r"(?i)\b1[- ]?(?:gamma|beta|alpha|delta|γ|β|α)\b"),
-    re.compile(r"(?i)\b\d+-layer\b"),
-    re.compile(r"(?i)\bQ[1-4]\b"),
-    re.compile(r"(?i)\bFY\d{2,4}\b"),
-    re.compile(r"(?i)\bTop\s+\d+\b"),
-    re.compile(r"(?i)\b\d+(?:\.\d+)?x\b"),
-    re.compile(r"(?i)\b(?:LP)?DDR\d+X?\b"),
-    re.compile(r"(?i)\bGDDR\d+X?\b"),
+    (re.compile(r"(?i)\bHBM(\d+)E?\b"), "generation"),
+    (re.compile(r"(?i)\b(\d+)-?Hi\b"), "stack"),
+    (re.compile(r"(?i)\b1[- ]?(?:gamma|beta|alpha|delta|γ|β|α)\b"), "node"),
+    (re.compile(r"(?i)\b(\d+)-layer\b"), "layer"),
+    (re.compile(r"(?i)\bQ[1-4]\b"), "quarter"),
+    (re.compile(r"(?i)\bFY(\d{2,4})\b"), "fiscal"),
+    (re.compile(r"(?i)\bTop\s+(\d+)\b"), "rank"),
+    (re.compile(r"(?i)\b(\d+(?:\.\d+)?)x\b"), "multiple"),
+    (re.compile(r"(?i)\b(?:LP)?DDR(\d+)X?\b"), "generation"),
+    (re.compile(r"(?i)\bGDDR(\d+)X?\b"), "generation"),
+    (re.compile(r"(?i)\bnext\s+\d+\s+years?\b"), "horizon"),
+    (re.compile(r"(?i)\bGen\s*\d+\b"), "generation"),
+    (re.compile(r"(?i)\bG\d{1,2}(?=\s*NAND\b)"), "generation"),
+    (re.compile(r"(?i)\b(\d+)-high\b"), "stack"),
+    (re.compile(r"(?i)\b\d+(?:\.\d+)?\s*GB\b"), "capacity"),
+    (re.compile(r"(?i)\b\d+(?:\.\d+)?\s*mm\b"), "geometry"),
+    (re.compile(r"(?i)\b\d+(?:\.\d+)?\s*nm\b"), "geometry"),
+    (re.compile(r"(?i)\bIn\s+(?:19|20)\d{2}\b"), "calendar"),
+    (re.compile(r"(?i)\bCY(\d{2}|\d{4})\b"), "calendar"),
+)
+_VALUATION_LINE = re.compile(
+    r"(?i)(?:\bP/E\b|\bPE\b|\bEV\b|\bEBITDA\b|\bearnings\b|\brevenue\b|\bsales\b|"
+    r"\bbook\b|\bmultiple\b|\btrades\s+at\b|\bvaluation\b|市盈率|倍)"
 )
 _NAMED_CONCEPT = (
     ("operating income", "operating_income"),
     ("gross profit", "gross_profit"),
     ("net income", "net_income"),
     ("net profit", "net_income"),
+    ("bottom line", "net_income"),
+    ("top line", "revenue"),
     ("market capitalization", "market_cap"),
     ("market cap", "market_cap"),
     ("market_cap", "market_cap"),
     ("marketcap", "market_cap"),
+    ("enterprise value", "enterprise_value"),
+    ("shares outstanding", "shares"),
     ("share count", "shares"),
+    ("营业收入", "revenue"),
     ("净利润", "net_income"),
     ("净利", "net_income"),
-    ("营业收入", "revenue"),
     ("营收", "revenue"),
+    ("收入", "revenue"),
+    ("市值", "market_cap"),
+    ("股本", "shares"),
     ("revenue", "revenue"),
-    ("sales", "revenue"),
     ("turnover", "revenue"),
     ("earnings", "net_income"),
+    ("sales", "revenue"),
+    ("income", "net_income"),
+    ("profit", "net_income"),
     ("shares", "shares"),
 )
+_SKIP_CELL = object()
+_FORM_GAP = re.compile(r"(?i)\b(?:form\s+[34]|10-k/?a?|10-q|8-k|20-f|40-f|6-k|def\s*14a)\b")
+_YEAR_GAP = re.compile(r"(?i)\b(?:fy\d{2,4}|q[1-4]|(?:19|20)\d{2})\b")
+_GLUE_GAP = re.compile(
+    r"(?i)\b(?:for|fiscal|year|was|were|is|are|of|per|the|a|an|in|on|at|and|its|their|"
+    r"to|be|by|from|this|that|reported|company|as|with|under|about|approximately|"
+    r"which|or|also|still|latest|filed|ended|end|those|that)\b"
+)
+_INPUT_WORD = re.compile(r"(?i)\b(?:times|using|via|multiplied|multiply)\b")
+_YEAR_CELL = re.compile(r"(?i)\s*(?:fy\s*)?(?:(?:19|20)\d{2})\s*")
+_TABLE_SEP = re.compile(r"\s*\|?(?:\s*:?-+:?\s*\|)+\s*")
 _NEARBY_CONCEPT = {
     "net_income": frozenset({"operating_income", "gross_profit"}),
     "operating_income": frozenset({"net_income"}),
@@ -1771,28 +1806,71 @@ def _words_to_int(text: str) -> int | None:
     return None
 
 
-def _english_magnitudes(visible: str) -> list[tuple[str, int, int]]:
-    found: list[tuple[str, int, int]] = []
+def _coefficient_quantum(text: str) -> Decimal:
+    if "." in text:
+        return Decimal(10) ** -len(text.split(".", 1)[1])
+    return Decimal(1)
+
+
+def _scaled_amount(base: Decimal, coefficient: str, scale: int) -> tuple[str, Decimal]:
+    quantum = _coefficient_quantum(coefficient) * (Decimal(10) ** scale)
+    amount = base * (Decimal(10) ** scale)
+    return format(amount, "f"), quantum
+
+
+def _english_magnitudes(visible: str) -> list[tuple[str, int, int, Decimal]]:
+    found: list[tuple[str, int, int, Decimal]] = []
     for match in _MAGNITUDE.finditer(visible):
         scale = _SCALE_WORD[match.group(4).casefold()]
         if match.group(1):
             base = Decimal(100)
+            coefficient = "100"
         elif match.group(2):
             base = Decimal(match.group(2))
+            coefficient = match.group(2)
         else:
             parsed = _words_to_int(match.group(3) or "")
             if parsed is None:
                 continue
             base = Decimal(parsed)
-        amount = base * (Decimal(10) ** scale)
-        found.append((format(amount, "f"), match.start(), match.end()))
+            coefficient = str(parsed)
+        rendered, quantum = _scaled_amount(base, coefficient, scale)
+        found.append((rendered, match.start(), match.end(), quantum))
+    for match in re.finditer(r"(?i)(?<![A-Za-z])\$?(?<![\d.])(\d+(?:\.\d+)?)B\b", visible):
+        base = Decimal(match.group(1))
+        rendered, quantum = _scaled_amount(base, match.group(1), 9)
+        found.append((rendered, match.start(), match.end(), quantum))
+    for match in re.finditer(r"(?<![\d.])(\d+(?:\.\d+)?)亿", visible):
+        base = Decimal(match.group(1))
+        rendered, quantum = _scaled_amount(base, match.group(1), 8)
+        found.append((rendered, match.start(), match.end(), quantum))
     return found
 
 
-def _label_spans(line: str) -> tuple[tuple[int, int], ...]:
+def _label_in_bounds(kind: str, match: re.Match[str], line: str, snapshot: IssuerSnapshot | None) -> bool:
+    if kind == "multiple":
+        if _VALUATION_LINE.search(line):
+            return False
+        number = Decimal(match.group(1))
+        return number == number.to_integral_value() and 0 < int(number) <= 10
+    if kind in {"generation", "stack", "layer", "rank"} and match.lastindex:
+        limit = {"generation": 9, "stack": 32, "layer": 1000, "rank": 20}[kind]
+        return int(match.group(1)) <= limit
+    if kind in {"fiscal", "calendar"} and match.lastindex:
+        year = _expand_fy(match.group(1))
+        if year is None or year < 2000:
+            return False
+        latest = _latest_fiscal_year(snapshot)
+        return latest is None or year <= latest + 5
+    return True
+
+
+def _label_spans(line: str, snapshot: IssuerSnapshot | None = None) -> tuple[tuple[int, int], ...]:
     spans = []
-    for pattern in _LABEL_NUMBER:
-        spans.extend((match.start(), match.end()) for match in pattern.finditer(line))
+    for pattern, kind in _LABEL_NUMBER:
+        for match in pattern.finditer(line):
+            if _label_in_bounds(kind, match, line, snapshot):
+                spans.append((match.start(), match.end()))
     return tuple(spans)
 
 
@@ -1800,29 +1878,202 @@ def _inside_span(start: int, end: int, spans: tuple[tuple[int, int], ...]) -> bo
     return any(start >= left and end <= right for left, right in spans)
 
 
-def _concepts_before(line: str, start: int) -> set[str]:
-    window = line[max(0, start - 80) : start]
-    folded = window.casefold()
-    found: set[str] = set()
+def _phrase_bounded(text: str, start: int, end: int) -> bool:
+    before = text[start - 1] if start else ""
+    after = text[end] if end < len(text) else ""
+    if before.isascii() and before.isalpha():
+        return False
+    if after.isascii() and after.isalpha():
+        return False
+    return True
+
+
+def _concept_hits(line: str) -> list[tuple[int, int, str, str]]:
+    folded = line.casefold()
+    hits: list[tuple[int, int, str, str]] = []
     for phrase, concept in _NAMED_CONCEPT:
-        idx = folded.rfind(phrase)
-        if idx >= 0 and not re.search(r"\d", folded[idx + len(phrase) :]):
-            found.add(concept)
-    profit_at = folded.rfind("profit")
-    if profit_at >= 0 and not re.search(r"\d", folded[profit_at + len("profit") :]):
-        prefix = folded[:profit_at]
-        if not prefix.endswith(("gross ", "operating ", "net ")):
-            found.add("net_income")
-    return found
+        start = 0
+        while True:
+            idx = folded.find(phrase, start)
+            if idx < 0:
+                break
+            end = idx + len(phrase)
+            if _phrase_bounded(folded, idx, end):
+                chosen = concept
+                if phrase == "profit":
+                    prefix = folded[:idx]
+                    if prefix.endswith("operating "):
+                        chosen = "operating_income"
+                    elif prefix.endswith("gross "):
+                        chosen = "gross_profit"
+                hits.append((idx, end, chosen, phrase))
+            start = idx + 1
+    for match in re.finditer(r"(?i)(?<![a-z])ev(?![a-z])", line):
+        hits.append((match.start(), match.end(), "enterprise_value", match.group(0)))
+    kept = []
+    for hit in hits:
+        if any(other[0] <= hit[0] and other[1] >= hit[1] and other[1] - other[0] > hit[1] - hit[0] for other in hits):
+            continue
+        if _INPUT_WORD.search(line[max(0, hit[0] - 30) : hit[0]]):
+            continue
+        kept.append(hit)
+    return kept
 
 
-def _line_years(line: str) -> set[int]:
-    found = {int(match.group(0)) for match in re.finditer(r"\b(?:19|20)\d{2}\b", line)}
-    for match in re.finditer(r"(?i)\bfy(\d{2}|\d{4})\b", line):
+def _gap_is_open(gap: str, excused: set[str] | None = None) -> bool:
+    text = _FORM_GAP.sub(" ", gap)
+    text = _YEAR_GAP.sub(" ", text)
+    if excused:
+
+        def replace(match: re.Match[str]) -> str:
+            cleaned = match.group(0).replace(",", "")
+            if cleaned in excused:
+                return " "
+            try:
+                rendered = format(Decimal(cleaned), "f")
+            except Exception:
+                return match.group(0)
+            if rendered in excused or any(_same_quantity(cleaned, item) for item in excused):
+                return " "
+            return match.group(0)
+
+        text = _NUMBER_IN_TEXT.sub(replace, text)
+    text = _GLUE_GAP.sub(" ", text)
+    text = re.sub(r"[\s,:;|/+\-—–'\"`()\[\]（）、为了是的与及和在按约約$＄£€¥]+", " ", text)
+    return text.strip() == ""
+
+
+def _soft_suffix(prefix: str) -> str:
+    rest = prefix
+    peeled = ""
+    token = re.compile(
+        r"(?i)(?:form\s+[34]|10-k/?a?|10-q|8-k|20-f|40-f|6-k|def\s*14a|fy\d{2,4}|q[1-4]|(?:19|20)\d{2}|"
+        r"for|fiscal|year|was|were|is|are|of|per|the|a|an|in|on|at|and|its|their|to|be|by|from|"
+        r"this|that|reported|as|with|gaap)$"
+    )
+    while rest:
+        trimmed = rest.rstrip()
+        tail = rest[len(trimmed) :]
+        matched = token.search(trimmed)
+        if matched and matched.end() == len(trimmed) and _phrase_bounded(trimmed, matched.start(), matched.end()):
+            peeled = trimmed[matched.start() :] + tail + peeled
+            rest = trimmed[: matched.start()]
+            continue
+        punct = re.search(r"[\s,:;|/+\-—–'\"`()（）、为了是的$＄£€¥]+$", rest)
+        if punct and punct.start() < len(rest):
+            peeled = rest[punct.start() :] + peeled
+            rest = rest[: punct.start()]
+            continue
+        break
+    return peeled
+
+
+def _named_years(text: str) -> set[int]:
+    cleaned = _FORM_GAP.sub(" ", text)
+    found: set[int] = set()
+    for match in re.finditer(r"(?i)\bFY(\d{2}|\d{4})\b", cleaned):
         year = _expand_fy(match.group(1))
         if year is not None:
             found.add(year)
+    for match in re.finditer(r"\b((?:19|20)\d{2})\b", cleaned):
+        found.add(int(match.group(1)))
     return found
+
+
+def _attached_years(line: str, label_start: int, label_end: int, number_start: int, number_end: int) -> set[int]:
+    if label_end <= number_start:
+        prefix = _soft_suffix(line[max(0, label_start - 50) : label_start])
+        gap = line[label_end:number_start]
+    else:
+        prefix = _soft_suffix(line[max(0, number_start - 50) : number_start])
+        gap = line[number_end:label_start]
+    return _named_years(prefix + " " + gap)
+
+
+def _closest_concept(
+    line: str,
+    anchor_start: int,
+    anchor_end: int,
+    excused: set[str] | None = None,
+) -> tuple[str, int, int, str] | None:
+    best: tuple[str, int, int, str] | None = None
+    best_gap: int | None = None
+    for start, end, concept, phrase in _concept_hits(line):
+        if end <= anchor_start:
+            gap = line[end:anchor_start]
+            distance = anchor_start - end
+        elif start >= anchor_end:
+            gap = line[anchor_end:start]
+            distance = start - anchor_end
+        else:
+            continue
+        if distance > 80 or not _gap_is_open(gap, excused):
+            continue
+        if best_gap is None or distance < best_gap:
+            best = (concept, start, end, phrase)
+            best_gap = distance
+    return best
+
+
+def _split_cells(line: str) -> list[tuple[int, int, str]]:
+    cells: list[tuple[int, int, str]] = []
+    start = None
+    for index, char in enumerate(line):
+        if char != "|":
+            continue
+        if start is not None:
+            cells.append((start, index, line[start:index]))
+        start = index + 1
+    return cells
+
+
+def _table_context(lines: list[str], index: int, pos: int):
+    line = lines[index] if 0 <= index < len(lines) else ""
+    if not line.strip().startswith("|"):
+        return None
+    cells = _split_cells(line)
+    target = None
+    for cell_index, (start, end, _text) in enumerate(cells):
+        if start <= pos < end:
+            target = cell_index
+            break
+    if target is None:
+        return None
+    cell = cells[target][2]
+    if _YEAR_CELL.fullmatch(cell):
+        return _SKIP_CELL
+    header = None
+    for cursor in range(index - 1, -1, -1):
+        if not lines[cursor].strip().startswith("|"):
+            break
+        if _TABLE_SEP.fullmatch(lines[cursor]):
+            if cursor > 0 and lines[cursor - 1].strip().startswith("|"):
+                header = _split_cells(lines[cursor - 1])
+            break
+    if header is None or target == 0:
+        return None
+    row = cells[0][2].strip()
+    column = header[target][2].strip() if target < len(header) else ""
+    return f"{row} {column} "
+
+
+def _concept_amounts(snapshot: IssuerSnapshot, concept: str, years: set[int]) -> list[Decimal]:
+    if concept == "shares":
+        return [] if snapshot.shares is None else [snapshot.shares.shares]
+    if concept == "market_cap":
+        try:
+            cap = _recomputed_cap(snapshot)
+        except ValueError:
+            return []
+        return [] if cap is None else [cap]
+    amounts = []
+    for fact in snapshot.annual:
+        if fact.concept != concept:
+            continue
+        if years and fact.fiscal_year not in years:
+            continue
+        amounts.append(fact.ones)
+    return amounts
 
 
 def _core_owners(snapshot: IssuerSnapshot, want: Decimal) -> list[tuple[str, int | None]]:
@@ -1838,27 +2089,65 @@ def _core_owners(snapshot: IssuerSnapshot, want: Decimal) -> list[tuple[str, int
     return owners
 
 
-def _ownership_failure(line: str, start: int, cleaned: str, snapshot: IssuerSnapshot) -> str | None:
-    named = _concepts_before(line, start)
-    if not named:
+def _probe_line(line: str, start: int, end: int, context: str | None) -> tuple[str, int, int]:
+    if context is None:
+        return line, start, end
+    shown = line[start:end]
+    return context + shown, len(context), len(context) + len(shown)
+
+
+def _ownership_failure(
+    line: str,
+    start: int,
+    end: int,
+    cleaned: str,
+    snapshot: IssuerSnapshot,
+    context: str | None = None,
+    excused: set[str] | None = None,
+) -> str | None:
+    probe, anchor_start, anchor_end = _probe_line(line, start, end, context)
+    hit = _closest_concept(probe, anchor_start, anchor_end, excused)
+    if hit is None:
         return None
     try:
         want = Decimal(cleaned)
     except Exception:
         return None
+    concept, label_start, label_end, _phrase = hit
+    years = _attached_years(probe, label_start, label_end, anchor_start, anchor_end)
+    if any(amount == want for amount in _concept_amounts(snapshot, concept, years)):
+        return None
     owners = _core_owners(snapshot, want)
     if not owners:
         return None
-    years = _line_years(line[max(0, start - 80) : start])
-    nearby: set[str] = set()
-    for concept in named:
-        nearby.update(_NEARBY_CONCEPT.get(concept, ()))
+    nearby = _NEARBY_CONCEPT.get(concept, ())
     for owner, year in owners:
-        if owner in named:
+        if owner in nearby and year is not None and (not years or year in years):
             return None
-        if owner in nearby and year is not None and year in years:
-            return None
-    return f"{sorted(named)[0]} does not own {cleaned} ({owners[0][0]})"
+    return f"{concept} does not own {cleaned} ({owners[0][0]})"
+
+
+def _rounded_snapshot(
+    line: str,
+    start: int,
+    end: int,
+    rendered: str,
+    quantum: Decimal,
+    snapshot: IssuerSnapshot,
+    context: str | None,
+) -> bool:
+    probe, anchor_start, anchor_end = _probe_line(line, start, end, context)
+    hit = _closest_concept(probe, anchor_start, anchor_end)
+    if hit is None:
+        return False
+    concept, label_start, label_end, _phrase = hit
+    years = _attached_years(probe, label_start, label_end, anchor_start, anchor_end)
+    try:
+        printed = Decimal(rendered)
+    except Exception:
+        return False
+    half = quantum / 2
+    return any(abs(amount - printed) <= half for amount in _concept_amounts(snapshot, concept, years))
 
 
 def _classified_numbers(
@@ -1889,9 +2178,9 @@ def _classified_numbers(
     for index, part in enumerate(parts):
         original = originals[index] if index < len(originals) else ""
         visible = _mask_inline(_line_body(part))
-        labels = _label_spans(visible)
+        labels = _label_spans(visible, snapshot)
         magnitudes = _english_magnitudes(visible)
-        magnitude_spans = tuple((start, end) for _rendered, start, end in magnitudes)
+        magnitude_spans = tuple((start, end) for _rendered, start, end, _quantum in magnitudes)
         present: set[str] = set()
         for stamp in file_dates:
             if stamp in original:
@@ -1908,8 +2197,14 @@ def _classified_numbers(
                 continue
             if "." not in cleaned and cleaned in present:
                 continue
+            context = _table_context(originals, index, match.start())
+            if context is _SKIP_CELL:
+                continue
+            owned_context = context if isinstance(context, str) else None
             if _listed(cleaned, free) or _contextual_hit(original, cleaned, snapshot):
-                owned = _ownership_failure(original, match.start(), cleaned, snapshot)
+                owned = _ownership_failure(
+                    original, match.start(), match.end(), cleaned, snapshot, owned_context, free
+                )
                 if owned and _listed(cleaned, free):
                     missed.append((owned, "owner"))
                 continue
@@ -1929,10 +2224,19 @@ def _classified_numbers(
                 continue
             kind = "broken" if _overlap(offset + start, offset + end, broken) else "outside"
             missed.append((rendered, kind))
-        for rendered, start, end in magnitudes:
+        for rendered, start, end, quantum in magnitudes:
             if _inside_span(start, end, labels):
                 continue
+            context = _table_context(originals, index, start)
+            if context is _SKIP_CELL:
+                continue
+            owned_context = context if isinstance(context, str) else None
             if _listed(rendered, free) or _contextual_hit(original, rendered, snapshot):
+                owned = _ownership_failure(original, start, end, rendered, snapshot, owned_context, free)
+                if owned:
+                    missed.append((owned, "owner"))
+                continue
+            if _rounded_snapshot(original, start, end, rendered, quantum, snapshot, owned_context):
                 continue
             kind = "broken" if _overlap(offset + start, offset + end, broken) else "outside"
             missed.append((rendered, kind))
@@ -2051,27 +2355,15 @@ def _derived_row_failures(
 
 
 _SCORE_MARK = "star or score marks have no scored citation"
-_GAAP_PHRASES = (
-    "gaap net income",
-    "gaap revenue",
-    "total revenue",
-    "net income",
-    "operating income",
-    "gross profit",
-    "净利润",
-    "净利",
-)
-_QUALIFIER_WORDS = ("nongaap", "non-gaap", "non gaap", "adjusted", "segment", "nonifrs", "non-ifrs")
-
-
 _SCORE_WORD = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
 
 
 def _score_runs(report: str) -> list[int]:
     runs = [len(match) for match in re.findall(r"[★☆⭐✪✭✮✯🌟]+", report)]
+    runs.extend(len(match) for match in re.findall(r"[♦✶]{2,}", report))
     runs.extend(len(match) for match in re.findall(r"(?<![*\w])\*{4,}(?![*\w])", report))
-    runs.extend(len(match) for match in re.findall(r"●+", report))
-    runs.extend(len(match) for match in re.findall(r"■+", report))
+    runs.extend(len(match) for match in re.findall(r"●{2,}", report))
+    runs.extend(len(match) for match in re.findall(r"■{2,}", report))
     digits = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5}
     for match in re.finditer(r"([一二三四五])星", report):
         runs.append(digits[match.group(1)])
@@ -2120,8 +2412,53 @@ def _grouped(token: str) -> str:
     return sign + grouped
 
 
-def _strip_brackets(line: str) -> str:
-    return re.sub(r"\{[^{}\n]*\}\[[^\]\n]*\]", " ", line)
+def _labeled_family(measure: str) -> str | None:
+    joined = _joined_measure(measure)
+    tokens = set(_measure_tokens(measure))
+    if "enterprisevalue" in joined:
+        return "enterprise_value"
+    if "marketcap" in joined or ("market" in tokens and tokens & {"cap", "capitalization", "mcap"}):
+        return "market_cap"
+    if _is_operating_metric(measure):
+        return _underlying_concept(measure)
+    if tokens & {"share", "shares"} or "sharecount" in joined or "sharesoutstanding" in joined:
+        return "shares"
+    return _underlying_concept(measure)
+
+
+def _explicit_qualifier(line: str, label_start: int, label_end: int, measure: str) -> bool:
+    window = line[max(0, label_start - 32) : label_end]
+    if re.search(r"(?i)non[-\s]?gaap|nongaap|adjusted|segment|non[-\s]?ifrs", window):
+        return True
+    noise = {"net", "income", "profit", "revenue", "sales", "earnings", "total", "gaap", "the", "of", "line"}
+    prefix = line[max(0, label_start - 24) : label_start]
+    for token in _measure_tokens(measure):
+        if token in noise or len(token) < 3 or token.isdigit():
+            continue
+        if re.search(rf"(?i)(?<![a-z0-9]){re.escape(token)}(?![a-z0-9])", prefix):
+            return True
+    return False
+
+
+def _prose_measure_ok(
+    measure: str,
+    concept: str,
+    line: str,
+    label_start: int,
+    label_end: int,
+    number_start: int,
+    number_end: int,
+    snapshot: IssuerSnapshot,
+) -> bool:
+    if _labeled_family(measure) != concept:
+        return False
+    years = _attached_years(line, label_start, label_end, number_start, number_end)
+    measure_years = set(_period_years(measure))
+    if _future_forecast(measure, snapshot) and measure_years and years == measure_years:
+        return True
+    if _has_qualifier(measure) and _explicit_qualifier(line, label_start, label_end, measure):
+        return True
+    return False
 
 
 def _qualified_failures(
@@ -2131,27 +2468,28 @@ def _qualified_failures(
     lines: Mapping[ClaimId, tuple[str, ...]],
 ) -> list[str]:
     failures = []
+    allowed = snapshot_allow_list(snapshot, "")
     for claim in ledger.claims:
         if not isinstance(claim, Cited):
             continue
         measure = str(claim.measure)
-        if not _result_stem(measure):
-            continue
-        if _unqualifiable(measure):
-            continue
         for row in lines.get(claim.id, ()):
             if not row or row not in report:
                 continue
             for line in report.splitlines():
-                if row not in line:
+                start = line.find(row)
+                if start < 0:
                     continue
-                prose = _strip_brackets(line).casefold()
-                if any(word in prose for word in _QUALIFIER_WORDS):
+                end = start + len(row)
+                hit = _closest_concept(line, start, end, allowed)
+                if hit is None:
                     continue
-                for phrase in _GAAP_PHRASES:
-                    if phrase in prose:
-                        failures.append(f"cited {measure} is worded as {phrase}")
-                        break
+                concept, label_start, label_end, phrase = hit
+                if _prose_measure_ok(measure, concept, line, label_start, label_end, start, end, snapshot):
+                    continue
+                failures.append(f"cited {measure} is worded as {phrase}")
+        if not _result_stem(measure) or _unqualifiable(measure):
+            continue
         concept = _underlying_concept(measure)
         if concept is None or _future_forecast(measure, snapshot):
             continue
