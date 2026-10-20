@@ -1667,6 +1667,7 @@ def _cycle_snapshot() -> IssuerSnapshot:
         annual=(
             AnnualFact(2026, date(2026, 9, 3), "net_income", Decimal("84969000000"), date(2026, 10, 9), "NetIncomeLoss"),
             AnnualFact(2026, date(2026, 9, 3), "revenue", Decimal("133188000000"), date(2026, 10, 9), "Revenues"),
+            AnnualFact(2025, date(2025, 8, 28), "revenue", Decimal("37378000000"), date(2025, 10, 3), "Revenues"),
             AnnualFact(2023, date(2023, 8, 31), "net_income", Decimal("-5833000000"), date(2023, 10, 6), "NetIncomeLoss"),
             AnnualFact(2023, date(2023, 8, 31), "revenue", Decimal("15540000000"), date(2023, 10, 6), "Revenues"),
         ),
@@ -1808,7 +1809,21 @@ class TestRoundFiveBypasses(unittest.TestCase):
             CitedUnit.USD_PER_GB,
             "https://www.trendforce.com/example/ddr5",
         )
-        ledger = admit(admit(SourceLedger("MU", ()), segment, snap), price, snap)
+        terminal = _cited(
+            "terminal",
+            "profit_2036",
+            "99000000000",
+            CitedUnit.USD_ONES,
+            "https://www.reuters.com/markets/micron-terminal",
+        )
+        tam = _cited(
+            "tam",
+            "hbm_tam",
+            "150000000000",
+            CitedUnit.USD_ONES,
+            "https://www.trendforce.com/example/hbm",
+        )
+        ledger = admit(admit(admit(admit(SourceLedger("MU", ()), segment, snap), price, snap), terminal, snap), tam, snap)
         lines = citation_lines(snap, ledger, {}, {})
         note = f"""---
 title: Micron sample note
@@ -1823,9 +1838,16 @@ The official close is 904.9 USD. Shares outstanding are 1131423212. Market cap i
 
 Fiscal 2026 revenue was 133,188,000,000. Revenue was $133.2 billion. 收入为1331.88亿。
 Net income was $85.0B. The bottom line was 84,969,000,000. Fiscal 2023 revenue was 15,540,000,000.
+FY2026 revenue was 133,188,000,000 and net income was 84,969,000,000.
+Revenue rose to 133,188,000,000 from 37,378,000,000, and net income to 84,969,000,000.
+Shares outstanding were 1,131,423,212 and market cap was 1,023,824,864,538.8.
+Revenue was $133.2 billion and net income was $85 billion. Net income was nearly $85 billion. Market cap was $1.02T.
 
 DRAM revenue was {lines[segment.id][0]} of total revenue 133,188,000,000.
 The DRAM contract price was {lines[price.id][0]}.
+Terminal profit {lines[terminal.id][0]}. Fiscal 2036 net income {lines[terminal.id][0]}.
+HBM TAM, roughly half of Micron's revenue, is {lines[tam.id][0]}.
+PCIe Gen5 x16, 9th-gen, 1TB, and 1.5x bandwidth.
 
 HBM3E 12-Hi, G9 NAND, 8-high, 24GB and 128 GB dies, 300mm wafers, 7nm, Gen 5.
 Over the next 10 years, In 2027 the stack is still 2x. CY2026 is the latest filed year.
@@ -1844,6 +1866,60 @@ Over the next 10 years, In 2027 the stack is still 2x. CY2026 is the latest file
 """
         result = audit_report(note, snap, ledger, {})
         self.assertEqual(result.status, "pass", result.failures)
+
+
+class TestRoundSixBypasses(unittest.TestCase):
+    def test_a_leading_label_keeps_the_number_in_its_clause(self):
+        snap = _cycle_snapshot()
+        sentences = (
+            "FY2026 revenue was 133,188,000,000 and net income was 84,969,000,000.\n",
+            "Revenue was 133,188,000,000; net income was 84,969,000,000.\n",
+            "Net income was 84,969,000,000 on revenue of 133,188,000,000.\n",
+            "Revenue rose to 133,188,000,000 from 37,378,000,000, and net income to 84,969,000,000.\n",
+            "Shares outstanding were 1,131,423,212 and market cap was 1,023,824,864,538.8.\n",
+            "Revenue was $133.2 billion and net income was $85 billion.\n",
+        )
+        for text in sentences:
+            result = audit_report(text, snap, None, {})
+            self.assertEqual(result.status, "pass", (text, result.failures))
+        stolen = audit_report("133,188,000,000 in net income.\n", snap, None, {})
+        self.assertEqual(stolen.status, "fail", stolen.failures)
+
+    def test_forecast_phrasing_can_name_a_future_profit(self):
+        snap = _cycle_snapshot()
+        for prose in (
+            "Terminal profit {line}.\n",
+            "Terminal-year profit {line}.\n",
+            "2036 profit {line}.\n",
+            "FY2036 profit {line}.\n",
+            "Fiscal 2036 net income {line}.\n",
+            "2036年净利润 {line}。\n",
+        ):
+            result = _audited(snap, "profit_2036", "99000000000", prose)
+            self.assertEqual(result.status, "pass", (prose, result.failures))
+        bare = _audited(snap, "profit_2036", "99000000000", "Bottom line was {line}.\n")
+        self.assertEqual(bare.status, "fail", bare.failures)
+
+    def test_rounded_suffixes_and_product_marks_stay_quiet(self):
+        snap = _cycle_snapshot()
+        quiet = (
+            "Net income was $85bn.\n",
+            "Net income was $85 bn.\n",
+            "Net income was ~$85 billion.\n",
+            "Net income was nearly $85 billion.\n",
+            "Market cap was $1.02T.\n",
+            "PCIe Gen5 x16, 9th-gen, 1TB, and 1.5x bandwidth.\n",
+        )
+        for text in quiet:
+            result = audit_report(text, snap, None, {})
+            self.assertEqual(result.status, "pass", (text, result.failures))
+        aside = _audited(
+            snap,
+            "hbm_tam",
+            "150000000000",
+            "HBM TAM, roughly half of Micron's revenue, is {line}.\n",
+        )
+        self.assertEqual(aside.status, "pass", aside.failures)
 
 
 if __name__ == "__main__":
