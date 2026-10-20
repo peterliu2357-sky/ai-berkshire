@@ -1738,7 +1738,9 @@ _LABEL_NUMBER = (
     (re.compile(r"(?i)\bGen\s*\d+\b"), "generation"),
     (re.compile(r"(?i)\bG\d{1,2}(?=\s*NAND\b)"), "generation"),
     (re.compile(r"(?i)\b(\d+)-high\b"), "stack"),
-    (re.compile(r"(?i)\b\d+(?:\.\d+)?\s*GB\b"), "capacity"),
+    (re.compile(r"(?i)\b\d+(?:\.\d+)?\s*(?:GB|TB)\b"), "capacity"),
+    (re.compile(r"(?i)\bx(\d{1,2})\b"), "lanes"),
+    (re.compile(r"(?i)\b\d+(?:st|nd|rd|th)-gen\b"), "ordinal"),
     (re.compile(r"(?i)\b\d+(?:\.\d+)?\s*mm\b"), "geometry"),
     (re.compile(r"(?i)\b\d+(?:\.\d+)?\s*nm\b"), "geometry"),
     (re.compile(r"(?i)\bIn\s+(?:19|20)\d{2}\b"), "calendar"),
@@ -1781,9 +1783,9 @@ _SKIP_CELL = object()
 _FORM_GAP = re.compile(r"(?i)\b(?:form\s+[34]|10-k/?a?|10-q|8-k|20-f|40-f|6-k|def\s*14a)\b")
 _YEAR_GAP = re.compile(r"(?i)\b(?:fy\d{2,4}|q[1-4]|(?:19|20)\d{2})\b")
 _GLUE_GAP = re.compile(
-    r"(?i)\b(?:for|fiscal|year|was|were|is|are|of|per|the|a|an|in|on|at|and|its|their|"
+    r"(?i)\b(?:for|fiscal|year|was|were|is|are|of|per|the|a|an|in|on|at|its|their|"
     r"to|be|by|from|this|that|reported|company|as|with|under|about|approximately|"
-    r"which|or|also|still|latest|filed|ended|end|those|that)\b"
+    r"which|or|also|still|latest|filed|ended|end|those|nearly|roughly|around)\b"
 )
 _INPUT_WORD = re.compile(r"(?i)\b(?:times|using|via|multiplied|multiply)\b")
 _YEAR_CELL = re.compile(r"(?i)\s*(?:fy\s*)?(?:(?:19|20)\d{2})\s*")
@@ -1836,9 +1838,13 @@ def _english_magnitudes(visible: str) -> list[tuple[str, int, int, Decimal]]:
             coefficient = str(parsed)
         rendered, quantum = _scaled_amount(base, coefficient, scale)
         found.append((rendered, match.start(), match.end(), quantum))
-    for match in re.finditer(r"(?i)(?<![A-Za-z])\$?(?<![\d.])(\d+(?:\.\d+)?)B\b", visible):
+    for match in re.finditer(r"(?i)(?<![A-Za-z])\$?(?<![\d.])(\d+(?:\.\d+)?)\s*(?:B|bn)\b", visible):
         base = Decimal(match.group(1))
         rendered, quantum = _scaled_amount(base, match.group(1), 9)
+        found.append((rendered, match.start(), match.end(), quantum))
+    for match in re.finditer(r"(?<![A-Za-z])\$?(?<![\d.])(\d+(?:\.\d+)?)T\b", visible):
+        base = Decimal(match.group(1))
+        rendered, quantum = _scaled_amount(base, match.group(1), 12)
         found.append((rendered, match.start(), match.end(), quantum))
     for match in re.finditer(r"(?<![\d.])(\d+(?:\.\d+)?)亿", visible):
         base = Decimal(match.group(1))
@@ -1852,7 +1858,9 @@ def _label_in_bounds(kind: str, match: re.Match[str], line: str, snapshot: Issue
         if _VALUATION_LINE.search(line):
             return False
         number = Decimal(match.group(1))
-        return number == number.to_integral_value() and 0 < int(number) <= 10
+        return Decimal(0) < number <= 10
+    if kind == "lanes" and match.lastindex:
+        return int(match.group(1)) <= 32
     if kind in {"generation", "stack", "layer", "rank"} and match.lastindex:
         limit = {"generation": 9, "stack": 32, "layer": 1000, "rank": 20}[kind]
         return int(match.group(1)) <= limit
@@ -1939,8 +1947,40 @@ def _gap_is_open(gap: str, excused: set[str] | None = None) -> bool:
 
         text = _NUMBER_IN_TEXT.sub(replace, text)
     text = _GLUE_GAP.sub(" ", text)
-    text = re.sub(r"[\s,:;|/+\-—–'\"`()\[\]（）、为了是的与及和在按约約$＄£€¥]+", " ", text)
+    text = re.sub(r"[\s,:|/+\-—–'\"`()\[\]（）、为了是的与及和在按约約年$＄£€¥~～]+", " ", text)
     return text.strip() == ""
+
+
+def _preceding_open(gap: str, excused: set[str] | None = None) -> bool:
+    if len(gap) > 80:
+        return False
+    text = _FORM_GAP.sub(" ", gap)
+    text = _YEAR_GAP.sub(" ", text)
+    if excused:
+
+        def replace(match: re.Match[str]) -> str:
+            cleaned = match.group(0).replace(",", "")
+            if cleaned in excused:
+                return " "
+            try:
+                rendered = format(Decimal(cleaned), "f")
+            except Exception:
+                return match.group(0)
+            if rendered in excused or any(_same_quantity(cleaned, item) for item in excused):
+                return " "
+            return match.group(0)
+
+        text = _NUMBER_IN_TEXT.sub(replace, text)
+    if _NUMBER_IN_TEXT.search(text):
+        return False
+    return re.search(r"(?i)[.;。；]|\band\b|以及", text) is None
+
+
+def _of_aside(line: str, concept_start: int, gap: str) -> bool:
+    prefix = line[max(0, concept_start - 24) : concept_start]
+    if re.search(r"(?i)\bof\b(?:\s+[A-Za-z]+'s)?\s*$", prefix) is None:
+        return False
+    return "," in gap or "，" in gap
 
 
 def _soft_suffix(prefix: str) -> str:
@@ -1948,8 +1988,8 @@ def _soft_suffix(prefix: str) -> str:
     peeled = ""
     token = re.compile(
         r"(?i)(?:form\s+[34]|10-k/?a?|10-q|8-k|20-f|40-f|6-k|def\s*14a|fy\d{2,4}|q[1-4]|(?:19|20)\d{2}|"
-        r"for|fiscal|year|was|were|is|are|of|per|the|a|an|in|on|at|and|its|their|to|be|by|from|"
-        r"this|that|reported|as|with|gaap)$"
+        r"for|fiscal|year|was|were|is|are|of|per|the|a|an|in|on|at|its|their|to|be|by|from|"
+        r"this|that|reported|as|with|gaap|nearly|roughly|around)$"
     )
     while rest:
         trimmed = rest.rstrip()
@@ -1959,7 +1999,7 @@ def _soft_suffix(prefix: str) -> str:
             peeled = trimmed[matched.start() :] + tail + peeled
             rest = trimmed[: matched.start()]
             continue
-        punct = re.search(r"[\s,:;|/+\-—–'\"`()（）、为了是的$＄£€¥]+$", rest)
+        punct = re.search(r"[\s,:|/+\-—–'\"`()（）、为了是的年$＄£€¥~～]+$", rest)
         if punct and punct.start() < len(rest):
             peeled = rest[punct.start() :] + peeled
             rest = rest[: punct.start()]
@@ -1975,7 +2015,7 @@ def _named_years(text: str) -> set[int]:
         year = _expand_fy(match.group(1))
         if year is not None:
             found.add(year)
-    for match in re.finditer(r"\b((?:19|20)\d{2})\b", cleaned):
+    for match in re.finditer(r"(?<!\d)((?:19|20)\d{2})(?!\d)", cleaned):
         found.add(int(match.group(1)))
     return found
 
@@ -1996,23 +2036,24 @@ def _closest_concept(
     anchor_end: int,
     excused: set[str] | None = None,
 ) -> tuple[str, int, int, str] | None:
-    best: tuple[str, int, int, str] | None = None
-    best_gap: int | None = None
+    preceding: list[tuple[int, str, int, int, str]] = []
+    following: list[tuple[int, str, int, int, str]] = []
     for start, end, concept, phrase in _concept_hits(line):
         if end <= anchor_start:
             gap = line[end:anchor_start]
-            distance = anchor_start - end
+            if len(gap) > 80 or not _preceding_open(gap, excused) or _of_aside(line, start, gap):
+                continue
+            preceding.append((anchor_start - end, concept, start, end, phrase))
         elif start >= anchor_end:
             gap = line[anchor_end:start]
-            distance = start - anchor_end
-        else:
-            continue
-        if distance > 80 or not _gap_is_open(gap, excused):
-            continue
-        if best_gap is None or distance < best_gap:
-            best = (concept, start, end, phrase)
-            best_gap = distance
-    return best
+            if len(gap) > 80 or not _gap_is_open(gap, excused):
+                continue
+            following.append((start - anchor_end, concept, start, end, phrase))
+    pool = preceding or following
+    if not pool:
+        return None
+    _distance, concept, start, end, phrase = min(pool)
+    return concept, start, end, phrase
 
 
 def _split_cells(line: str) -> list[tuple[int, int, str]]:
@@ -2106,7 +2147,7 @@ def _ownership_failure(
     excused: set[str] | None = None,
 ) -> str | None:
     probe, anchor_start, anchor_end = _probe_line(line, start, end, context)
-    hit = _closest_concept(probe, anchor_start, anchor_end, excused)
+    hit = _closest_concept(probe, anchor_start, anchor_end)
     if hit is None:
         return None
     try:
@@ -2148,6 +2189,19 @@ def _rounded_snapshot(
         return False
     half = quantum / 2
     return any(abs(amount - printed) <= half for amount in _concept_amounts(snapshot, concept, years))
+
+
+def _cited_year_beside_concept(line: str, start: int, end: int) -> bool:
+    raw = line[start:end]
+    if not re.fullmatch(r"\d{4}", raw):
+        return False
+    if re.search(rf"(?i)measure=[a-z0-9_]*{re.escape(raw)}\b", line) is None:
+        return False
+    before = line[max(0, start - 16) : start]
+    after = line[end : end + 16].replace("年", " ")
+    probe = before + " " + after
+    anchor = len(before)
+    return _closest_concept(probe, anchor, anchor + 1) is not None
 
 
 def _classified_numbers(
@@ -2192,6 +2246,8 @@ def _classified_numbers(
             raw = match.group(0)
             cleaned = raw.replace(",", "")
             if _inside_form(visible, match.start(), match.end()) or _inside_span(match.start(), match.end(), labels):
+                continue
+            if _cited_year_beside_concept(original, match.start(), match.end()):
                 continue
             if _inside_span(match.start(), match.end(), magnitude_spans):
                 continue
@@ -2454,7 +2510,14 @@ def _prose_measure_ok(
         return False
     years = _attached_years(line, label_start, label_end, number_start, number_end)
     measure_years = set(_period_years(measure))
+    window = line[max(0, label_start - 40) : label_end]
     if _future_forecast(measure, snapshot) and measure_years and years == measure_years:
+        return True
+    if (
+        _future_forecast(measure, snapshot)
+        and concept == "net_income"
+        and re.search(r"(?i)\bterminal(?:[-\s]+year)?\b", window)
+    ):
         return True
     if _has_qualifier(measure) and _explicit_qualifier(line, label_start, label_end, measure):
         return True
