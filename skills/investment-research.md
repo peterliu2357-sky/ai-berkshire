@@ -35,7 +35,7 @@
 ### 第一步：数据收集
 
 > **数据源规范**：参见 `skills/financial-data.md`。所有财务数据必须来自两个独立来源，误差>1%须标记。
-> - 中概 ADR：macrotrends（主）+ stockanalysis（副）。美国本土 10-K 与在美上市的 20-F/40-F 改走 `skills/financial-data.md` 的「美国本土上市公司」一节和 `skills/us-market.md`，不要把股本传入 `three-scenario`。报告默认中文，只有用户要求英文或传入 `lang=en` 时才用 `skills/investment-team-en.md`。
+> - 中概 ADR：macrotrends（主）+ stockanalysis（副）。美国本土 10-K 与在美上市的 20-F/40-F 改走 `skills/financial-data.md` 的「美国本土上市公司」一节和 `skills/us-market.md`，不要把股本传入 `three-scenario`。终值利润用未来年度口径，句子写成 `Terminal profit`、`Terminal-year profit`、`2036 profit`、`FY2036 profit`、`Fiscal 2036 net income` 或 `2036年净利润`，年份与 measure 一致。报告默认中文，只有用户要求英文或传入 `lang=en` 时才用 `skills/investment-team-en.md`。
 > - 港股：aastocks（主）+ macrotrends ADR（副）
 > - A股：东方财富（主）+ 巨潮资讯（副）
 

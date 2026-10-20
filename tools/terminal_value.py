@@ -172,6 +172,10 @@ def irr_from_terminal(profit_2036, mcap_today, pe, years=10, payout=0.0):
 
     payout = 股息率 - 稀释率，年化，直接加在几何回报上（报告口径，未做再投资复利）。
     """
+    if years <= 0:
+        raise ValueError("derived years must be positive")
+    if pe <= 0:
+        raise ValueError("pe must be positive")
     return (profit_2036 * pe / mcap_today) ** (1.0 / years) - 1.0 + payout
 
 
